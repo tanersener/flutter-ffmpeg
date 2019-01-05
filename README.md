@@ -1,2 +1,3 @@
-# flutter-ffmpeg
-FFmpeg for flutter
+# flutter_ffmpeg
+
+FFmpeg plugin for Flutter. Supports iOS and Android.
