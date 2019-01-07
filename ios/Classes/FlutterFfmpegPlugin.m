@@ -46,6 +46,9 @@ static NSString *const KEY_STAT_VIDEO_FPS = @"videoFps";
 static NSString *const EVENT_LOG = @"FlutterFFmpegLogCallback";
 static NSString *const EVENT_STAT = @"FlutterFFmpegStatisticsCallback";
 
+/**
+ * Flutter FFmpeg Plugin
+ */
 @implementation FlutterFFmpegPlugin {
     FlutterEventSink _eventSink;
 }

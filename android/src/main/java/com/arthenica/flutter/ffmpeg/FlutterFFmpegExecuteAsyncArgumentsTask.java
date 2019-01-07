@@ -29,6 +29,12 @@ import java.util.List;
 
 import io.flutter.plugin.common.MethodChannel;
 
+/**
+ * Asynchronous task which performs {@link FFmpeg#execute(String[])} method invocations.
+ *
+ * @author Taner Sener
+ * @since 0.1.0
+ */
 public class FlutterFFmpegExecuteAsyncArgumentsTask extends AsyncTask<String, Integer, Integer> {
 
     private final MethodChannel.Result result;

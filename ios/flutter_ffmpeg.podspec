@@ -6,7 +6,7 @@ Pod::Spec.new do |s|
   s.homepage         = 'https://github.com/tanersener/flutter-ffmpeg'
 
   s.author           = { 'Taner Sener' => 'tanersener@gmail.com' }
-  s.license          = { :file => '../LICENSE.LGPLv3.txt' }
+  s.license          = { :file => '../LICENSE' }
 
   s.requires_arc     = true
   s.ios.deployment_target = '9.3'

@@ -27,6 +27,12 @@ import com.arthenica.mobileffmpeg.MediaInformation;
 
 import io.flutter.plugin.common.MethodChannel;
 
+/**
+ * Asynchronous task which performs {@link FFmpeg#getMediaInformation(String, Long)} method invocations.
+ *
+ * @author Taner Sener
+ * @since 0.1.0
+ */
 public class FlutterFFmpegGetMediaInformationAsyncTask extends AsyncTask<String, Integer, MediaInformation> {
 
     private Integer timeout;

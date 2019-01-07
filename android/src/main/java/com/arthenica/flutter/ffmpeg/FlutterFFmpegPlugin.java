@@ -48,9 +48,10 @@ import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
 
 /**
- * <p>Main class of Flutter FFmpeg Plugin.
+ * <h3>Flutter FFmpeg Plugin</h3>
  *
  * @author Taner Sener
+ * @since 0.1.0
  */
 public class FlutterFFmpegPlugin implements MethodCallHandler, EventChannel.StreamHandler {
     public static final String LIBRARY_NAME = "flutter-ffmpeg";

@@ -26,6 +26,12 @@ import com.arthenica.mobileffmpeg.FFmpeg;
 
 import io.flutter.plugin.common.MethodChannel;
 
+/**
+ * Asynchronous task which performs {@link FFmpeg#execute(String, String)} method invocations.
+ *
+ * @author Taner Sener
+ * @since 0.1.0
+ */
 public class FlutterFFmpegExecuteAsyncCommandTask extends AsyncTask<String, Integer, Integer> {
 
     private String delimiter;
