@@ -75,7 +75,7 @@ to enable other installed packages using the following steps.
       flutter_ffmpeg:
         git:
           url: git://github.com/tanersener/flutter-ffmpeg.git
-          ref: master
+          ref: v0.1.0
           path: packages/flutter_ffmpeg_https
 
     ```
