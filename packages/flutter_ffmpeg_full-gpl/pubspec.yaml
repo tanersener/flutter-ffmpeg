@@ -1,0 +1,17 @@
+name: flutter_ffmpeg
+description: FFmpeg plugin for Flutter.
+version: 0.1.0
+author: Taner Sener <tanersener@gmail.com>
+homepage: https://github.com/tanersener/flutter-ffmpeg
+
+environment:
+  sdk: ">=2.0.0-dev.68.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+flutter:
+  plugin:
+    androidPackage: com.arthenica.flutter.ffmpeg
+    pluginClass: FlutterFFmpegPlugin
