@@ -69,9 +69,18 @@ Add `flutter_ffmpeg` as a [dependency in your pubspec.yaml file](https://flutter
 Default installation of `FlutterFFmpeg` enables the default package, which is based on `https` package. It is possible
 to enable other installed packages using the following steps.
 
+1. Use the following dependency block in your `pubspec.yaml` file.
     ```
+    dependencies:
+      flutter_ffmpeg:
+        git:
+          url: git://github.com/tanersener/flutter-ffmpeg.git
+          ref: master
+          path: packages/flutter_ffmpeg_https
 
     ```
+
+2. Set package name in `path: packages/flutter_ffmpeg_<package name>` section.  
 
 ### 3. Using
 
