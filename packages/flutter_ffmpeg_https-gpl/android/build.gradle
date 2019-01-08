@@ -1,5 +1,5 @@
 group 'com.arthenica.flutter.ffmpeg'
-version '0.1.0'
+version '0.1.1'
 
 buildscript {
     repositories {
@@ -34,5 +34,5 @@ android {
 }
 
 dependencies {
-    implementation 'com.arthenica:mobile-ffmpeg-https-gpl:4.2.LTS'
+    implementation 'com.arthenica:mobile-ffmpeg-https-gpl:4.2'
 }

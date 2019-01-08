@@ -2,8 +2,14 @@
 
 TOOL_DIR="`pwd`"
 
+# 1. package name
+# 2. lts release
 create_package() {
-    local PACKAGE_NAME="flutter_ffmpeg_$1"
+    if [[ "$2" == "yes" ]]; then
+        local PACKAGE_NAME="flutter_ffmpeg_$1_lts"
+    else
+        local PACKAGE_NAME="flutter_ffmpeg_$1"
+    fi
 
     local PACKAGE_PATH="${TOOL_DIR}/../packages/${PACKAGE_NAME}"
 
@@ -43,15 +49,33 @@ create_package() {
     # 6. UPDATE DEPENDENCIES
     sed -i .tmp "s/mobile-ffmpeg-https/mobile-ffmpeg-$1/g" ${PACKAGE_PATH}/android/build.gradle
     sed -i .tmp "s/mobile-ffmpeg-https/mobile-ffmpeg-$1/g"  ${PACKAGE_PATH}/ios/flutter_ffmpeg.podspec
+    
+    if [[ "$2" != "yes" ]]; then
+        sed -i .tmp "s/\.LTS//g" ${PACKAGE_PATH}/android/build.gradle
+        sed -i .tmp "s/\.LTS//g"  ${PACKAGE_PATH}/ios/flutter_ffmpeg.podspec
+    fi
+    
+    # 8. CLEAN TEMP FILES
     rm -f ${PACKAGE_PATH}/ios/flutter_ffmpeg.podspec.tmp
     rm -f ${PACKAGE_PATH}/android/build.gradle.tmp
 }
 
-create_package 'min'
-create_package 'min-gpl'
-create_package 'https'
-create_package 'https-gpl'
-create_package 'audio'
-create_package 'video'
-create_package 'full'
-create_package 'full-gpl'
+# MAIN RELEASES
+create_package "min"
+create_package "min-gpl"
+create_package "https"
+create_package "https-gpl"
+create_package "audio"
+create_package "video"
+create_package "full"
+create_package "full-gpl"
+
+# LTS RELEASES
+create_package "min" "yes"
+create_package "min-gpl" "yes"
+create_package "https" "yes"
+create_package "https-gpl" "yes"
+create_package "audio" "yes"
+create_package "video" "yes"
+create_package "full" "yes"
+create_package "full-gpl" "yes"

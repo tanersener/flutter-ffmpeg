@@ -1,6 +1,6 @@
 name: flutter_ffmpeg
-description: FFmpeg plugin for Flutter.
-version: 0.1.0
+description: Flutter plugin to run FFmpeg in the mobile platform. Supports iOS and Android.
+version: 0.1.1
 author: Taner Sener <tanersener@gmail.com>
 homepage: https://github.com/tanersener/flutter-ffmpeg
 
