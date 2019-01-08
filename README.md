@@ -1,4 +1,8 @@
-# flutter_ffmpeg
+# flutter_ffmpeg 
+
+[![Join the chat at https://gitter.im/flutter-ffmpeg/community](https://badges.gitter.im/flutter-ffmpeg/community.svg)](https://gitter.im/flutter-ffmpeg/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) 
+![GitHub release](https://img.shields.io/badge/release-v0.1.0-blue.svg) 
+![](https://img.shields.io/pub/v/flutter_ffmpeg.svg)
 
 FFmpeg plugin for Flutter. Supports iOS and Android.
 
