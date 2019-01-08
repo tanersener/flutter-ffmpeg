@@ -70,8 +70,7 @@ Add `flutter_ffmpeg` as a [dependency in your pubspec.yaml file](https://flutter
 
 #### 2.1 Packages
 
-Default installation of `FlutterFFmpeg` enables the default package, which is based on `https_lts` package. It is possible
-to enable other packages using the following steps.
+Installation of `FlutterFFmpeg` using `pub` enables the default package, which is based on `https` package of `LTS` release. It is possible to enable other packages using the following steps.
 
 1. Use the following dependency block in your `pubspec.yaml` file.
     ```
@@ -83,13 +82,13 @@ to enable other packages using the following steps.
           path: packages/flutter_ffmpeg_https
 
     ```
-2. Update version in `ref:`.
+2. Update version in `ref:` argument.
 
-3. Set package name in `path: packages/flutter_ffmpeg_<package name>[_lts]` section.`
+3. Set package name in `path: packages/flutter_ffmpeg_<package name>[_lts]` section. Include `_lts` postfix only if you want to depend on an `LTS` release.
 
 #### 2.2 LTS Releases
 
-`flutter_ffmpeg` is published in two different variants: `Main Release` and `LTS Release`. Both releases share the same source code but is built with different settings. You may need to change `flutter_ffmpeg` variant used to support a specific feature/architecture. Use instructions in [2.1](#21-packages) and add `_lts` postfix in step `#3`.
+`flutter_ffmpeg` is published in two different variants: `Main Release` and `LTS Release`. Both releases share the same source code but is built with different settings. Use instructions in [2.1](#21-packages) and add `_lts` postfix in step `#3`, if you need to change `flutter_ffmpeg` variant used to support a specific feature/architecture. .
 
 |        | Main Release | LTS Release |
 | :----: | :----: | :----: |
