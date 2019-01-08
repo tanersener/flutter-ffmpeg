@@ -1,7 +1,7 @@
 # flutter_ffmpeg 
 
 [![Join the chat at https://gitter.im/flutter-ffmpeg/community](https://badges.gitter.im/flutter-ffmpeg/community.svg)](https://gitter.im/flutter-ffmpeg/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) 
-![GitHub release](https://img.shields.io/badge/release-v0.1.0-blue.svg) 
+![GitHub release](https://img.shields.io/badge/release-v0.1.1-blue.svg) 
 ![](https://img.shields.io/pub/v/flutter_ffmpeg.svg)
 
 FFmpeg plugin for Flutter. Supports iOS and Android.
@@ -94,10 +94,10 @@ Installation of `FlutterFFmpeg` using `pub` enables the default package, which i
 | :----: | :----: | :----: |
 | Android API Level | 24 | 21 | 
 | Android Camera Access | x | - |
-| Android Architectures | arm-v7a-neon<br/>arm64-v8a<br/>x86<br/>x86-64</br> | arm-v7a<br/>arm-v7a-neon<br/>arm64-v8a<br/>x86<br/>x86-64</br> |
+| Android Architectures | arm-v7a-neon<br>arm64-v8a<br>x86<br>x86-64 | arm-v7a<br>arm-v7a-neon<br>arm64-v8a<br>x86<br>x86-64 |
 | IOS SDK | 12.1 | 9.3 |
 | Xcode Support | 10.1 | 7.3.1 |
-| IOS Architectures | arm64<br/>arm64e<br/>x86-64</br> | armv7<br/>arm64<br/>i386<br/>x86-64</br> |   
+| IOS Architectures | arm64<br>arm64e<br>x86-64 | armv7<br>arm64<br>i386<br>x86-64 |   
 
 ### 3. Using
 
