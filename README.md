@@ -70,8 +70,8 @@ Add `flutter_ffmpeg` as a [dependency in your pubspec.yaml file](https://flutter
 
 #### 2.1 Packages
 
-Default installation of `FlutterFFmpeg` enables the default package, which is based on `https` package. It is possible
-to enable other installed packages using the following steps.
+Default installation of `FlutterFFmpeg` enables the default package, which is based on `https_lts` package. It is possible
+to enable other packages using the following steps.
 
 1. Use the following dependency block in your `pubspec.yaml` file.
     ```
@@ -79,12 +79,26 @@ to enable other installed packages using the following steps.
       flutter_ffmpeg:
         git:
           url: git://github.com/tanersener/flutter-ffmpeg.git
-          ref: v0.1.0
+          ref: v0.1.1
           path: packages/flutter_ffmpeg_https
 
     ```
+2. Update version in `ref:`.
 
-2. Set package name in `path: packages/flutter_ffmpeg_<package name>` section.  
+3. Set package name in `path: packages/flutter_ffmpeg_<package name>[_lts]` section.`
+
+#### 2.2 LTS Releases
+
+`flutter_ffmpeg` is published in two different variants: `Main Release` and `LTS Release`. Both releases share the same source code but is built with different settings. You may need to change `flutter_ffmpeg` variant used to support a specific feature/architecture. Use instructions in [2.1](#21-packages) and add `_lts` postfix in step `#3`.
+
+|        | Main Release | LTS Release |
+| :----: | :----: | :----: |
+| Android API Level | 24 | 21 | 
+| Android Camera Access | x | - |
+| Android Architectures | arm-v7a-neon<br/>arm64-v8a<br/>x86<br/>x86-64</br> | arm-v7a<br/>arm-v7a-neon<br/>arm64-v8a<br/>x86<br/>x86-64</br> |
+| IOS SDK | 12.1 | 9.3 |
+| Xcode Support | 10.1 | 7.3.1 |
+| IOS Architectures | arm64<br/>arm64e<br/>x86-64</br> | armv7<br/>arm64<br/>i386<br/>x86-64</br> |   
 
 ### 3. Using
 
@@ -231,7 +245,7 @@ to enable other installed packages using the following steps.
 
 #### 4.1 Releases
 
-- `0.1.0` releases is based on `FFmpeg v4.2-dev` and `MobileFFmpeg v4.2.LTS`
+- `0.1.x` releases are based on `FFmpeg v4.2-dev` and `MobileFFmpeg v4.2.LTS`
 
 ### 5. Updates
 
