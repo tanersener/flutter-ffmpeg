@@ -244,25 +244,46 @@ Installation of `FlutterFFmpeg` using `pub` enables the default package, which i
 
 ### 4. Versions
 
-#### 4.1 Releases
-
 - `0.1.x` releases are based on `FFmpeg v4.2-dev` and `MobileFFmpeg v4.2.LTS`
 
-### 5. Updates
+### 5. Tips
+
+- You should not use double quotes (") to define your complex filters or map definitions.
+    ```
+     -filter_complex [0:v]scale=1280:-1[v] -map [v]
+    ```
+
+- If your commands include unnecessary quotes or space characters your command will fail with `No such filter: ' '` errors. Please check your command and remove them.
+
+- Enabling `ProGuard` on Android causes linking errors. Please add the following rule inside your `proguard-rules.pro` file to preserve necessary method names and prevent linking errors.
+
+    ```
+    -keep class com.arthenica.mobileffmpeg.Config {
+        native <methods>;
+        void log(int, byte[]);
+        void statistics(int, float, float, long , int, double, double);
+    }
+    ```
+
+- By default, Xcode compresses `PNG` files during packaging. If you use `.png` files in your commands make sure you set the following two settings to `NO`. If one of them is set to `YES`, your operations may fail with `Error while decoding stream #0:0: Generic error in an external library` error.
+
+    <img width="720" alt="png_settings" src="https://user-images.githubusercontent.com/10158439/45798948-794c9f80-bcb4-11e8-8881-8c61789b283c.png">
+
+### 6. Updates
 
 Refer to [Changelog](CHANGELOG.md) for updates.
 
-### 6. License
+### 7. License
 
 This project is licensed under the LGPL v3.0. However, if installation is customized to use a package with `-gpl` postfix (min-gpl, https-gpl, full-gpl) then `FlutterFFmpeg` is subject to the GPL v3.0 license.
 
 Digital assets used in test applications are published in the public domain.
 
-### 7. Contributing
+### 8. Contributing
 
 Feel free to submit issues or pull requests.
 
-### 8. See Also
+### 9. See Also
 
 - [FFmpeg](https://www.ffmpeg.org)
 - [Mobile FFmpeg Wiki](https://github.com/tanersener/mobile-ffmpeg/wiki)
