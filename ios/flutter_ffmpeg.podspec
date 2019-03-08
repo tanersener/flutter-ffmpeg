@@ -10,6 +10,7 @@ Pod::Spec.new do |s|
 
   s.requires_arc     = true
   s.ios.deployment_target = '9.3'
+  s.static_framework  = true
 
   s.source              = { :path => '.' }
   s.source_files        = 'Classes/**/*'
