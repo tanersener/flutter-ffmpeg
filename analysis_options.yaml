@@ -1,4 +1,0 @@
-analyzer:
-  exclude:
-    - example/**
-    - example/test/**
