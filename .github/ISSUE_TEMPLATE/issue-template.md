@@ -20,7 +20,7 @@ If applicable, add screenshots to help explain your problem.
 Post logs here or paste them to [Ghostbin](https://ghostbin.com) and insert the link here.
 
 **Environment**
- - Flutter doctor output
+Flutter doctor output
 
 **Other**
 Add any other context about the problem here.
