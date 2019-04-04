@@ -91,14 +91,47 @@ Installation of `FlutterFFmpeg` using `pub` enables the default package, which i
 
 `flutter_ffmpeg` is published in two different variants: `Main Release` and `LTS Release`. Both releases share the same source code but is built with different settings. Below you can see the changes between the two.
 
-|        | Main Release | LTS Release |
-| :----: | :----: | :----: |
-| Android API Level | 24 | 21 | 
-| Android Camera Access | Yes | - |
-| Android Architectures | arm-v7a-neon<br>arm64-v8a<br>x86<br>x86-64 | arm-v7a<br>arm-v7a-neon<br>arm64-v8a<br>x86<br>x86-64 |
-| IOS SDK | 12.1 | 9.3 |
-| Xcode Support | 10.1 | 7.3.1 |
-| IOS Architectures | arm64<br>arm64e<br>x86-64 | armv7<br>arm64<br>i386<br>x86-64 |   
+<table>
+<thead>
+    <tr>
+        <th align="center"></th>
+        <th align="center">Main Release</th>
+        <th align="center">LTS Release</th>
+    </tr>
+</thead>
+<tbody>
+    <tr>
+        <td align="center">Android API Level</td>
+        <td align="center">24</td>
+        <td align="center">21</td>
+    </tr>
+    <tr>
+        <td align="center">Android Camera Access</td>
+        <td align="center">Yes</td>
+        <td align="center">-</td>
+    </tr>
+    <tr>
+        <td align="center">Android Architectures</td>
+        <td align="center">arm-v7a-neon<br>arm64-v8a<br>x86<br>x86-64</td>
+        <td align="center">arm-v7a<br>arm-v7a-neon<br>arm64-v8a<br>x86<br>x86-64</td>
+    </tr>
+    <tr>
+        <td align="center">IOS SDK</td>
+        <td align="center">12.1</td>
+        <td align="center">9.3</td>
+    </tr>
+    <tr>
+        <td align="center">Xcode Support</td>
+        <td align="center">10.1</td>
+        <td align="center">7.3.1</td>
+    </tr>
+    <tr>
+        <td align="center">IOS Architectures</td>
+        <td align="center">arm64<br>arm64e<br>x86-64</td>
+        <td align="center">armv7<br>arm64<br>i386<br>x86-64</td>
+    </tr>
+</tbody>
+</table>   
 
 ### 3. Using
 
