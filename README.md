@@ -5,7 +5,7 @@
 
 FFmpeg plugin for Flutter. Supports iOS and Android.
 
-<img src="https://github.com/tanersener/flutter-ffmpeg/blob/development/doc/assets/flutter-ffmpeg-logo-v2-cropped.png" width="240">
+<img src="https://github.com/tanersener/flutter-ffmpeg/raw/development/doc/assets/flutter-ffmpeg-logo-v2-cropped.png" width="240">
 
 ### 1. Features
 - Based on MobileFFmpeg
