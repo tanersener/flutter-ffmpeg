@@ -1,3 +1,7 @@
+## 0.2.1
+- Fixed documentation errors
+- Updated package description
+
 ## 0.2.0
 - Added AndroidX support
 - Removed app icons for Android

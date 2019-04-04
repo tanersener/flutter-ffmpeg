@@ -1,6 +1,6 @@
 # flutter_ffmpeg 
 
-![GitHub release](https://img.shields.io/badge/release-v0.2.0-blue.svg) 
+![GitHub release](https://img.shields.io/badge/release-v0.2.1-blue.svg) 
 ![](https://img.shields.io/pub/v/flutter_ffmpeg.svg)
 
 FFmpeg plugin for Flutter. Supports iOS and Android.
@@ -79,7 +79,7 @@ Installation of `FlutterFFmpeg` using `pub` enables the default package, which i
       flutter_ffmpeg:
         git:
           url: git://github.com/tanersener/flutter-ffmpeg.git
-          ref: v0.2.0
+          ref: v0.2.1
           path: packages/flutter_ffmpeg_<package_name>
 
     ```
