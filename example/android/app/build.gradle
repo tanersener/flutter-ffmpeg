@@ -33,7 +33,7 @@ android {
 
     defaultConfig {
         applicationId "com.arthenica.flutter.ffmpeg.FlutterFFmpegExample"
-        minSdkVersion 21
+        minSdkVersion 24
         targetSdkVersion 28
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
