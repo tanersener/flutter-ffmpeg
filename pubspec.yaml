@@ -11,6 +11,10 @@ dependencies:
   flutter:
     sdk: flutter
 
+dev_dependencies:
+  path_provider: ^0.5.0+1
+  path: ^1.6.2
+
 flutter:
   plugin:
     androidPackage: com.arthenica.flutter.ffmpeg
