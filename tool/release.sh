@@ -48,17 +48,29 @@ create_package() {
 
     # 6. UPDATE DEPENDENCIES
     sed -i .tmp "s/mobile-ffmpeg-https/mobile-ffmpeg-$1/g" ${PACKAGE_PATH}/android/build.gradle
-    sed -i .tmp "s/mobile-ffmpeg-https/mobile-ffmpeg-$1/g"  ${PACKAGE_PATH}/ios/flutter_ffmpeg.podspec
+    sed -i .tmp "s/mobile-ffmpeg-https/mobile-ffmpeg-$1/g" ${PACKAGE_PATH}/ios/flutter_ffmpeg.podspec
     
-    if [[ "$2" != "yes" ]]; then
-        sed -i .tmp "s/\.LTS//g" ${PACKAGE_PATH}/android/build.gradle
-        sed -i .tmp "s/\.LTS//g"  ${PACKAGE_PATH}/ios/flutter_ffmpeg.podspec
+    if [[ "$2" == "yes" ]]; then
+        sed -i .tmp "s/minSdkVersion 24/minSdkVersion 21/g" ${PACKAGE_PATH}/android/build.gradle
+        sed -i .tmp "s/implementation \'com.arthenica:mobile-ffmpeg-$1:$VERSION\'/implementation \'com.arthenica:mobile-ffmpeg-$1:$LTS_VERSION\'/g" ${PACKAGE_PATH}/android/build.gradle
+        sed -i .tmp "s/mobile-ffmpeg-$1\'\, \'$VERSION/mobile-ffmpeg-$1\'\, \'$LTS_VERSION/g" ${PACKAGE_PATH}/ios/flutter_ffmpeg.podspec
     fi
     
     # 8. CLEAN TEMP FILES
     rm -f ${PACKAGE_PATH}/ios/flutter_ffmpeg.podspec.tmp
     rm -f ${PACKAGE_PATH}/android/build.gradle.tmp
 }
+
+if [[ $# -ne 2 ]];
+then
+    echo "Usage: release.sh <version> <lts version>"
+    exit 1
+fi
+
+VERSION=$1
+LTS_VERSION=$2
+
+echo -e "Creating release packages for version: $VERSION and lts version: $LTS_VERSION\n"
 
 # MAIN RELEASES
 create_package "min"

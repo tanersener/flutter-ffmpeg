@@ -1,5 +1,5 @@
 group 'com.arthenica.flutter.ffmpeg'
-version '0.1.1'
+version '0.2.0'
 
 buildscript {
     repositories {
@@ -8,7 +8,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.2.1'
+        classpath 'com.android.tools.build:gradle:3.3.2'
     }
 }
 
@@ -22,11 +22,10 @@ rootProject.allprojects {
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion 28
 
     defaultConfig {
-        minSdkVersion 21
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        minSdkVersion 24
     }
     lintOptions {
         disable 'InvalidPackage'
@@ -34,5 +33,5 @@ android {
 }
 
 dependencies {
-    implementation 'com.arthenica:mobile-ffmpeg-full-gpl:4.2'
+    implementation 'com.arthenica:mobile-ffmpeg-full-gpl:4.2.1'
 }

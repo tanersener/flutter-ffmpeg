@@ -1,8 +1,0 @@
-analyzer:
-  language:
-    enableStrictCallChecks: true
-    enableSuperMixins: true
-    enableAssertInitializer: true
-  exclude:
-    - example/**
-    - example/test/**

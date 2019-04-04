@@ -1,12 +1,11 @@
 # flutter_ffmpeg 
 
-[![Join the chat at https://gitter.im/flutter-ffmpeg/community](https://badges.gitter.im/flutter-ffmpeg/community.svg)](https://gitter.im/flutter-ffmpeg/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) 
-![GitHub release](https://img.shields.io/badge/release-v0.1.1-blue.svg) 
+![GitHub release](https://img.shields.io/badge/release-v0.2.0-blue.svg) 
 ![](https://img.shields.io/pub/v/flutter_ffmpeg.svg)
 
 FFmpeg plugin for Flutter. Supports iOS and Android.
 
-<img src="https://github.com/tanersener/flutter-ffmpeg/blob/development/docs/assets/flutter-ffmpeg-logo-v2-cropped.png" width="240">
+<img src="https://github.com/tanersener/flutter-ffmpeg/raw/development/doc/assets/flutter-ffmpeg-logo-v2-cropped.png" width="240">
 
 ### 1. Features
 - Based on MobileFFmpeg
@@ -72,7 +71,7 @@ Add `flutter_ffmpeg` as a [dependency in your pubspec.yaml file](https://flutter
 
 #### 2.1 Packages
 
-Installation of `FlutterFFmpeg` using `pub` enables the default package, which is based on `https` package of `LTS` release. It is possible to enable other packages using the following steps.
+Installation of `FlutterFFmpeg` using `pub` enables the default package, which is based on `https` package. It is possible to enable other packages using the following steps.
 
 1. Use the following dependency block in your `pubspec.yaml` file.
     ```
@@ -80,13 +79,13 @@ Installation of `FlutterFFmpeg` using `pub` enables the default package, which i
       flutter_ffmpeg:
         git:
           url: git://github.com/tanersener/flutter-ffmpeg.git
-          ref: v0.1.1
-          path: packages/flutter_ffmpeg_https
+          ref: v0.2.0
+          path: packages/flutter_ffmpeg_<package_name>
 
     ```
 2. Update version in `ref:` argument.
 
-3. Set package name in `path: packages/flutter_ffmpeg_<package name>[_lts]` section. Include `_lts` postfix only if you want to depend on an `LTS` release.
+3. Set package name in `path: packages/flutter_ffmpeg_<package_name>[_lts]` section. Include `_lts` postfix only if you want to depend on an `LTS` release.
 
 #### 2.2 LTS Releases
 
@@ -242,18 +241,18 @@ Installation of `FlutterFFmpeg` using `pub` enables the default package, which i
     });
     ```
 
-### 4. Versions
-
-- `0.1.x` releases are based on `FFmpeg v4.2-dev` and `MobileFFmpeg v4.2.LTS`
-
-### 5. Tips
+### 4. Tips
 
 - You should not use double quotes (") to define your complex filters or map definitions.
     ```
      -filter_complex [0:v]scale=1280:-1[v] -map [v]
     ```
 
-- If your commands include unnecessary quotes or space characters your command will fail with `No such filter: ' '` errors. Please check your command and remove them.
+- If your commands include unnecessary quotes or space characters, your command will fail with `No such filter: ' '` errors. Please check your command and remove them.
+
+- `FlutterFFmpeg.execute` method has an optional delimiter parameter. Delimiter defines how a command string will be split into arguments. When a delimiter is not specified then space character is used as default delimiter. 
+Consequently if you have a space character in one of your command arguments, in filename or in `-filter_complex` block, then your command string will be split into invalid arguments and execution will fail. 
+You can fix this error by splitting your command string into array yourself and calling `executeWithArguments` method or using a different delimiter character in your command string and specifying it in the `execute` call.
 
 - Enabling `ProGuard` on Android causes linking errors. Please add the following rule inside your `proguard-rules.pro` file to preserve necessary method names and prevent linking errors.
 
@@ -269,21 +268,35 @@ Installation of `FlutterFFmpeg` using `pub` enables the default package, which i
 
     <img width="720" alt="png_settings" src="https://user-images.githubusercontent.com/10158439/45798948-794c9f80-bcb4-11e8-8881-8c61789b283c.png">
 
-### 6. Updates
+- Some `flutter_ffmpeg` packages include `libc++_shared.so` native library. If a second library which also includes `libc++_shared.so` is added as a dependency, `gradle` fails with `More than one file was found with OS independent path 'lib/x86/libc++_shared.so'` error message.
+
+  You can fix this error by adding the following block into your `build.gradle`.
+  ```
+  android {
+      packagingOptions {
+          pickFirst 'lib/x86/libc++_shared.so'
+          pickFirst 'lib/x86_64/libc++_shared.so'
+          pickFirst 'lib/armeabi-v7a/libc++_shared.so'
+          pickFirst 'lib/arm64-v8a/libc++_shared.so'
+      }
+  }
+  ```
+
+### 5. Updates
 
 Refer to [Changelog](CHANGELOG.md) for updates.
 
-### 7. License
+### 6. License
 
 This project is licensed under the LGPL v3.0. However, if installation is customized to use a package with `-gpl` postfix (min-gpl, https-gpl, full-gpl) then `FlutterFFmpeg` is subject to the GPL v3.0 license.
 
 Digital assets used in test applications are published in the public domain.
 
-### 8. Contributing
+### 7. Contributing
 
 Feel free to submit issues or pull requests.
 
-### 9. See Also
+### 8. See Also
 
 - [FFmpeg](https://www.ffmpeg.org)
 - [Mobile FFmpeg Wiki](https://github.com/tanersener/mobile-ffmpeg/wiki)

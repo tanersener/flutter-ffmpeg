@@ -405,7 +405,7 @@ class FlutterFFmpegTestAppState extends State<MainPage> with TickerProviderState
     String ffmpegCodec = _currentCodec;
 
     // VIDEO CODEC MENU HAS BASIC NAMES, FFMPEG NEEDS LONGER LIBRARY NAMES.
-    if (ffmpegCodec == "h264") {
+    if (ffmpegCodec == "x264") {
       ffmpegCodec = "libx264";
     } else if (ffmpegCodec == "x265") {
       ffmpegCodec = "libx265";
@@ -452,7 +452,7 @@ class FlutterFFmpegTestAppState extends State<MainPage> with TickerProviderState
     List<DropdownMenuItem<String>> items = new List();
 
     items.add(new DropdownMenuItem(value: "mpeg4", child: new Text("mpeg4")));
-    items.add(new DropdownMenuItem(value: "h264", child: new Text("h264")));
+    items.add(new DropdownMenuItem(value: "x264", child: new Text("x264")));
     items.add(new DropdownMenuItem(value: "x265", child: new Text("x265")));
     items.add(new DropdownMenuItem(value: "xvid", child: new Text("xvid")));
     items.add(new DropdownMenuItem(value: "vp8", child: new Text("vp8")));
