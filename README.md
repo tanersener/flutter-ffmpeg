@@ -283,8 +283,9 @@ Installation of `FlutterFFmpeg` using `pub` enables the default package, which i
 
 - If your commands include unnecessary quotes or space characters, your command will fail with `No such filter: ' '` errors. Please check your command and remove them.
 
-- `FlutterFFmpeg.execute` method has an optional delimiter parameter. Delimiter defines how a command string will be split into arguments. When a delimiter is not specified then space character is used as default delimiter. 
-Consequently if you have a space character in one of your command arguments, in filename or in `-filter_complex` block, then your command string will be split into invalid arguments and execution will fail. 
+- `execute` method is overloaded and has an optional delimiter parameter. Delimiter defines how the command string will be split into arguments. 
+When delimiter is not specified the space character is used as the default delimiter. 
+Based on this, if one or more of your command arguments include a space character, in filename path or in `-filter_complex` block, then your command string will be split into invalid arguments and execution will fail.  
 You can fix this error by splitting your command string into array yourself and calling `executeWithArguments` method or using a different delimiter character in your command string and specifying it in the `execute` call.
 
 - Enabling `ProGuard` on Android causes linking errors. Please add the following rule inside your `proguard-rules.pro` file to preserve necessary method names and prevent linking errors.
@@ -296,6 +297,10 @@ You can fix this error by splitting your command string into array yourself and 
         void statistics(int, float, float, long , int, double, double);
     }
     ```
+
+- `ffmpeg` requires a valid `fontconfig` configuration to render subtitles. Unfortunately, Android does not include a default `fontconfig` configuration. 
+So if you do not register a font or specify a `fontconfig` configuration under Android, then the burning process will not produce any errors but subtitles won't be burned in your file. 
+You can overcome this situation by registering a font using `setFontDirectory` method or specifying your own `fontconfig` configuration using `setFontconfigConfigurationPath` method.
 
 - By default, Xcode compresses `PNG` files during packaging. If you use `.png` files in your commands make sure you set the following two settings to `NO`. If one of them is set to `YES`, your operations may fail with `Error while decoding stream #0:0: Generic error in an external library` error.
 
