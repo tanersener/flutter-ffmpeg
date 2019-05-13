@@ -91,6 +91,8 @@ Installation of `FlutterFFmpeg` using `pub` enables the default package, which i
 
 `flutter_ffmpeg` is published in two different variants: `Main Release` and `LTS Release`. Both releases share the same source code but is built with different settings. Below you can see the changes between the two.
 
+In order to install the `LTS` variant, install the `flutter_ffmpeg_https_lts` package using instructions in `2.1` or append `_lts` to the package name you are using. 
+
 <table>
 <thead>
     <tr>
