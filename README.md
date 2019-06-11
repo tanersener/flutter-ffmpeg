@@ -285,6 +285,8 @@ In order to install the `LTS` variant, install the `flutter_ffmpeg_https_lts` pa
 
 - If your commands include unnecessary quotes or space characters, your command will fail with `No such filter: ' '` errors. Please check your command and remove them.
 
+- `flutter_ffmpeg` uses file system paths, it does not know what an assets folder or project folder is. So you can't use resources on those folders directly, you need to provide full paths of those resources.
+
 - `execute` method is overloaded and has an optional delimiter parameter. Delimiter defines how the command string will be split into arguments. 
 When delimiter is not specified the space character is used as the default delimiter. 
 Based on this, if one or more of your command arguments include a space character, in filename path or in `-filter_complex` block, then your command string will be split into invalid arguments and execution will fail.  
