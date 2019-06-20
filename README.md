@@ -1,6 +1,6 @@
 # flutter_ffmpeg 
 
-![GitHub release](https://img.shields.io/badge/release-v0.2.1-blue.svg) 
+![GitHub release](https://img.shields.io/badge/release-v0.2.3-blue.svg) 
 ![](https://img.shields.io/pub/v/flutter_ffmpeg.svg)
 
 FFmpeg plugin for Flutter. Supports iOS and Android.
@@ -10,10 +10,10 @@ FFmpeg plugin for Flutter. Supports iOS and Android.
 ### 1. Features
 - Based on MobileFFmpeg
 - Supports
-    - Both Android and IOS
+    - Both Android (API 21+) and iOS (SDK 9.3+)
     - FFmpeg `v4.2-dev-x` (master) releases
     - `arm-v7a`, `arm-v7a-neon`, `arm64-v8a`, `x86` and `x86_64` architectures on Android
-    - `armv7`, `armv7s`, `arm64`, `arm64e`, `i386` and `x86_64` architectures on IOS
+    - `armv7`, `armv7s`, `arm64`, `arm64e`, `i386` and `x86_64` architectures on iOS
     - 24 external libraries
 
         `fontconfig`, `freetype`, `fribidi`, `gmp`, `gnutls`, `kvazaar`, `lame`, `libaom`, `libass`, `libiconv`, `libilbc`, `libtheora`, `libvorbis`, `libvpx`, `libwebp`, `libxml2`, `opencore-amr`, `opus`, `shine`, `snappy`, `soxr`, `speex`, `twolame`, `wavpack`
@@ -23,7 +23,7 @@ FFmpeg plugin for Flutter. Supports iOS and Android.
         `vid.stab`, `x264`, `x265`, `xvidcore`
 
     - `zlib` and `MediaCodec` Android system libraries
-    - `bzip2`, `zlib` IOS system libraries and `AudioToolbox`, `CoreImage`, `VideoToolbox`, `AVFoundation` IOS system frameworks
+    - `bzip2`, `zlib` iOS system libraries and `AudioToolbox`, `CoreImage`, `VideoToolbox`, `AVFoundation` iOS system frameworks
 
 - Licensed under LGPL 3.0, can be customized to support GPL v3.0
 - Includes eight different packages with different external libraries enabled in FFmpeg
@@ -79,7 +79,7 @@ Installation of `FlutterFFmpeg` using `pub` enables the default package, which i
       flutter_ffmpeg:
         git:
           url: git://github.com/tanersener/flutter-ffmpeg.git
-          ref: v0.2.1
+          ref: v0.2.3
           path: packages/flutter_ffmpeg_<package_name>
 
     ```
@@ -118,17 +118,17 @@ In order to install the `LTS` variant, install the `flutter_ffmpeg_https_lts` pa
         <td align="center">arm-v7a<br>arm-v7a-neon<br>arm64-v8a<br>x86<br>x86-64</td>
     </tr>
     <tr>
-        <td align="center">IOS SDK</td>
-        <td align="center">12.1</td>
-        <td align="center">9.3</td>
-    </tr>
-    <tr>
         <td align="center">Xcode Support</td>
         <td align="center">10.1</td>
         <td align="center">7.3.1</td>
     </tr>
     <tr>
-        <td align="center">IOS Architectures</td>
+        <td align="center">iOS SDK</td>
+        <td align="center">12.1</td>
+        <td align="center">9.3</td>
+    </tr>
+    <tr>
+        <td align="center">iOS Architectures</td>
         <td align="center">arm64<br>arm64e<br>x86-64</td>
         <td align="center">armv7<br>arm64<br>i386<br>x86-64</td>
     </tr>
@@ -284,6 +284,8 @@ In order to install the `LTS` variant, install the `flutter_ffmpeg_https_lts` pa
     ```
 
 - If your commands include unnecessary quotes or space characters, your command will fail with `No such filter: ' '` errors. Please check your command and remove them.
+
+- `flutter_ffmpeg` uses file system paths, it does not know what an assets folder or project folder is. So you can't use resources on those folders directly, you need to provide full paths of those resources.
 
 - `execute` method is overloaded and has an optional delimiter parameter. Delimiter defines how the command string will be split into arguments. 
 When delimiter is not specified the space character is used as the default delimiter. 

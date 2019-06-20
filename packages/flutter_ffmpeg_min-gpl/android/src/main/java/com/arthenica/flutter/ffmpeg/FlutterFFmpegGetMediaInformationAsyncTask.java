@@ -37,10 +37,12 @@ public class FlutterFFmpegGetMediaInformationAsyncTask extends AsyncTask<String,
 
     private Integer timeout;
     private final MethodChannel.Result result;
+    private final FlutterFFmpegResultHandler flutterFFmpegResultHandler;
 
-    FlutterFFmpegGetMediaInformationAsyncTask(final Integer timeout, final MethodChannel.Result result) {
+    FlutterFFmpegGetMediaInformationAsyncTask(final FlutterFFmpegResultHandler flutterFFmpegResultHandler, final Integer timeout, final MethodChannel.Result result) {
         this.timeout = timeout;
         this.result = result;
+        this.flutterFFmpegResultHandler = flutterFFmpegResultHandler;
     }
 
     @Override
@@ -64,7 +66,7 @@ public class FlutterFFmpegGetMediaInformationAsyncTask extends AsyncTask<String,
 
     @Override
     protected void onPostExecute(final MediaInformation mediaInformation) {
-        result.success(FlutterFFmpegPlugin.toMediaInformationMap(mediaInformation));
+        flutterFFmpegResultHandler.success(result, FlutterFFmpegPlugin.toMediaInformationMap(mediaInformation));
     }
 
 }
