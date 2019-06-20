@@ -79,7 +79,7 @@ Installation of `FlutterFFmpeg` using `pub` enables the default package, which i
       flutter_ffmpeg:
         git:
           url: git://github.com/tanersener/flutter-ffmpeg.git
-          ref: v0.2.1
+          ref: v0.2.3
           path: packages/flutter_ffmpeg_<package_name>
 
     ```
