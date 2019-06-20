@@ -1,6 +1,6 @@
 # flutter_ffmpeg 
 
-![GitHub release](https://img.shields.io/badge/release-v0.2.2-blue.svg) 
+![GitHub release](https://img.shields.io/badge/release-v0.2.3-blue.svg) 
 ![](https://img.shields.io/pub/v/flutter_ffmpeg.svg)
 
 FFmpeg plugin for Flutter. Supports iOS and Android.
