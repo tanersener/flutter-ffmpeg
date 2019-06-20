@@ -80,6 +80,7 @@ public class FlutterFFmpegPlugin implements MethodCallHandler, EventChannel.Stre
 
     private EventChannel.EventSink eventSink;
     private final Registrar registrar;
+    private final FlutterFFmpegResultHandler flutterFFmpegResultHandler;
 
     /**
      * Registers plugin to registry.
@@ -87,17 +88,19 @@ public class FlutterFFmpegPlugin implements MethodCallHandler, EventChannel.Stre
      * @param registrar receiver of plugin registration
      */
     public static void registerWith(final Registrar registrar) {
-        FlutterFFmpegPlugin handler = new FlutterFFmpegPlugin(registrar);
+        FlutterFFmpegPlugin flutterFFmpegPlugin = new FlutterFFmpegPlugin(registrar);
 
         final MethodChannel channel = new MethodChannel(registrar.messenger(), "flutter_ffmpeg");
-        channel.setMethodCallHandler(handler);
+        channel.setMethodCallHandler(flutterFFmpegPlugin);
 
         final EventChannel eventChannel = new EventChannel(registrar.messenger(), "flutter_ffmpeg_event");
-        eventChannel.setStreamHandler(handler);
+        eventChannel.setStreamHandler(flutterFFmpegPlugin);
     }
 
     private FlutterFFmpegPlugin(Registrar registrar) {
         this.registrar = registrar;
+
+        this.flutterFFmpegResultHandler = new FlutterFFmpegResultHandler();
     }
 
     private Context getActiveContext() {
@@ -115,18 +118,18 @@ public class FlutterFFmpegPlugin implements MethodCallHandler, EventChannel.Stre
         if (call.method.equals("getPlatform")) {
 
             final String abi = AbiDetect.getAbi();
-            result.success(toStringMap(KEY_PLATFORM, PLATFORM_NAME + "-" + abi));
+            flutterFFmpegResultHandler.success(result, toStringMap(KEY_PLATFORM, PLATFORM_NAME + "-" + abi));
 
         } else if (call.method.equals("getFFmpegVersion")) {
 
             final String version = FFmpeg.getFFmpegVersion();
-            result.success(toStringMap(KEY_VERSION, version));
+            flutterFFmpegResultHandler.success(result, toStringMap(KEY_VERSION, version));
 
         } else if (call.method.equals("executeWithArguments")) {
 
             List<String> arguments = call.argument("arguments");
 
-            final FlutterFFmpegExecuteAsyncArgumentsTask asyncTask = new FlutterFFmpegExecuteAsyncArgumentsTask(arguments, result);
+            final FlutterFFmpegExecuteAsyncArgumentsTask asyncTask = new FlutterFFmpegExecuteAsyncArgumentsTask(flutterFFmpegResultHandler, arguments, result);
             asyncTask.execute("dummy-trigger");
 
         } else if (call.method.equals("execute")) {
@@ -134,7 +137,7 @@ public class FlutterFFmpegPlugin implements MethodCallHandler, EventChannel.Stre
             String command = call.argument("command");
             String delimiter = call.argument("delimiter");
 
-            final FlutterFFmpegExecuteAsyncCommandTask asyncTask = new FlutterFFmpegExecuteAsyncCommandTask(delimiter, result);
+            final FlutterFFmpegExecuteAsyncCommandTask asyncTask = new FlutterFFmpegExecuteAsyncCommandTask(flutterFFmpegResultHandler, delimiter, result);
             asyncTask.execute(command);
 
         } else if (call.method.equals("cancel")) {
@@ -152,7 +155,7 @@ public class FlutterFFmpegPlugin implements MethodCallHandler, EventChannel.Stre
         } else if (call.method.equals("getLogLevel")) {
 
             final Level level = Config.getLogLevel();
-            result.success(toIntMap(KEY_LOG_LEVEL, levelToInt(level)));
+            flutterFFmpegResultHandler.success(result, toIntMap(KEY_LOG_LEVEL, levelToInt(level)));
 
         } else if (call.method.equals("setLogLevel")) {
 
@@ -192,7 +195,7 @@ public class FlutterFFmpegPlugin implements MethodCallHandler, EventChannel.Stre
 
         } else if (call.method.equals("getLastReceivedStatistics")) {
 
-            result.success(toMap(Config.getLastReceivedStatistics()));
+            flutterFFmpegResultHandler.success(result, toMap(Config.getLastReceivedStatistics()));
 
         } else if (call.method.equals("resetStatistics")) {
 
@@ -217,22 +220,22 @@ public class FlutterFFmpegPlugin implements MethodCallHandler, EventChannel.Stre
         } else if (call.method.equals("getPackageName")) {
 
             final String packageName = Config.getPackageName();
-            result.success(toStringMap(KEY_PACKAGE_NAME, packageName));
+            flutterFFmpegResultHandler.success(result, toStringMap(KEY_PACKAGE_NAME, packageName));
 
         } else if (call.method.equals("getExternalLibraries")) {
 
             final List<String> externalLibraries = Config.getExternalLibraries();
-            result.success(externalLibraries);
+            flutterFFmpegResultHandler.success(result, externalLibraries);
 
         } else if (call.method.equals("getLastReturnCode")) {
 
             int lastReturnCode = FFmpeg.getLastReturnCode();
-            result.success(toIntMap(KEY_LAST_RC, lastReturnCode));
+            flutterFFmpegResultHandler.success(result, toIntMap(KEY_LAST_RC, lastReturnCode));
 
         } else if (call.method.equals("getLastCommandOutput")) {
 
             final String lastCommandOutput = FFmpeg.getLastCommandOutput();
-            result.success(toStringMap(KEY_LAST_COMMAND_OUTPUT, lastCommandOutput));
+            flutterFFmpegResultHandler.success(result, toStringMap(KEY_LAST_COMMAND_OUTPUT, lastCommandOutput));
 
         } else if (call.method.equals("getMediaInformation")) {
             final String path = call.argument("path");
@@ -241,11 +244,11 @@ public class FlutterFFmpegPlugin implements MethodCallHandler, EventChannel.Stre
                 timeout = 10000;
             }
 
-            final FlutterFFmpegGetMediaInformationAsyncTask asyncTask = new FlutterFFmpegGetMediaInformationAsyncTask(timeout, result);
+            final FlutterFFmpegGetMediaInformationAsyncTask asyncTask = new FlutterFFmpegGetMediaInformationAsyncTask(flutterFFmpegResultHandler, timeout, result);
             asyncTask.execute(path);
 
         } else {
-            result.notImplemented();
+            flutterFFmpegResultHandler.notImplemented(result);
         }
     }
 
@@ -268,13 +271,13 @@ public class FlutterFFmpegPlugin implements MethodCallHandler, EventChannel.Stre
 
         logWrapperMap.put(EVENT_LOG, logMap);
 
-        eventSink.success(logWrapperMap);
+        flutterFFmpegResultHandler.success(eventSink, logWrapperMap);
     }
 
     protected void emitStatistics(final Statistics statistics) {
         final HashMap<String, Object> statisticsMap = new HashMap<>();
         statisticsMap.put(EVENT_STAT, toMap(statistics));
-        eventSink.success(statisticsMap);
+        flutterFFmpegResultHandler.success(eventSink, statisticsMap);
     }
 
     public static int levelToInt(final Level level) {

@@ -3,5 +3,6 @@
 .dart_tool/
 .pub/
 build/
-pubspec.lock
+/pubspec.lock
 /.packages
+/.gradle/

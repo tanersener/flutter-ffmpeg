@@ -39,10 +39,12 @@ public class FlutterFFmpegExecuteAsyncArgumentsTask extends AsyncTask<String, In
 
     private final MethodChannel.Result result;
     private final List<String> arguments;
+    private final FlutterFFmpegResultHandler flutterFFmpegResultHandler;
 
-    FlutterFFmpegExecuteAsyncArgumentsTask(final List<String> arguments, final MethodChannel.Result result) {
+    FlutterFFmpegExecuteAsyncArgumentsTask(final FlutterFFmpegResultHandler flutterFFmpegResultHandler, final List<String> arguments, final MethodChannel.Result result) {
         this.arguments = arguments;
         this.result = result;
+        this.flutterFFmpegResultHandler = flutterFFmpegResultHandler;
     }
 
     @Override
@@ -60,7 +62,7 @@ public class FlutterFFmpegExecuteAsyncArgumentsTask extends AsyncTask<String, In
 
     @Override
     protected void onPostExecute(final Integer rc) {
-        result.success(FlutterFFmpegPlugin.toIntMap(FlutterFFmpegPlugin.KEY_RC, rc));
+        flutterFFmpegResultHandler.success(result, FlutterFFmpegPlugin.toIntMap(FlutterFFmpegPlugin.KEY_RC, rc));
     }
 
 }

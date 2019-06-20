@@ -1,3 +1,6 @@
+## 0.2.2
+- Fixed flutter v1.6 compatibility errors
+
 ## 0.2.1
 - Fixed documentation errors
 - Updated package description

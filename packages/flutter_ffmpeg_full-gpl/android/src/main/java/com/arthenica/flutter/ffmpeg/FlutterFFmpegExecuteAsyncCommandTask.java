@@ -36,8 +36,9 @@ public class FlutterFFmpegExecuteAsyncCommandTask extends AsyncTask<String, Inte
 
     private String delimiter;
     private final MethodChannel.Result result;
+    private final FlutterFFmpegResultHandler flutterFFmpegResultHandler;
 
-    FlutterFFmpegExecuteAsyncCommandTask(final String delimiter, final MethodChannel.Result result) {
+    FlutterFFmpegExecuteAsyncCommandTask(final FlutterFFmpegResultHandler flutterFFmpegResultHandler, final String delimiter, final MethodChannel.Result result) {
         if (delimiter == null) {
             this.delimiter = " ";
         } else {
@@ -45,6 +46,7 @@ public class FlutterFFmpegExecuteAsyncCommandTask extends AsyncTask<String, Inte
         }
 
         this.result = result;
+        this.flutterFFmpegResultHandler = flutterFFmpegResultHandler;
     }
 
     @Override
@@ -66,7 +68,7 @@ public class FlutterFFmpegExecuteAsyncCommandTask extends AsyncTask<String, Inte
 
     @Override
     protected void onPostExecute(final Integer rc) {
-        result.success(FlutterFFmpegPlugin.toIntMap(FlutterFFmpegPlugin.KEY_RC, rc));
+        flutterFFmpegResultHandler.success(result, FlutterFFmpegPlugin.toIntMap(FlutterFFmpegPlugin.KEY_RC, rc));
     }
 
 }
