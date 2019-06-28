@@ -309,6 +309,19 @@ You can overcome this situation by registering a font using `setFontDirectory` m
 - By default, Xcode compresses `PNG` files during packaging. If you use `.png` files in your commands make sure you set the following two settings to `NO`. If one of them is set to `YES`, your operations may fail with `Error while decoding stream #0:0: Generic error in an external library` error.
 
     <img width="720" alt="png_settings" src="https://user-images.githubusercontent.com/10158439/45798948-794c9f80-bcb4-11e8-8881-8c61789b283c.png">
+    
+- Setting `use_frameworks!` in `Podfile` causes the following error.
+
+    ```    
+    FlutterFFmpegPlugin.h:21:9: error: include of non-modular header inside framework module 'flutter_ffmpeg.FlutterFFmpegPlugin': 
+    #import <mobileffmpeg/MobileFFmpegConfig.h>
+            ^
+    1 error generated.
+    ```
+    
+    You can fix this error by setting `Allow Non-modular includes in Framework Modules` to `YES` under `Build Settings -> Apple LLVM - Language - Modules`.
+
+    <img src="https://github.com/tanersener/flutter-ffmpeg/raw/development/doc/assets/tip_use_frameworks.png" width="500">
 
 - Some `flutter_ffmpeg` packages include `libc++_shared.so` native library. If a second library which also includes `libc++_shared.so` is added as a dependency, `gradle` fails with `More than one file was found with OS independent path 'lib/x86/libc++_shared.so'` error message.
 
