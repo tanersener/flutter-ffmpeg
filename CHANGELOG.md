@@ -1,3 +1,9 @@
+## 0.2.4
+- Adds support for Android devices with API Level 16+
+- Fixes issues #21 and #36
+- Removes conflicting attributes from AndroidManifest.xml
+- Includes ProGuard configuration file inside
+
 ## 0.2.3
 - Fixed flutter v1.6 compatibility errors on packages
 

@@ -1,6 +1,6 @@
 # flutter_ffmpeg 
 
-![GitHub release](https://img.shields.io/badge/release-v0.2.3-blue.svg) 
+![GitHub release](https://img.shields.io/badge/release-v0.2.4-blue.svg)
 ![](https://img.shields.io/pub/v/flutter_ffmpeg.svg)
 
 FFmpeg plugin for Flutter. Supports iOS and Android.
@@ -10,7 +10,7 @@ FFmpeg plugin for Flutter. Supports iOS and Android.
 ### 1. Features
 - Based on MobileFFmpeg
 - Supports
-    - Both Android (API 21+) and iOS (SDK 9.3+)
+    - Both Android (API Level 16+) and iOS (SDK 9.3+)
     - FFmpeg `v4.2-dev-x` (master) releases
     - `arm-v7a`, `arm-v7a-neon`, `arm64-v8a`, `x86` and `x86_64` architectures on Android
     - `armv7`, `armv7s`, `arm64`, `arm64e`, `i386` and `x86_64` architectures on iOS
@@ -67,7 +67,11 @@ FFmpeg plugin for Flutter. Supports iOS and Android.
 
 ### 2. Installation
 
-Add `flutter_ffmpeg` as a [dependency in your pubspec.yaml file](https://flutter.io/platform-plugins).
+Add `flutter_ffmpeg` as a dependency in your `pubspec.yaml file`.
+  ```
+dependencies:
+    flutter_ffmpeg: ^0.2.4
+  ```
 
 #### 2.1 Packages
 
@@ -79,7 +83,7 @@ Installation of `FlutterFFmpeg` using `pub` enables the default package, which i
       flutter_ffmpeg:
         git:
           url: git://github.com/tanersener/flutter-ffmpeg.git
-          ref: v0.2.3
+          ref: v0.2.4
           path: packages/flutter_ffmpeg_<package_name>
 
     ```
@@ -105,7 +109,7 @@ In order to install the `LTS` variant, install the `flutter_ffmpeg_https_lts` pa
     <tr>
         <td align="center">Android API Level</td>
         <td align="center">24</td>
-        <td align="center">21</td>
+        <td align="center">16</td>
     </tr>
     <tr>
         <td align="center">Android Camera Access</td>
@@ -287,12 +291,45 @@ In order to install the `LTS` variant, install the `flutter_ffmpeg_https_lts` pa
 
 - `flutter_ffmpeg` uses file system paths, it does not know what an assets folder or project folder is. So you can't use resources on those folders directly, you need to provide full paths of those resources.
 
+- `flutter_ffmpeg` requires ios deployment target to be at least `9.3`. 
+  So if you don't specify a deployment target or set a value smaller than `9.3` then your build will fail with the following error.
+   
+   ```
+    Resolving dependencies of `Podfile`
+    [!] CocoaPods could not find compatible versions for pod "flutter_ffmpeg":
+      In Podfile:
+        flutter_ffmpeg (from `.symlinks/plugins/flutter_ffmpeg/ios`)
+    
+    Specs satisfying the `flutter_ffmpeg (from `.symlinks/plugins/flutter_ffmpeg/ios`)` dependency were found, but they required a higher minimum
+    deployment target.
+    ```
+    
+  You can fix this issue by adding `platform :ios, '9.3'` definition to your `ios/Podfile` file.
+
+    ```
+    platform :ios, '9.3'
+    ```
+    
+- `flutter_ffmpeg` includes native libraries that require ios deployment target to be at least `9.3`. 
+  If a deployment target is not set or a value smaller than `9.3` is used then your build will fail with the following error.
+   
+    ```
+    ld: targeted OS version does not support use of thread local variables in __gnutls_rnd_deinit for architecture x86_64
+    clang: error: linker command failed with exit code 1 (use -v to see invocation)
+    ```
+
+  Unfortunately the latest versions of `Flutter` and `Cocoapods` have some issues about setting ios deployment target from `Podfile`.
+  Having `platform :ios, '9.3'` in your `Podfile` is not enough. `Runner` project still uses the default value `8.0`.
+  You need to open `Runner.xcworkspace` in `Xcode` and set `iOS Deployment Target` of `Runner` project to `9.3` manually.
+    
+    <img src="https://github.com/tanersener/flutter-ffmpeg/raw/development/doc/assets/tip_runner_deployment_target.png" width="480">
+
 - `execute` method is overloaded and has an optional delimiter parameter. Delimiter defines how the command string will be split into arguments. 
 When delimiter is not specified the space character is used as the default delimiter. 
 Based on this, if one or more of your command arguments include a space character, in filename path or in `-filter_complex` block, then your command string will be split into invalid arguments and execution will fail.  
 You can fix this error by splitting your command string into array yourself and calling `executeWithArguments` method or using a different delimiter character in your command string and specifying it in the `execute` call.
 
-- Enabling `ProGuard` on Android causes linking errors. Please add the following rule inside your `proguard-rules.pro` file to preserve necessary method names and prevent linking errors.
+- Enabling `ProGuard` on releases older than `v0.2.4` causes linking errors. Please add the following rule inside your `proguard-rules.pro` file to preserve necessary method names and prevent linking errors.
 
     ```
     -keep class com.arthenica.mobileffmpeg.Config {
@@ -308,7 +345,7 @@ You can overcome this situation by registering a font using `setFontDirectory` m
 
 - By default, Xcode compresses `PNG` files during packaging. If you use `.png` files in your commands make sure you set the following two settings to `NO`. If one of them is set to `YES`, your operations may fail with `Error while decoding stream #0:0: Generic error in an external library` error.
 
-    <img width="720" alt="png_settings" src="https://user-images.githubusercontent.com/10158439/45798948-794c9f80-bcb4-11e8-8881-8c61789b283c.png">
+    <img src="https://github.com/tanersener/flutter-ffmpeg/raw/development/doc/assets/tip_png_files.png" width="720">
     
 - Setting `use_frameworks!` in `Podfile` causes the following error.
 
