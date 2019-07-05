@@ -91,7 +91,19 @@ Installation of `FlutterFFmpeg` using `pub` enables the default package, which i
 
 3. Set package name in `path: packages/flutter_ffmpeg_<package_name>[_lts]` section. Include `_lts` postfix only if you want to depend on an `LTS` release.
 
-#### 2.2 LTS Releases
+#### 2.2 Existing Applications
+
+It is possible to add `flutter_ffmpeg` to existing applications using [Add-to-App](https://github.com/flutter/flutter/wiki/Add-Flutter-to-existing-apps) guide.
+
+Please execute the following additional steps if you are integrating into an iOS application.
+
+1. Go to `Build Phases` of `Pods` -> `FlutterPluginRegistrant` target and add all frameworks under the `Pods/mobile-ffmpeg-<package name>` directory to the `Link Binary With Libraries` section
+
+2. Go to `Build Phases` of `Pods` -> `FlutterPluginRegistrant` target and add all system libraries/frameworks listed in Step 4 of [Importing-Frameworks](https://github.com/tanersener/mobile-ffmpeg/wiki/Importing-Frameworks) guide to the `Link Binary With Libraries` section
+
+3. Go to `Build Phases` of `Pods` -> `FlutterPluginRegistrant` target and add `AVFoundation` system framework to the `Link Binary With Libraries` section
+
+#### 2.3 LTS Releases
 
 `flutter_ffmpeg` is published in two different variants: `Main Release` and `LTS Release`. Both releases share the same source code but is built with different settings. Below you can see the changes between the two.
 
@@ -137,7 +149,7 @@ In order to install the `LTS` variant, install the `flutter_ffmpeg_https_lts` pa
         <td align="center">armv7<br>arm64<br>i386<br>x86-64</td>
     </tr>
 </tbody>
-</table>   
+</table>
 
 ### 3. Using
 
