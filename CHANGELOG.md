@@ -1,3 +1,6 @@
+## 0.2.5
+- Implements side data information parsing
+
 ## 0.2.4
 - Adds support for Android devices with API Level 16+
 - Fixes issues #21 and #36

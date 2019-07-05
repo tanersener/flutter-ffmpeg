@@ -386,6 +386,11 @@ static NSString *const EVENT_STAT = @"FlutterFFmpegStatisticsCallback";
         if (metadataDictionary != nil && ([metadataDictionary count] > 0)) {
             dictionary[@"metadata"] = metadataDictionary;
         }
+
+        NSDictionary *sidedataDictionary = [streamInformation getSidedataEntries];
+        if (sidedataDictionary != nil && ([sidedataDictionary count] > 0)) {
+            dictionary[@"sidedata"] = sidedataDictionary;
+        }
     }
 
     return dictionary;
