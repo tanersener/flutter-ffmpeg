@@ -20,8 +20,6 @@
 package com.arthenica.flutter.ffmpeg;
 
 import android.content.Context;
-import android.system.ErrnoException;
-import android.util.Log;
 
 import com.arthenica.mobileffmpeg.AbiDetect;
 import com.arthenica.mobileffmpeg.Config;
@@ -204,11 +202,7 @@ public class FlutterFFmpegPlugin implements MethodCallHandler, EventChannel.Stre
         } else if (call.method.equals("setFontconfigConfigurationPath")) {
             String path = call.argument("path");
 
-            try {
-                Config.setFontconfigConfigurationPath(path);
-            } catch (final ErrnoException e) {
-                Log.w(LIBRARY_NAME, String.format("Setting fontconfig configuration path failed for %s", path), e);
-            }
+            Config.setFontconfigConfigurationPath(path);
 
         } else if (call.method.equals("setFontDirectory")) {
 

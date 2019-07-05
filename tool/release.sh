@@ -51,7 +51,7 @@ create_package() {
     sed -i .tmp "s/mobile-ffmpeg-https/mobile-ffmpeg-$1/g" ${PACKAGE_PATH}/ios/flutter_ffmpeg.podspec
     
     if [[ "$2" == "yes" ]]; then
-        sed -i .tmp "s/minSdkVersion 24/minSdkVersion 21/g" ${PACKAGE_PATH}/android/build.gradle
+        sed -i .tmp "s/minSdkVersion 24/minSdkVersion 16/g" ${PACKAGE_PATH}/android/build.gradle
         sed -i .tmp "s/implementation \'com.arthenica:mobile-ffmpeg-$1:$VERSION\'/implementation \'com.arthenica:mobile-ffmpeg-$1:$LTS_VERSION\'/g" ${PACKAGE_PATH}/android/build.gradle
         sed -i .tmp "s/mobile-ffmpeg-$1\'\, \'$VERSION/mobile-ffmpeg-$1\'\, \'$LTS_VERSION/g" ${PACKAGE_PATH}/ios/flutter_ffmpeg.podspec
     fi

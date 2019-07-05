@@ -232,15 +232,22 @@ static NSString *const EVENT_STAT = @"FlutterFFmpegStatisticsCallback";
 }
 
 - (void)emitLogMessage:(NSDictionary*)logMessage{
-    _eventSink([FlutterFFmpegPlugin toStringDictionary:EVENT_LOG :logMessage]);
+    _eventSink([FlutterFFmpegPlugin toStringDictionary:EVENT_LOG withDictionary:logMessage]);
 }
 
 - (void)emitStatistics:(Statistics*)statistics{
     NSDictionary *dictionary = [FlutterFFmpegPlugin toStatisticsDictionary:statistics];
-    _eventSink([FlutterFFmpegPlugin toStringDictionary:EVENT_STAT :dictionary]);
+    _eventSink([FlutterFFmpegPlugin toStringDictionary:EVENT_STAT withDictionary:dictionary]);
 }
 
 + (NSDictionary *)toStringDictionary:(NSString*)key :(NSString*)value {
+    NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] init];
+    dictionary[key] = value;
+
+    return dictionary;
+}
+
++ (NSDictionary *)toStringDictionary:(NSString*)key withDictionary:(NSDictionary*)value {
     NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] init];
     dictionary[key] = value;
 
