@@ -425,6 +425,17 @@ public class FlutterFFmpegPlugin implements MethodCallHandler, EventChannel.Stre
 
                 map.put("metadata", metadataMap);
             }
+
+            final Set<Map.Entry<String, String>> sidedata = streamInformation.getSidedataEntries();
+            if ((sidedata != null) && (sidedata.size() > 0)) {
+                final HashMap<String, String> sidedataMap = new HashMap<>();
+
+                for (Map.Entry<String, String> entry : sidedata) {
+                    sidedataMap.put(entry.getKey(), entry.getValue());
+                }
+
+                map.put("sidedata", sidedataMap);
+            }
         }
 
         return map;
