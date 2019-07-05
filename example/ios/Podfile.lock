@@ -1,6 +1,6 @@
 PODS:
   - Flutter (1.0.0)
-  - flutter_ffmpeg (0.2.4):
+  - flutter_ffmpeg (0.2.5):
     - Flutter
     - mobile-ffmpeg-https (= 4.2.2)
   - mobile-ffmpeg-https (4.2.2)
@@ -26,7 +26,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Flutter: 58dd7d1b27887414a370fcccb9e645c08ffd7a6a
-  flutter_ffmpeg: 0559b652297c415396f5c2e9bbb2f453b58cde1e
+  flutter_ffmpeg: 5da696fb4882454772ffbb49913629ba6a086b28
   mobile-ffmpeg-https: 9474e6e0958b6c12d981073d81a3b9484da02f48
   path_provider: f96fff6166a8867510d2c25fdcc346327cc4b259
 
