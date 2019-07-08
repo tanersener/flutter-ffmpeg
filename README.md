@@ -234,6 +234,19 @@ In order to install the `LTS` variant, install the `flutter_ffmpeg_https_lts` pa
                     print("Stream real frame rate: ${streamsInfo['realFrameRate']}");
                     print("Stream time base: ${streamsInfo['timeBase']}");
                     print("Stream codec time base: ${streamsInfo['codecTimeBase']}");
+
+                    final metadataMap = streamsInfo['metadata'];
+                    if (metadataMap != null) {
+                        print('Stream metadata encoder: ${metadataMap['encoder']}');
+                        print('Stream metadata rotate: ${metadataMap['rotate']}');
+                        print('Stream metadata creation time: ${metadataMap['creation_time']}');
+                        print('Stream metadata handler name: ${metadataMap['handler_name']}');
+                    }
+    
+                    final sideDataMap = streamsInfo['sidedata'];
+                    if (sideDataMap != null) {
+                        print('Stream side data displaymatrix: ${sideDataMap['displaymatrix']}');
+                    }
                 }
             }
         }
