@@ -67,17 +67,17 @@ class VideoUtil {
   }
 
   static String generateEncodeVideoScript(String image1Path, String image2Path, String image3Path, String videoFilePath, String videoCodec, String customOptions) {
-    return "-hide_banner -y -loop 1 -i " +
+    return "-hide_banner    -y -loop   1 -i '" +
         image1Path +
-        " " +
-        "-loop 1 -i " +
+        "' " +
+        "-loop   1 -i \"" +
         image2Path +
-        " " +
-        "-loop 1 -i " +
+        "\" " +
+        "-loop 1   -i \"" +
         image3Path +
-        " " +
+        "\" " +
         "-filter_complex " +
-        "[0:v]setpts=PTS-STARTPTS,scale=w=\'if(gte(iw/ih,640/427),min(iw,640),-1)\':h=\'if(gte(iw/ih,640/427),-1,min(ih,427))\',scale=trunc(iw/2)*2:trunc(ih/2)*2,setsar=sar=1/1,split=2[stream1out1][stream1out2];" +
+        "\"[0:v]setpts=PTS-STARTPTS,scale=w=\'if(gte(iw/ih,640/427),min(iw,640),-1)\':h=\'if(gte(iw/ih,640/427),-1,min(ih,427))\',scale=trunc(iw/2)*2:trunc(ih/2)*2,setsar=sar=1/1,split=2[stream1out1][stream1out2];" +
         "[1:v]setpts=PTS-STARTPTS,scale=w=\'if(gte(iw/ih,640/427),min(iw,640),-1)\':h=\'if(gte(iw/ih,640/427),-1,min(ih,427))\',scale=trunc(iw/2)*2:trunc(ih/2)*2,setsar=sar=1/1,split=2[stream2out1][stream2out2];" +
         "[2:v]setpts=PTS-STARTPTS,scale=w=\'if(gte(iw/ih,640/427),min(iw,640),-1)\':h=\'if(gte(iw/ih,640/427),-1,min(ih,427))\',scale=trunc(iw/2)*2:trunc(ih/2)*2,setsar=sar=1/1,split=2[stream3out1][stream3out2];" +
         "[stream1out1]pad=width=640:height=427:x=(640-iw)/2:y=(427-ih)/2:color=#00000000,trim=duration=3,select=lte(n\\,90)[stream1overlaid];" +
@@ -88,7 +88,7 @@ class VideoUtil {
         "[stream3out2]pad=width=640:height=427:x=(640-iw)/2:y=(427-ih)/2:color=#00000000,trim=duration=1,select=lte(n\\,30)[stream3starting];" +
         "[stream2starting][stream1ending]blend=all_expr=\'if(gte(X,(W/2)*T/1)*lte(X,W-(W/2)*T/1),B,A)\':shortest=1[stream2blended];" +
         "[stream3starting][stream2ending]blend=all_expr=\'if(gte(X,(W/2)*T/1)*lte(X,W-(W/2)*T/1),B,A)\':shortest=1[stream3blended];" +
-        "[stream1overlaid][stream2blended][stream2overlaid][stream3blended][stream3overlaid]concat=n=5:v=1:a=0,scale=w=640:h=424,format=yuv420p[video]" +
+        "[stream1overlaid][stream2blended][stream2overlaid][stream3blended][stream3overlaid]concat=n=5:v=1:a=0,scale=w=640:h=424,format=yuv420p[video]\"" +
         " -map [video] -vsync 2 -async 1 " +
         customOptions +
         "-c:v " +
@@ -147,9 +147,20 @@ class FlutterFFmpegTestAppState extends State<MainPage> with TickerProviderState
     VideoUtil.copyFileAssets('assets/tajmahal.jpg', ASSET_3).then((path) => print('Loaded asset $path.'));
   }
 
+  void testParseArguments() {
+    testParseSimpleCommand();
+    testParseSingleQuotesInCommand();
+    testParseDoubleQuotesInCommand();
+    testParseDoubleQuotesAndEscapesInCommand();
+  }
+
   void testRunCommand() {
     getLastReturnCode().then((rc) => print("Last rc: $rc"));
     getLastCommandOutput().then((output) => print("Last command output: $output"));
+
+    print("Testing ParseArguments.");
+
+    testParseArguments();
 
     print("Testing COMMAND.");
 
@@ -176,9 +187,8 @@ class FlutterFFmpegTestAppState extends State<MainPage> with TickerProviderState
     // disableLogs();
     // enableLogs();
 
-    // execute(_commandController.text).then((rc) => print("FFmpeg process exited with rc $rc"));
-    // executeWithDelimiter(_commandController.text, "_").then((rc) => print("FFmpeg process exited with rc $rc") );
-    executeWithArguments(_commandController.text.split(" ")).then((rc) => print("FFmpeg process exited with rc $rc"));
+    execute(_commandController.text).then((rc) => print("FFmpeg process exited with rc $rc"));
+    // executeWithArguments(_commandController.text.split(" ")).then((rc) => print("FFmpeg process exited with rc $rc"));
 
     setState(() {});
   }
@@ -275,9 +285,6 @@ class FlutterFFmpegTestAppState extends State<MainPage> with TickerProviderState
               }
             });
 
-            // COMMENT OPTIONAL TESTS
-            // execute(VideoUtil.generateEncodeVideoScript(image1Path, image2Path, image3Path, videoPath, _currentCodec, "")).timeout(Duration(milliseconds: 1300), onTimeout: () { cancel(); });
-
             // resetStatistics();
 
             getLastReceivedStatistics().then((lastStatistics) {
@@ -334,10 +341,6 @@ class FlutterFFmpegTestAppState extends State<MainPage> with TickerProviderState
 
   Future<int> execute(String command) async {
     return await _flutterFFmpeg.execute(command);
-  }
-
-  Future<int> executeWithDelimiter(String command, String delimiter) async {
-    return await _flutterFFmpeg.execute(command, delimiter);
   }
 
   Future<void> cancel() async {
@@ -641,4 +644,118 @@ class FlutterFFmpegTestAppState extends State<MainPage> with TickerProviderState
     super.dispose();
     _commandController.dispose();
   }
+
+  void testParseSimpleCommand() {
+    var argumentArray = _flutterFFmpeg.parseArguments("-hide_banner   -loop 1  -i file.jpg  -filter_complex  [0:v]setpts=PTS-STARTPTS[video] -map [video] -vsync 2 -async 1  video.mp4");
+
+    assert(argumentArray != null);
+    assert(argumentArray.length == 14);
+
+    assert("-hide_banner" == argumentArray[0]);
+    assert("-loop" == argumentArray[1]);
+    assert("1" == argumentArray[2]);
+    assert("-i" == argumentArray[3]);
+    assert("file.jpg" == argumentArray[4]);
+    assert("-filter_complex" == argumentArray[5]);
+    assert("[0:v]setpts=PTS-STARTPTS[video]" == argumentArray[6]);
+    assert("-map" == argumentArray[7]);
+    assert("[video]" == argumentArray[8]);
+    assert("-vsync" == argumentArray[9]);
+    assert("2" == argumentArray[10]);
+    assert("-async" == argumentArray[11]);
+    assert("1" == argumentArray[12]);
+    assert("video.mp4" == argumentArray[13]);
+  }
+
+  void testParseSingleQuotesInCommand() {
+    var argumentArray = _flutterFFmpeg.parseArguments("-loop 1 'file one.jpg'  -filter_complex  '[0:v]setpts=PTS-STARTPTS[video]'  -map  [video]  video.mp4 ");
+
+    assert(argumentArray != null);
+    assert(argumentArray.length == 8);
+
+    assert("-loop" == argumentArray[0]);
+    assert("1" == argumentArray[1]);
+    assert("file one.jpg" == argumentArray[2]);
+    assert("-filter_complex" == argumentArray[3]);
+    assert("[0:v]setpts=PTS-STARTPTS[video]" == argumentArray[4]);
+    assert("-map" == argumentArray[5]);
+    assert("[video]" == argumentArray[6]);
+    assert("video.mp4" == argumentArray[7]);
+  }
+
+  void testParseDoubleQuotesInCommand() {
+    var argumentArray = _flutterFFmpeg.parseArguments("-loop  1 \"file one.jpg\"   -filter_complex \"[0:v]setpts=PTS-STARTPTS[video]\"  -map  [video]  video.mp4 ");
+
+    assert(argumentArray != null);
+    assert(argumentArray.length == 8);
+
+    assert("-loop" == argumentArray[0]);
+    assert("1" == argumentArray[1]);
+    assert("file one.jpg" == argumentArray[2]);
+    assert("-filter_complex" == argumentArray[3]);
+    assert("[0:v]setpts=PTS-STARTPTS[video]" == argumentArray[4]);
+    assert("-map" == argumentArray[5]);
+    assert("[video]" == argumentArray[6]);
+    assert("video.mp4" == argumentArray[7]);
+
+    argumentArray = _flutterFFmpeg.parseArguments(" -i   file:///tmp/input.mp4 -vcodec libx264 -vf \"scale=1024:1024,pad=width=1024:height=1024:x=0:y=0:color=black\"  -acodec copy  -q:v 0  -q:a   0 video.mp4");
+
+    assert(argumentArray != null);
+    assert(argumentArray.length == 13);
+
+    assert("-i" == argumentArray[0]);
+    assert("file:///tmp/input.mp4" == argumentArray[1]);
+    assert("-vcodec" == argumentArray[2]);
+    assert("libx264" == argumentArray[3]);
+    assert("-vf" == argumentArray[4]);
+    assert("scale=1024:1024,pad=width=1024:height=1024:x=0:y=0:color=black" == argumentArray[5]);
+    assert("-acodec" == argumentArray[6]);
+    assert("copy" == argumentArray[7]);
+    assert("-q:v" == argumentArray[8]);
+    assert("0" == argumentArray[9]);
+    assert("-q:a" == argumentArray[10]);
+    assert("0" == argumentArray[11]);
+    assert("video.mp4" == argumentArray[12]);
+  }
+
+  void testParseDoubleQuotesAndEscapesInCommand() {
+    var argumentArray = _flutterFFmpeg.parseArguments("  -i   file:///tmp/input.mp4 -vf \"subtitles=file:///tmp/subtitles.srt:force_style=\'FontSize=16,PrimaryColour=&HFFFFFF&\'\" -vcodec libx264   -acodec copy  -q:v 0 -q:a  0  video.mp4");
+
+    assert(argumentArray != null);
+    assert(argumentArray.length == 13);
+
+    assert("-i" == argumentArray[0]);
+    assert("file:///tmp/input.mp4" == argumentArray[1]);
+    assert("-vf" == argumentArray[2]);
+    assert("subtitles=file:///tmp/subtitles.srt:force_style='FontSize=16,PrimaryColour=&HFFFFFF&'" == argumentArray[3]);
+    assert("-vcodec" == argumentArray[4]);
+    assert("libx264" == argumentArray[5]);
+    assert("-acodec" == argumentArray[6]);
+    assert("copy" == argumentArray[7]);
+    assert("-q:v" == argumentArray[8]);
+    assert("0" == argumentArray[9]);
+    assert("-q:a" == argumentArray[10]);
+    assert("0" == argumentArray[11]);
+    assert("video.mp4" == argumentArray[12]);
+
+    argumentArray = _flutterFFmpeg.parseArguments("  -i   file:///tmp/input.mp4 -vf \"subtitles=file:///tmp/subtitles.srt:force_style=\\\"FontSize=16,PrimaryColour=&HFFFFFF&\\\"\" -vcodec libx264   -acodec copy  -q:v 0 -q:a  0  video.mp4");
+
+    assert(argumentArray != null);
+    assert(argumentArray.length == 13);
+
+    assert("-i" == argumentArray[0]);
+    assert("file:///tmp/input.mp4" == argumentArray[1]);
+    assert("-vf" == argumentArray[2]);
+    assert("subtitles=file:///tmp/subtitles.srt:force_style=\\\"FontSize=16,PrimaryColour=&HFFFFFF&\\\"" == argumentArray[3]);
+    assert("-vcodec" == argumentArray[4]);
+    assert("libx264" == argumentArray[5]);
+    assert("-acodec" == argumentArray[6]);
+    assert("copy" == argumentArray[7]);
+    assert("-q:v" == argumentArray[8]);
+    assert("0" == argumentArray[9]);
+    assert("-q:a" == argumentArray[10]);
+    assert("0" == argumentArray[11]);
+    assert("video.mp4" == argumentArray[12]);
+  }
+
 }

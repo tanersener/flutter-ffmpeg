@@ -1,3 +1,6 @@
+## 0.2.6
+- Adds support for single quotes and double quotes in command strings
+
 ## 0.2.5
 - Implements side data information parsing
 
