@@ -1,6 +1,6 @@
 # flutter_ffmpeg 
 
-![GitHub release](https://img.shields.io/badge/release-v0.2.5-blue.svg)
+![GitHub release](https://img.shields.io/badge/release-v0.2.6-blue.svg)
 ![](https://img.shields.io/pub/v/flutter_ffmpeg.svg)
 
 FFmpeg plugin for Flutter. Supports iOS and Android.
@@ -70,7 +70,7 @@ FFmpeg plugin for Flutter. Supports iOS and Android.
 Add `flutter_ffmpeg` as a dependency in your `pubspec.yaml file`.
   ```
 dependencies:
-    flutter_ffmpeg: ^0.2.5
+    flutter_ffmpeg: ^0.2.6
   ```
 
 #### 2.1 Packages
@@ -83,7 +83,7 @@ Installation of `FlutterFFmpeg` using `pub` enables the default package, which i
       flutter_ffmpeg:
         git:
           url: git://github.com/tanersener/flutter-ffmpeg.git
-          ref: v0.2.5
+          ref: v0.2.6
           path: packages/flutter_ffmpeg_<package_name>
 
     ```
@@ -307,17 +307,10 @@ In order to install the `LTS` variant, install the `flutter_ffmpeg_https_lts` pa
 
 ### 4. Tips
 
-- You should not use double quotes (") to define your complex filters or map definitions.
-    ```
-     -filter_complex [0:v]scale=1280:-1[v] -map [v]
-    ```
-
-- If your commands include unnecessary quotes or space characters, your command will fail with `No such filter: ' '` errors. Please check your command and remove them.
-
-- `flutter_ffmpeg` uses file system paths, it does not know what an assets folder or project folder is. So you can't use resources on those folders directly, you need to provide full paths of those resources.
+- `flutter_ffmpeg` uses file system paths, it does not know what an `assets` folder or a `project` folder is. So you can't use resources on those folders directly, you need to provide full paths of those resources.
 
 - `flutter_ffmpeg` requires ios deployment target to be at least `9.3`. 
-  So if you don't specify a deployment target or set a value smaller than `9.3` then your build will fail with the following error.
+  If you don't specify a deployment target or set a value smaller than `9.3` then your build will fail with the following error.
    
    ```
     Resolving dependencies of `Podfile`
@@ -348,11 +341,6 @@ In order to install the `LTS` variant, install the `flutter_ffmpeg_https_lts` pa
   You need to open `Runner.xcworkspace` in `Xcode` and set `iOS Deployment Target` of `Runner` project to `9.3` manually.
     
     <img src="https://github.com/tanersener/flutter-ffmpeg/raw/development/doc/assets/tip_runner_deployment_target.png" width="480">
-
-- `execute` method is overloaded and has an optional delimiter parameter. Delimiter defines how the command string will be split into arguments. 
-When delimiter is not specified the space character is used as the default delimiter. 
-Based on this, if one or more of your command arguments include a space character, in filename path or in `-filter_complex` block, then your command string will be split into invalid arguments and execution will fail.  
-You can fix this error by splitting your command string into array yourself and calling `executeWithArguments` method or using a different delimiter character in your command string and specifying it in the `execute` call.
 
 - Enabling `ProGuard` on releases older than `v0.2.4` causes linking errors. Please add the following rule inside your `proguard-rules.pro` file to preserve necessary method names and prevent linking errors.
 
