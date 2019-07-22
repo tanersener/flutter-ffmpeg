@@ -1,6 +1,6 @@
 # flutter_ffmpeg 
 
-![GitHub release](https://img.shields.io/badge/release-v0.2.6-blue.svg)
+![GitHub release](https://img.shields.io/badge/release-v0.2.7-blue.svg)
 ![](https://img.shields.io/pub/v/flutter_ffmpeg.svg)
 
 FFmpeg plugin for Flutter. Supports iOS and Android.
@@ -70,26 +70,57 @@ FFmpeg plugin for Flutter. Supports iOS and Android.
 Add `flutter_ffmpeg` as a dependency in your `pubspec.yaml file`.
   ```
 dependencies:
-    flutter_ffmpeg: ^0.2.6
+    flutter_ffmpeg: ^0.2.7
   ```
 
 #### 2.1 Packages
 
 Installation of `FlutterFFmpeg` using `pub` enables the default package, which is based on `https` package. It is possible to enable other packages using the following steps.
 
-1. Use the following dependency block in your `pubspec.yaml` file.
-    ```
-    dependencies:
-      flutter_ffmpeg:
-        git:
-          url: git://github.com/tanersener/flutter-ffmpeg.git
-          ref: v0.2.6
-          path: packages/flutter_ffmpeg_<package_name>
+##### 2.1.1 Android
+
+- Edit `android/build.gradle` file and define package name in `ext.flutterFFmpegPackage` variable.
 
     ```
-2. Update version in `ref:` argument.
+    ext {
+        flutterFFmpegPackage  = "<package name>"
+    }
 
-3. Set package name in `path: packages/flutter_ffmpeg_<package_name>[_lts]` section. Include `_lts` postfix only if you want to depend on an `LTS` release.
+    ```
+
+##### 2.1.2 iOS
+
+- Edit `ios/Podfile` file and modify the default `# Plugin Pods` block as follows. 
+  Do not forget to specify package name in `<package name>` section.
+
+    ```
+    plugin_pods = parse_KV_file('../.flutter-plugins')
+    plugin_pods.map { |p|
+    symlink = File.join('.symlinks', 'plugins', p[:name])
+    File.symlink(p[:path], symlink)
+    if p[:name] == 'flutter_ffmpeg'
+        pod p[:name]+'/<package name>', :path => File.join(symlink, 'ios')
+    else
+        pod p[:name], :path => File.join(symlink, 'ios')
+    end
+    }
+    ```
+
+##### 2.1.3 Package Names
+
+The following table shows all package names defined for `flutter_ffmpeg`.
+    
+| Package | Main Release | LTS Release |
+| :----: | :----: | :----: |
+| min | min  | min-lts |
+| min-gpl | min-gpl | min-gpl-lts |
+| http | https | http-lts |
+| http-gpl | http-gpl | http-gpl-lts |
+| audio | audio | audio-lts |
+| video | video | video-lts |
+| full | full | full-lts |
+| full-gpl | full-gpl | full-gpl-lts |
+
 
 #### 2.2 Existing Applications
 
@@ -107,7 +138,7 @@ Please execute the following additional steps if you are integrating into an iOS
 
 `flutter_ffmpeg` is published in two different variants: `Main Release` and `LTS Release`. Both releases share the same source code but is built with different settings. Below you can see the changes between the two.
 
-In order to install the `LTS` variant, install the `flutter_ffmpeg_https_lts` package using instructions in `2.1` or append `_lts` to the package name you are using. 
+In order to install the `LTS` variant, install the `https-lts` package using instructions in `2.1` or append `-lts` to the package name you are using. 
 
 <table>
 <thead>

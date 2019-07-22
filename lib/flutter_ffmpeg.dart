@@ -404,7 +404,8 @@ class FlutterFFmpeg {
           argumentList.add(currentArgument.toString());
           currentArgument = new StringBuffer();
         }
-      } else if (currentChar == '\''.codeUnitAt(0) && (previousChar == null || previousChar != '\\'.codeUnitAt(0))) {
+      } else if (currentChar == '\''.codeUnitAt(0) &&
+          (previousChar == null || previousChar != '\\'.codeUnitAt(0))) {
         if (singleQuoteStarted) {
           singleQuoteStarted = false;
         } else if (doubleQuoteStarted) {
@@ -412,7 +413,8 @@ class FlutterFFmpeg {
         } else {
           singleQuoteStarted = true;
         }
-      } else if (currentChar == '\"'.codeUnitAt(0) && (previousChar == null || previousChar != '\\'.codeUnitAt(0))) {
+      } else if (currentChar == '\"'.codeUnitAt(0) &&
+          (previousChar == null || previousChar != '\\'.codeUnitAt(0))) {
         if (doubleQuoteStarted) {
           doubleQuoteStarted = false;
         } else if (singleQuoteStarted) {
@@ -431,5 +433,4 @@ class FlutterFFmpeg {
 
     return argumentList;
   }
-
 }

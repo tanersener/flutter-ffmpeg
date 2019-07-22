@@ -1,3 +1,7 @@
+## 0.2.7
+- Uses new package selection mechanism
+- Fixes issue #52
+
 ## 0.2.6
 - Adds support for single quotes and double quotes in command strings
 

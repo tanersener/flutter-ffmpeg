@@ -56,7 +56,11 @@ target 'Runner' do
   plugin_pods.map { |p|
     symlink = File.join('.symlinks', 'plugins', p[:name])
     File.symlink(p[:path], symlink)
-    pod p[:name], :path => File.join(symlink, 'ios')
+    if p[:name] == 'flutter_ffmpeg'
+        pod p[:name]+'/full', :path => File.join(symlink, 'ios')
+    else
+        pod p[:name], :path => File.join(symlink, 'ios')
+    end
   }
 end
 
