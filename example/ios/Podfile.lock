@@ -1,20 +1,20 @@
 PODS:
   - Flutter (1.0.0)
-  - flutter_ffmpeg (0.2.6):
+  - flutter_ffmpeg/full (0.2.7):
     - Flutter
-    - mobile-ffmpeg-https (= 4.2.2)
-  - mobile-ffmpeg-https (4.2.2)
+    - mobile-ffmpeg-full (= 4.2.2)
+  - mobile-ffmpeg-full (4.2.2)
   - path_provider (0.0.1):
     - Flutter
 
 DEPENDENCIES:
   - Flutter (from `.symlinks/flutter/ios`)
-  - flutter_ffmpeg (from `.symlinks/plugins/flutter_ffmpeg/ios`)
+  - flutter_ffmpeg/full (from `.symlinks/plugins/flutter_ffmpeg/ios`)
   - path_provider (from `.symlinks/plugins/path_provider/ios`)
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
-    - mobile-ffmpeg-https
+    - mobile-ffmpeg-full
 
 EXTERNAL SOURCES:
   Flutter:
@@ -26,10 +26,10 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Flutter: 58dd7d1b27887414a370fcccb9e645c08ffd7a6a
-  flutter_ffmpeg: c000927c8fbfcecf97489e4aeba435aaea39cc61
-  mobile-ffmpeg-https: 9474e6e0958b6c12d981073d81a3b9484da02f48
+  flutter_ffmpeg: 05ee218287a2b55a13df8f7970aab1a52094083e
+  mobile-ffmpeg-full: 42f654ef799818c6b8344ffd5a63c83b53f86745
   path_provider: f96fff6166a8867510d2c25fdcc346327cc4b259
 
-PODFILE CHECKSUM: f89e2d3393e97ef827d5588a24b755fc03ebc243
+PODFILE CHECKSUM: 3c42d7d5cb11914bdcd50bd04ea49997cf3f22b5
 
 COCOAPODS: 1.7.3

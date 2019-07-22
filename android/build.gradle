@@ -1,5 +1,17 @@
+static String safePackageName(String prop) {
+    prop.replace("-lts", "")
+}
+
+static String safePackageVersion(String prop, String version, String ltsVersion) {
+    prop.contains("-lts") ? ltsVersion + ".LTS" : version
+}
+
+String safeExtGet(String prop, String fallback) {
+    rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
+}
+
 group 'com.arthenica.flutter.ffmpeg'
-version '0.2.6'
+version '0.2.7'
 
 buildscript {
     repositories {
@@ -25,7 +37,7 @@ android {
     compileSdkVersion 28
 
     defaultConfig {
-        minSdkVersion 24
+        minSdkVersion safeExtGet('flutterFFmpegPackage', 'https').contains("-lts") ? 16 : 24
     }
     lintOptions {
         disable 'InvalidPackage'
@@ -33,5 +45,5 @@ android {
 }
 
 dependencies {
-    implementation 'com.arthenica:mobile-ffmpeg-https:4.2.2'
+    implementation 'com.arthenica:mobile-ffmpeg-' + safePackageName(safeExtGet('flutterFFmpegPackage', 'https')) + ':' + safePackageVersion(safeExtGet('flutterFFmpegPackage', 'https'), '4.2.2', '4.2.2')
 }
