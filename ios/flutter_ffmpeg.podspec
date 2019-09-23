@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
   s.source_files        = 'Classes/**/*'
   s.public_header_files = 'Classes/**/*.h'
 
-  s.default_subspec   = 'https'
+  s.default_subspec   = 'https-gpl'
 
   s.dependency          'Flutter'
 
