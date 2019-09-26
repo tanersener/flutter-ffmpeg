@@ -114,8 +114,8 @@ The following table shows all package names defined for `flutter_ffmpeg`.
 | :----: | :----: | :----: |
 | min | min  | min-lts |
 | min-gpl | min-gpl | min-gpl-lts |
-| http | https | http-lts |
-| http-gpl | http-gpl | http-gpl-lts |
+| https | https | https-lts |
+| https-gpl | https-gpl | https-gpl-lts |
 | audio | audio | audio-lts |
 | video | video | video-lts |
 | full | full | full-lts |
