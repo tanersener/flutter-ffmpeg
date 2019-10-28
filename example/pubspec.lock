@@ -72,9 +72,9 @@ packages:
   flutter_ffmpeg:
     dependency: "direct main"
     description:
-      path: ".."
-      relative: true
-    source: path
+      name: flutter_ffmpeg
+      url: "https://pub.dartlang.org"
+    source: hosted
     version: "0.2.8"
   flutter_test:
     dependency: "direct dev"
