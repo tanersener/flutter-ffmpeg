@@ -1,3 +1,7 @@
+## 0.2.8
+- Uses ffmpeg v4.3
+- Implements registerNewFFmpegPipe API method
+
 ## 0.2.7
 - Uses new package selection mechanism
 - Fixes issue #52

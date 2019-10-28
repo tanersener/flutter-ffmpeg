@@ -1,5 +1,6 @@
 name: flutter_ffmpeg_example
 description: Demonstrates how to use the flutter_ffmpeg plugin.
+version: 1.0.0
 publish_to: 'none'
 
 environment:
@@ -9,9 +10,10 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^0.1.2
-  path: ^1.6.2
-  path_provider: ^0.5.0+1
-  flutter_ffmpeg: 0.2.7
+  path: ^1.6.4
+  path_provider: ^1.4.0
+  flutter_ffmpeg:
+    path: ../
 
 dev_dependencies:
   flutter_test:

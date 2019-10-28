@@ -156,11 +156,12 @@ class FlutterFFmpegTestAppState extends State<MainPage> with TickerProviderState
 
   void testRunCommand() {
     getLastReturnCode().then((rc) => print("Last rc: $rc"));
-    getLastCommandOutput().then((output) => print("Last command output: $output"));
+    getLastCommandOutput().then((output) => debugPrint("Last command output: \"$output\"", wrapWidth: 1024));
 
     print("Testing ParseArguments.");
 
     testParseArguments();
+    registerNewFFmpegPipe().then((path) => print("New FFmpeg pipe: $path"));
 
     print("Testing COMMAND.");
 
@@ -281,7 +282,7 @@ class FlutterFFmpegTestAppState extends State<MainPage> with TickerProviderState
           VideoUtil.assetPath(videoPath).then((fullVideoPath) {
             execute(VideoUtil.generateEncodeVideoScript(image1Path, image2Path, image3Path, fullVideoPath, ffmpegCodec, customOptions)).then((rc) {
               if (rc == 0) {
-                testGetMediaInformation(fullVideoPath);
+                getLastCommandOutput().then((output) => debugPrint("Last command output: \"$output\"", wrapWidth: 1024));
               }
             });
 
@@ -409,6 +410,10 @@ class FlutterFFmpegTestAppState extends State<MainPage> with TickerProviderState
 
   Future<Map<dynamic, dynamic>> getMediaInformation(String path) async {
     return await _flutterFFmpeg.getMediaInformation(path);
+  }
+
+  Future<String> registerNewFFmpegPipe() async {
+    return await _flutterFFmpeg.registerNewFFmpegPipe();
   }
 
   void _changedCodec(String selectedCodec) {

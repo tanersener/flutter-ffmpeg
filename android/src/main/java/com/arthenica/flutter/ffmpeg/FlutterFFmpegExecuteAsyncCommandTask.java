@@ -58,7 +58,7 @@ public class FlutterFFmpegExecuteAsyncCommandTask extends AsyncTask<String, Inte
 
             Log.d(FlutterFFmpegPlugin.LIBRARY_NAME, String.format("Running FFmpeg command: %s with delimiter %s.", command, delimiter));
 
-            rc = FFmpeg.execute(command, delimiter);
+            rc = FFmpeg.execute(command);
 
             Log.d(FlutterFFmpegPlugin.LIBRARY_NAME, String.format("FFmpeg exited with rc: %d", rc));
         }

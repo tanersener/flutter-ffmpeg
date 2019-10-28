@@ -31,6 +31,7 @@ static NSString *const KEY_PLATFORM = @"platform";
 static NSString *const KEY_PACKAGE_NAME = @"packageName";
 static NSString *const KEY_LAST_RC = @"lastRc";
 static NSString *const KEY_LAST_COMMAND_OUTPUT = @"lastCommandOutput";
+static NSString *const KEY_PIPE = @"pipe";
 
 static NSString *const KEY_LOG_TEXT = @"log";
 static NSString *const KEY_LOG_LEVEL = @"level";
@@ -207,6 +208,11 @@ static NSString *const EVENT_STAT = @"FlutterFFmpegStatisticsCallback";
             MediaInformation *mediaInformation = [MobileFFmpeg getMediaInformation:path timeout:[timeout intValue]];
             result([FlutterFFmpegPlugin toMediaInformationDictionary:mediaInformation]);
         });
+
+    } else if ([@"registerNewFFmpegPipe" isEqualToString:call.method]) {
+
+        NSString *pipe = [MobileFFmpegConfig registerNewFFmpegPipe];
+        result([FlutterFFmpegPlugin toStringDictionary:KEY_PIPE :pipe]);
 
     } else {
 

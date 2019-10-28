@@ -1,6 +1,6 @@
 # flutter_ffmpeg 
 
-![GitHub release](https://img.shields.io/badge/release-v0.2.7-blue.svg)
+![GitHub release](https://img.shields.io/badge/release-v0.2.8-blue.svg)
 ![](https://img.shields.io/pub/v/flutter_ffmpeg.svg)
 
 FFmpeg plugin for Flutter. Supports iOS and Android.
@@ -11,7 +11,7 @@ FFmpeg plugin for Flutter. Supports iOS and Android.
 - Based on MobileFFmpeg
 - Supports
     - Both Android (API Level 16+) and iOS (SDK 9.3+)
-    - FFmpeg `v4.2-dev-x` (master) releases
+    - FFmpeg `v4.2-dev-x` and `v4.3-dev-x` (master) releases
     - `arm-v7a`, `arm-v7a-neon`, `arm64-v8a`, `x86` and `x86_64` architectures on Android
     - `armv7`, `armv7s`, `arm64`, `arm64e`, `i386` and `x86_64` architectures on iOS
     - 24 external libraries
@@ -70,7 +70,7 @@ FFmpeg plugin for Flutter. Supports iOS and Android.
 Add `flutter_ffmpeg` as a dependency in your `pubspec.yaml file`.
   ```
 dependencies:
-    flutter_ffmpeg: ^0.2.7
+    flutter_ffmpeg: ^0.2.8
   ```
 
 #### 2.1 Packages
@@ -94,16 +94,20 @@ Installation of `FlutterFFmpeg` using `pub` enables the default package, which i
   Do not forget to specify package name in `<package name>` section.
 
     ```
+    # Prepare symlinks folder. We use symlinks to avoid having Podfile.lock
+    # referring to absolute paths on developers' machines.
+    system('rm -rf .symlinks')
+    system('mkdir -p .symlinks/plugins')
     plugin_pods = parse_KV_file('../.flutter-plugins')
-    plugin_pods.map { |p|
-    symlink = File.join('.symlinks', 'plugins', p[:name])
-    File.symlink(p[:path], symlink)
-    if p[:name] == 'flutter_ffmpeg'
-        pod p[:name]+'/<package name>', :path => File.join(symlink, 'ios')
-    else
-        pod p[:name], :path => File.join(symlink, 'ios')
+    plugin_pods.each do |name, path|
+      symlink = File.join('.symlinks', 'plugins', name)
+      File.symlink(path, symlink)
+      if name == 'flutter_ffmpeg'
+          pod name+'/<package name>', :path => File.join(symlink, 'ios')
+      else
+          pod name, :path => File.join(symlink, 'ios')
+      end
     end
-    }
     ```
 
 ##### 2.1.3 Package Names
@@ -333,6 +337,12 @@ In order to install the `LTS` variant, install the `https-lts` package using ins
     ```
     _flutterFFmpeg.getExternalLibraries().then((packageList) {
          packageList.forEach((value) => print("External library: $value"));
+    });
+    ```
+15. Create new `FFmpeg` pipe. 
+    ```
+    _flutterFFmpeg.registerNewFFmpegPipe().then((path) {
+         then((stats) => print("New ffmpeg pipe at $path"));
     });
     ```
 

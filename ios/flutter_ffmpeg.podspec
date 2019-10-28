@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'flutter_ffmpeg'
-  s.version          = '0.2.7'
+  s.version          = '0.2.8'
   s.summary          = 'FFmpeg plugin for Flutter.'
   s.description      = 'FFmpeg plugin based on mobile-ffmpeg for Flutter.'
   s.homepage         = 'https://github.com/tanersener/flutter-ffmpeg'
@@ -24,7 +24,7 @@ Pod::Spec.new do |s|
     ss.source_files        = 'Classes/**/*'
     ss.public_header_files = 'Classes/**/*.h'
 
-    ss.dependency 'mobile-ffmpeg-min', '4.2.2'
+    ss.dependency 'mobile-ffmpeg-min', '4.3'
   end
 
   s.subspec 'min-lts' do |ss|
@@ -38,7 +38,7 @@ Pod::Spec.new do |s|
     ss.source_files        = 'Classes/**/*'
     ss.public_header_files = 'Classes/**/*.h'
 
-    ss.dependency 'mobile-ffmpeg-min-gpl', '4.2.2'
+    ss.dependency 'mobile-ffmpeg-min-gpl', '4.3'
   end
 
   s.subspec 'min-gpl-lts' do |ss|
@@ -52,7 +52,7 @@ Pod::Spec.new do |s|
     ss.source_files        = 'Classes/**/*'
     ss.public_header_files = 'Classes/**/*.h'
 
-    ss.dependency 'mobile-ffmpeg-https', '4.2.2'
+    ss.dependency 'mobile-ffmpeg-https', '4.3'
   end
 
   s.subspec 'https-lts' do |ss|
@@ -66,7 +66,7 @@ Pod::Spec.new do |s|
     ss.source_files        = 'Classes/**/*'
     ss.public_header_files = 'Classes/**/*.h'
 
-    ss.dependency 'mobile-ffmpeg-https-gpl', '4.2.2'
+    ss.dependency 'mobile-ffmpeg-https-gpl', '4.3'
   end
 
   s.subspec 'https-gpl-lts' do |ss|
@@ -80,7 +80,7 @@ Pod::Spec.new do |s|
     ss.source_files        = 'Classes/**/*'
     ss.public_header_files = 'Classes/**/*.h'
 
-    ss.dependency 'mobile-ffmpeg-audio', '4.2.2'
+    ss.dependency 'mobile-ffmpeg-audio', '4.3'
   end
 
   s.subspec 'audio-lts' do |ss|
@@ -94,7 +94,7 @@ Pod::Spec.new do |s|
     ss.source_files        = 'Classes/**/*'
     ss.public_header_files = 'Classes/**/*.h'
 
-    ss.dependency 'mobile-ffmpeg-video', '4.2.2'
+    ss.dependency 'mobile-ffmpeg-video', '4.3'
   end
 
   s.subspec 'video-lts' do |ss|
@@ -108,7 +108,7 @@ Pod::Spec.new do |s|
     ss.source_files        = 'Classes/**/*'
     ss.public_header_files = 'Classes/**/*.h'
 
-    ss.dependency 'mobile-ffmpeg-full', '4.2.2'
+    ss.dependency 'mobile-ffmpeg-full', '4.3'
   end
 
   s.subspec 'full-lts' do |ss|
@@ -122,7 +122,7 @@ Pod::Spec.new do |s|
     ss.source_files        = 'Classes/**/*'
     ss.public_header_files = 'Classes/**/*.h'
 
-    ss.dependency 'mobile-ffmpeg-full-gpl', '4.2.2'
+    ss.dependency 'mobile-ffmpeg-full-gpl', '4.3'
   end
 
   s.subspec 'full-gpl-lts' do |ss|
