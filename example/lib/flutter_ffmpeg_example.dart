@@ -171,7 +171,8 @@ class FlutterFFmpegTestAppState extends State<MainPage>
 
   void testRunCommand() {
     getLastReturnCode().then((rc) => print("Last rc: $rc"));
-    getLastCommandOutput().then((output) => debugPrint("Last command output: \"$output\"", wrapWidth: 1024));
+    getLastCommandOutput().then((output) =>
+        debugPrint("Last command output: \"$output\"", wrapWidth: 1024));
 
     print("Testing ParseArguments.");
 
@@ -304,7 +305,9 @@ class FlutterFFmpegTestAppState extends State<MainPage>
                     image3Path, fullVideoPath, ffmpegCodec, customOptions))
                 .then((rc) {
               if (rc == 0) {
-                getLastCommandOutput().then((output) => debugPrint("Last command output: \"$output\"", wrapWidth: 1024));
+                getLastCommandOutput().then((output) => debugPrint(
+                    "Last command output: \"$output\"",
+                    wrapWidth: 1024));
               }
             });
 
