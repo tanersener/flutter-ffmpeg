@@ -11,7 +11,7 @@ String safeExtGet(String prop, String fallback) {
 }
 
 group 'com.arthenica.flutter.ffmpeg'
-version '0.2.7'
+version '0.2.8'
 
 buildscript {
     repositories {
@@ -45,5 +45,5 @@ android {
 }
 
 dependencies {
-    implementation 'com.arthenica:mobile-ffmpeg-' + safePackageName(safeExtGet('flutterFFmpegPackage', 'https')) + ':' + safePackageVersion(safeExtGet('flutterFFmpegPackage', 'https'), '4.2.2', '4.2.2')
+    implementation 'com.arthenica:mobile-ffmpeg-' + safePackageName(safeExtGet('flutterFFmpegPackage', 'https')) + ':' + safePackageVersion(safeExtGet('flutterFFmpegPackage', 'https'), '4.3', '4.2.2')
 }

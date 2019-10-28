@@ -142,3 +142,10 @@ Demonstrates how to use the flutter_ffmpeg plugin.
          packageList.forEach((value) => print("External library: $value"));
     });
     ```
+15. Create new `FFmpeg` pipe. 
+    ```
+    _flutterFFmpeg.registerNewFFmpegPipe().then((path) {
+         then((stats) => print("New ffmpeg pipe at $path"));
+    });
+    ```
+

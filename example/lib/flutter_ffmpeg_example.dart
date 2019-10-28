@@ -55,18 +55,27 @@ class VideoUtil {
   static Future<File> copyFileAssets(String assetName, String localName) async {
     final ByteData assetByteData = await rootBundle.load(assetName);
 
-    final List<int> byteList = assetByteData.buffer.asUint8List(assetByteData.offsetInBytes, assetByteData.lengthInBytes);
+    final List<int> byteList = assetByteData.buffer
+        .asUint8List(assetByteData.offsetInBytes, assetByteData.lengthInBytes);
 
-    final String fullTemporaryPath = join((await tempDirectory).path, localName);
+    final String fullTemporaryPath =
+        join((await tempDirectory).path, localName);
 
-    return new File(fullTemporaryPath).writeAsBytes(byteList, mode: FileMode.writeOnly, flush: true);
+    return new File(fullTemporaryPath)
+        .writeAsBytes(byteList, mode: FileMode.writeOnly, flush: true);
   }
 
   static Future<String> assetPath(String assetName) async {
     return join((await tempDirectory).path, assetName);
   }
 
-  static String generateEncodeVideoScript(String image1Path, String image2Path, String image3Path, String videoFilePath, String videoCodec, String customOptions) {
+  static String generateEncodeVideoScript(
+      String image1Path,
+      String image2Path,
+      String image3Path,
+      String videoFilePath,
+      String videoCodec,
+      String customOptions) {
     return "-hide_banner    -y -loop   1 -i '" +
         image1Path +
         "' " +
@@ -98,7 +107,8 @@ class VideoUtil {
   }
 }
 
-class FlutterFFmpegTestAppState extends State<MainPage> with TickerProviderStateMixin {
+class FlutterFFmpegTestAppState extends State<MainPage>
+    with TickerProviderStateMixin {
   static const String ASSET_1 = "1.jpg";
   static const String ASSET_2 = "2.jpg";
   static const String ASSET_3 = "3.jpg";
@@ -132,9 +142,11 @@ class FlutterFFmpegTestAppState extends State<MainPage> with TickerProviderState
   void startupTests() {
     getFFmpegVersion().then((version) => print("FFmpeg version: $version"));
     getPlatform().then((platform) => print("Platform: $platform"));
-    getLogLevel().then((level) => print("Old log level: " + LogLevel.levelToString(level)));
+    getLogLevel().then(
+        (level) => print("Old log level: " + LogLevel.levelToString(level)));
     setLogLevel(LogLevel.AV_LOG_INFO);
-    getLogLevel().then((level) => print("New log level: " + LogLevel.levelToString(level)));
+    getLogLevel().then(
+        (level) => print("New log level: " + LogLevel.levelToString(level)));
     getPackageName().then((packageName) => print("Package name: $packageName"));
     getExternalLibraries().then((packageList) {
       packageList.forEach((value) => print("External library: $value"));
@@ -142,9 +154,12 @@ class FlutterFFmpegTestAppState extends State<MainPage> with TickerProviderState
   }
 
   void prepareAssets() {
-    VideoUtil.copyFileAssets('assets/pyramid.jpg', ASSET_1).then((path) => print('Loaded asset $path.'));
-    VideoUtil.copyFileAssets('assets/colosseum.jpg', ASSET_2).then((path) => print('Loaded asset $path.'));
-    VideoUtil.copyFileAssets('assets/tajmahal.jpg', ASSET_3).then((path) => print('Loaded asset $path.'));
+    VideoUtil.copyFileAssets('assets/pyramid.jpg', ASSET_1)
+        .then((path) => print('Loaded asset $path.'));
+    VideoUtil.copyFileAssets('assets/colosseum.jpg', ASSET_2)
+        .then((path) => print('Loaded asset $path.'));
+    VideoUtil.copyFileAssets('assets/tajmahal.jpg', ASSET_3)
+        .then((path) => print('Loaded asset $path.'));
   }
 
   void testParseArguments() {
@@ -156,11 +171,13 @@ class FlutterFFmpegTestAppState extends State<MainPage> with TickerProviderState
 
   void testRunCommand() {
     getLastReturnCode().then((rc) => print("Last rc: $rc"));
-    getLastCommandOutput().then((output) => print("Last command output: $output"));
+    getLastCommandOutput().then((output) =>
+        debugPrint("Last command output: \"$output\"", wrapWidth: 1024));
 
     print("Testing ParseArguments.");
 
     testParseArguments();
+    registerNewFFmpegPipe().then((path) => print("New FFmpeg pipe: $path"));
 
     print("Testing COMMAND.");
 
@@ -187,7 +204,8 @@ class FlutterFFmpegTestAppState extends State<MainPage> with TickerProviderState
     // disableLogs();
     // enableLogs();
 
-    execute(_commandController.text).then((rc) => print("FFmpeg process exited with rc $rc"));
+    execute(_commandController.text)
+        .then((rc) => print("FFmpeg process exited with rc $rc"));
     // executeWithArguments(_commandController.text.split(" ")).then((rc) => print("FFmpeg process exited with rc $rc"));
 
     setState(() {});
@@ -232,22 +250,26 @@ class FlutterFFmpegTestAppState extends State<MainPage> with TickerProviderState
               print('Stream channel layout: ${streamsInfo['channelLayout']}');
               print('Stream sar: ${streamsInfo['sampleAspectRatio']}');
               print('Stream dar: ${streamsInfo['displayAspectRatio']}');
-              print('Stream average frame rate: ${streamsInfo['averageFrameRate']}');
+              print(
+                  'Stream average frame rate: ${streamsInfo['averageFrameRate']}');
               print('Stream real frame rate: ${streamsInfo['realFrameRate']}');
               print('Stream time base: ${streamsInfo['timeBase']}');
               print('Stream codec time base: ${streamsInfo['codecTimeBase']}');
 
               final metadataMap = streamsInfo['metadata'];
               if (metadataMap != null) {
-                  print('Stream metadata encoder: ${metadataMap['encoder']}');
-                  print('Stream metadata rotate: ${metadataMap['rotate']}');
-                  print('Stream metadata creation time: ${metadataMap['creation_time']}');
-                  print('Stream metadata handler name: ${metadataMap['handler_name']}');
+                print('Stream metadata encoder: ${metadataMap['encoder']}');
+                print('Stream metadata rotate: ${metadataMap['rotate']}');
+                print(
+                    'Stream metadata creation time: ${metadataMap['creation_time']}');
+                print(
+                    'Stream metadata handler name: ${metadataMap['handler_name']}');
               }
 
               final sideDataMap = streamsInfo['sidedata'];
               if (sideDataMap != null) {
-                  print('Stream side data displaymatrix: ${sideDataMap['displaymatrix']}');
+                print(
+                    'Stream side data displaymatrix: ${sideDataMap['displaymatrix']}');
               }
             }
           }
@@ -279,9 +301,13 @@ class FlutterFFmpegTestAppState extends State<MainPage> with TickerProviderState
           final String ffmpegCodec = getFFmpegCodecName();
 
           VideoUtil.assetPath(videoPath).then((fullVideoPath) {
-            execute(VideoUtil.generateEncodeVideoScript(image1Path, image2Path, image3Path, fullVideoPath, ffmpegCodec, customOptions)).then((rc) {
+            execute(VideoUtil.generateEncodeVideoScript(image1Path, image2Path,
+                    image3Path, fullVideoPath, ffmpegCodec, customOptions))
+                .then((rc) {
               if (rc == 0) {
-                testGetMediaInformation(fullVideoPath);
+                getLastCommandOutput().then((output) => debugPrint(
+                    "Last command output: \"$output\"",
+                    wrapWidth: 1024));
               }
             });
 
@@ -299,10 +325,13 @@ class FlutterFFmpegTestAppState extends State<MainPage> with TickerProviderState
                 double bitrate = _doublePrecision(lastStatistics['bitrate'], 2);
                 double speed = _doublePrecision(lastStatistics['speed'], 2);
                 int videoFrameNumber = lastStatistics['videoFrameNumber'];
-                double videoQuality = _doublePrecision(lastStatistics['videoQuality'], 2);
-                double videoFps = _doublePrecision(lastStatistics['videoFps'], 2);
+                double videoQuality =
+                    _doublePrecision(lastStatistics['videoQuality'], 2);
+                double videoFps =
+                    _doublePrecision(lastStatistics['videoFps'], 2);
 
-                statisticsCallback(time, size, bitrate, speed, videoFrameNumber, videoQuality, videoFps);
+                statisticsCallback(time, size, bitrate, speed, videoFrameNumber,
+                    videoQuality, videoFps);
               }
             });
           });
@@ -323,8 +352,10 @@ class FlutterFFmpegTestAppState extends State<MainPage> with TickerProviderState
     setState(() {});
   }
 
-  void statisticsCallback(int time, int size, double bitrate, double speed, int videoFrameNumber, double videoQuality, double videoFps) {
-    print("Statistics: time: $time, size: $size, bitrate: $bitrate, speed: $speed, videoFrameNumber: $videoFrameNumber, videoQuality: $videoQuality, videoFps: $videoFps");
+  void statisticsCallback(int time, int size, double bitrate, double speed,
+      int videoFrameNumber, double videoQuality, double videoFps) {
+    print(
+        "Statistics: time: $time, size: $size, bitrate: $bitrate, speed: $speed, videoFrameNumber: $videoFrameNumber, videoQuality: $videoQuality, videoFps: $videoFps");
   }
 
   Future<String> getFFmpegVersion() async {
@@ -387,7 +418,8 @@ class FlutterFFmpegTestAppState extends State<MainPage> with TickerProviderState
     return await _flutterFFmpeg.setFontconfigConfigurationPath(path);
   }
 
-  Future<void> setFontDirectory(String fontDirectory, Map<String, String> fontNameMap) async {
+  Future<void> setFontDirectory(
+      String fontDirectory, Map<String, String> fontNameMap) async {
     return await _flutterFFmpeg.setFontDirectory(fontDirectory, fontNameMap);
   }
 
@@ -409,6 +441,10 @@ class FlutterFFmpegTestAppState extends State<MainPage> with TickerProviderState
 
   Future<Map<dynamic, dynamic>> getMediaInformation(String path) async {
     return await _flutterFFmpeg.getMediaInformation(path);
+  }
+
+  Future<String> registerNewFFmpegPipe() async {
+    return await _flutterFFmpeg.registerNewFFmpegPipe();
   }
 
   void _changedCodec(String selectedCodec) {
@@ -529,25 +565,29 @@ class FlutterFFmpegTestAppState extends State<MainPage> with TickerProviderState
                     controller: _commandController,
                     decoration: InputDecoration(
                         border: const OutlineInputBorder(
-                          borderSide: const BorderSide(color: Color(0xFF3498DB)),
+                          borderSide:
+                              const BorderSide(color: Color(0xFF3498DB)),
                           borderRadius: const BorderRadius.all(
                             const Radius.circular(5),
                           ),
                         ),
                         focusedBorder: const OutlineInputBorder(
-                          borderSide: const BorderSide(color: Color(0xFF3498DB)),
+                          borderSide:
+                              const BorderSide(color: Color(0xFF3498DB)),
                           borderRadius: const BorderRadius.all(
                             const Radius.circular(5),
                           ),
                         ),
                         enabledBorder: const OutlineInputBorder(
-                          borderSide: const BorderSide(color: Color(0xFF3498DB)),
+                          borderSide:
+                              const BorderSide(color: Color(0xFF3498DB)),
                           borderRadius: const BorderRadius.all(
                             const Radius.circular(5),
                           ),
                         ),
                         contentPadding: EdgeInsets.fromLTRB(8, 12, 8, 12),
-                        hintStyle: new TextStyle(fontSize: 14, color: Colors.grey[400]),
+                        hintStyle: new TextStyle(
+                            fontSize: 14, color: Colors.grey[400]),
                         hintText: "Enter command"),
                     style: new TextStyle(fontSize: 14, color: Colors.black),
                   ),
@@ -566,7 +606,10 @@ class FlutterFFmpegTestAppState extends State<MainPage> with TickerProviderState
                       child: new Center(
                         child: new Text(
                           'RUN',
-                          style: new TextStyle(fontSize: 14.0, fontWeight: FontWeight.bold, color: Colors.white),
+                          style: new TextStyle(
+                              fontSize: 14.0,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white),
                         ),
                       ),
                     ),
@@ -577,8 +620,12 @@ class FlutterFFmpegTestAppState extends State<MainPage> with TickerProviderState
                       alignment: Alignment(-1.0, -1.0),
                       margin: EdgeInsets.all(20.0),
                       padding: EdgeInsets.all(4.0),
-                      decoration: new BoxDecoration(borderRadius: BorderRadius.all(new Radius.circular(5)), color: Color(0xFFF1C40F)),
-                      child: SingleChildScrollView(reverse: true, child: Text(_commandOutput))),
+                      decoration: new BoxDecoration(
+                          borderRadius:
+                              BorderRadius.all(new Radius.circular(5)),
+                          color: Color(0xFFF1C40F)),
+                      child: SingleChildScrollView(
+                          reverse: true, child: Text(_commandOutput))),
                 )
               ],
             ),
@@ -590,7 +637,9 @@ class FlutterFFmpegTestAppState extends State<MainPage> with TickerProviderState
                     child: Container(
                       width: 200,
                       alignment: Alignment(0.0, 0.0),
-                      decoration: BoxDecoration(color: Color.fromRGBO(155, 89, 182, 1.0), borderRadius: BorderRadius.circular(5)),
+                      decoration: BoxDecoration(
+                          color: Color.fromRGBO(155, 89, 182, 1.0),
+                          borderRadius: BorderRadius.circular(5)),
                       child: DropdownButtonHideUnderline(
                           child: DropdownButton(
                         style: new TextStyle(
@@ -618,7 +667,10 @@ class FlutterFFmpegTestAppState extends State<MainPage> with TickerProviderState
                       child: new Center(
                         child: new Text(
                           'ENCODE',
-                          style: new TextStyle(fontSize: 14.0, fontWeight: FontWeight.bold, color: Colors.white),
+                          style: new TextStyle(
+                              fontSize: 14.0,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white),
                         ),
                       ),
                     ),
@@ -629,8 +681,12 @@ class FlutterFFmpegTestAppState extends State<MainPage> with TickerProviderState
                       alignment: Alignment(-1.0, -1.0),
                       margin: EdgeInsets.all(20.0),
                       padding: EdgeInsets.all(4.0),
-                      decoration: new BoxDecoration(borderRadius: BorderRadius.all(new Radius.circular(5)), color: Color(0xFFF1C40F)),
-                      child: SingleChildScrollView(reverse: true, child: Text(_encodeOutput))),
+                      decoration: new BoxDecoration(
+                          borderRadius:
+                              BorderRadius.all(new Radius.circular(5)),
+                          color: Color(0xFFF1C40F)),
+                      child: SingleChildScrollView(
+                          reverse: true, child: Text(_encodeOutput))),
                 )
               ],
             ),
@@ -646,7 +702,8 @@ class FlutterFFmpegTestAppState extends State<MainPage> with TickerProviderState
   }
 
   void testParseSimpleCommand() {
-    var argumentArray = _flutterFFmpeg.parseArguments("-hide_banner   -loop 1  -i file.jpg  -filter_complex  [0:v]setpts=PTS-STARTPTS[video] -map [video] -vsync 2 -async 1  video.mp4");
+    var argumentArray = _flutterFFmpeg.parseArguments(
+        "-hide_banner   -loop 1  -i file.jpg  -filter_complex  [0:v]setpts=PTS-STARTPTS[video] -map [video] -vsync 2 -async 1  video.mp4");
 
     assert(argumentArray != null);
     assert(argumentArray.length == 14);
@@ -668,7 +725,8 @@ class FlutterFFmpegTestAppState extends State<MainPage> with TickerProviderState
   }
 
   void testParseSingleQuotesInCommand() {
-    var argumentArray = _flutterFFmpeg.parseArguments("-loop 1 'file one.jpg'  -filter_complex  '[0:v]setpts=PTS-STARTPTS[video]'  -map  [video]  video.mp4 ");
+    var argumentArray = _flutterFFmpeg.parseArguments(
+        "-loop 1 'file one.jpg'  -filter_complex  '[0:v]setpts=PTS-STARTPTS[video]'  -map  [video]  video.mp4 ");
 
     assert(argumentArray != null);
     assert(argumentArray.length == 8);
@@ -684,7 +742,8 @@ class FlutterFFmpegTestAppState extends State<MainPage> with TickerProviderState
   }
 
   void testParseDoubleQuotesInCommand() {
-    var argumentArray = _flutterFFmpeg.parseArguments("-loop  1 \"file one.jpg\"   -filter_complex \"[0:v]setpts=PTS-STARTPTS[video]\"  -map  [video]  video.mp4 ");
+    var argumentArray = _flutterFFmpeg.parseArguments(
+        "-loop  1 \"file one.jpg\"   -filter_complex \"[0:v]setpts=PTS-STARTPTS[video]\"  -map  [video]  video.mp4 ");
 
     assert(argumentArray != null);
     assert(argumentArray.length == 8);
@@ -698,7 +757,8 @@ class FlutterFFmpegTestAppState extends State<MainPage> with TickerProviderState
     assert("[video]" == argumentArray[6]);
     assert("video.mp4" == argumentArray[7]);
 
-    argumentArray = _flutterFFmpeg.parseArguments(" -i   file:///tmp/input.mp4 -vcodec libx264 -vf \"scale=1024:1024,pad=width=1024:height=1024:x=0:y=0:color=black\"  -acodec copy  -q:v 0  -q:a   0 video.mp4");
+    argumentArray = _flutterFFmpeg.parseArguments(
+        " -i   file:///tmp/input.mp4 -vcodec libx264 -vf \"scale=1024:1024,pad=width=1024:height=1024:x=0:y=0:color=black\"  -acodec copy  -q:v 0  -q:a   0 video.mp4");
 
     assert(argumentArray != null);
     assert(argumentArray.length == 13);
@@ -708,7 +768,8 @@ class FlutterFFmpegTestAppState extends State<MainPage> with TickerProviderState
     assert("-vcodec" == argumentArray[2]);
     assert("libx264" == argumentArray[3]);
     assert("-vf" == argumentArray[4]);
-    assert("scale=1024:1024,pad=width=1024:height=1024:x=0:y=0:color=black" == argumentArray[5]);
+    assert("scale=1024:1024,pad=width=1024:height=1024:x=0:y=0:color=black" ==
+        argumentArray[5]);
     assert("-acodec" == argumentArray[6]);
     assert("copy" == argumentArray[7]);
     assert("-q:v" == argumentArray[8]);
@@ -719,7 +780,8 @@ class FlutterFFmpegTestAppState extends State<MainPage> with TickerProviderState
   }
 
   void testParseDoubleQuotesAndEscapesInCommand() {
-    var argumentArray = _flutterFFmpeg.parseArguments("  -i   file:///tmp/input.mp4 -vf \"subtitles=file:///tmp/subtitles.srt:force_style=\'FontSize=16,PrimaryColour=&HFFFFFF&\'\" -vcodec libx264   -acodec copy  -q:v 0 -q:a  0  video.mp4");
+    var argumentArray = _flutterFFmpeg.parseArguments(
+        "  -i   file:///tmp/input.mp4 -vf \"subtitles=file:///tmp/subtitles.srt:force_style=\'FontSize=16,PrimaryColour=&HFFFFFF&\'\" -vcodec libx264   -acodec copy  -q:v 0 -q:a  0  video.mp4");
 
     assert(argumentArray != null);
     assert(argumentArray.length == 13);
@@ -727,7 +789,9 @@ class FlutterFFmpegTestAppState extends State<MainPage> with TickerProviderState
     assert("-i" == argumentArray[0]);
     assert("file:///tmp/input.mp4" == argumentArray[1]);
     assert("-vf" == argumentArray[2]);
-    assert("subtitles=file:///tmp/subtitles.srt:force_style='FontSize=16,PrimaryColour=&HFFFFFF&'" == argumentArray[3]);
+    assert(
+        "subtitles=file:///tmp/subtitles.srt:force_style='FontSize=16,PrimaryColour=&HFFFFFF&'" ==
+            argumentArray[3]);
     assert("-vcodec" == argumentArray[4]);
     assert("libx264" == argumentArray[5]);
     assert("-acodec" == argumentArray[6]);
@@ -738,7 +802,8 @@ class FlutterFFmpegTestAppState extends State<MainPage> with TickerProviderState
     assert("0" == argumentArray[11]);
     assert("video.mp4" == argumentArray[12]);
 
-    argumentArray = _flutterFFmpeg.parseArguments("  -i   file:///tmp/input.mp4 -vf \"subtitles=file:///tmp/subtitles.srt:force_style=\\\"FontSize=16,PrimaryColour=&HFFFFFF&\\\"\" -vcodec libx264   -acodec copy  -q:v 0 -q:a  0  video.mp4");
+    argumentArray = _flutterFFmpeg.parseArguments(
+        "  -i   file:///tmp/input.mp4 -vf \"subtitles=file:///tmp/subtitles.srt:force_style=\\\"FontSize=16,PrimaryColour=&HFFFFFF&\\\"\" -vcodec libx264   -acodec copy  -q:v 0 -q:a  0  video.mp4");
 
     assert(argumentArray != null);
     assert(argumentArray.length == 13);
@@ -746,7 +811,9 @@ class FlutterFFmpegTestAppState extends State<MainPage> with TickerProviderState
     assert("-i" == argumentArray[0]);
     assert("file:///tmp/input.mp4" == argumentArray[1]);
     assert("-vf" == argumentArray[2]);
-    assert("subtitles=file:///tmp/subtitles.srt:force_style=\\\"FontSize=16,PrimaryColour=&HFFFFFF&\\\"" == argumentArray[3]);
+    assert(
+        "subtitles=file:///tmp/subtitles.srt:force_style=\\\"FontSize=16,PrimaryColour=&HFFFFFF&\\\"" ==
+            argumentArray[3]);
     assert("-vcodec" == argumentArray[4]);
     assert("libx264" == argumentArray[5]);
     assert("-acodec" == argumentArray[6]);
@@ -757,5 +824,4 @@ class FlutterFFmpegTestAppState extends State<MainPage> with TickerProviderState
     assert("0" == argumentArray[11]);
     assert("video.mp4" == argumentArray[12]);
   }
-
 }

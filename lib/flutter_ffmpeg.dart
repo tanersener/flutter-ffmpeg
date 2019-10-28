@@ -380,6 +380,18 @@ class FlutterFFmpeg {
     }
   }
 
+  /// Creates a new FFmpeg pipe and returns its path.
+  Future<String> registerNewFFmpegPipe() async {
+    try {
+      final Map<dynamic, dynamic> result =
+          await _methodChannel.invokeMethod('registerNewFFmpegPipe');
+      return result['pipe'];
+    } on PlatformException catch (e) {
+      print("Plugin error: ${e.message}");
+      return null;
+    }
+  }
+
   /// Parses the given [command] into arguments.
   List<String> parseArguments(String command) {
     List<String> argumentList = new List();

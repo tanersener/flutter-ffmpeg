@@ -60,6 +60,7 @@ public class FlutterFFmpegPlugin implements MethodCallHandler, EventChannel.Stre
     public static final String KEY_PLATFORM = "platform";
     public static final String KEY_PACKAGE_NAME = "packageName";
     public static final String KEY_LAST_RC = "lastRc";
+    public static final String KEY_PIPE = "pipe";
 
     public static final String KEY_LAST_COMMAND_OUTPUT = "lastCommandOutput";
     public static final String KEY_LOG_TEXT = "log";
@@ -240,6 +241,11 @@ public class FlutterFFmpegPlugin implements MethodCallHandler, EventChannel.Stre
 
             final FlutterFFmpegGetMediaInformationAsyncTask asyncTask = new FlutterFFmpegGetMediaInformationAsyncTask(flutterFFmpegResultHandler, timeout, result);
             asyncTask.execute(path);
+
+        } else if (call.method.equals("registerNewFFmpegPipe")) {
+
+            final String pipe = Config.registerNewFFmpegPipe(getActiveContext());
+            flutterFFmpegResultHandler.success(result, toStringMap(KEY_PIPE, pipe));
 
         } else {
             flutterFFmpegResultHandler.notImplemented(result);
