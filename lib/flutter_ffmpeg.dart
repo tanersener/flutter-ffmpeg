@@ -384,7 +384,7 @@ class FlutterFFmpeg {
   Future<String> registerNewFFmpegPipe() async {
     try {
       final Map<dynamic, dynamic> result =
-      await _methodChannel.invokeMethod('registerNewFFmpegPipe');
+          await _methodChannel.invokeMethod('registerNewFFmpegPipe');
       return result['pipe'];
     } on PlatformException catch (e) {
       print("Plugin error: ${e.message}");
