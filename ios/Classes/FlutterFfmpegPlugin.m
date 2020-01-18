@@ -20,8 +20,9 @@
 #import "FlutterFFmpegPlugin.h"
 
 #import <mobileffmpeg/ArchDetect.h>
-#import <mobileffmpeg/MobileFFmpeg.h>
 #import <mobileffmpeg/MobileFFmpegConfig.h>
+#import <mobileffmpeg/MobileFFmpeg.h>
+#import <mobileffmpeg/MobileFFprobe.h>
 
 static NSString *const PLATFORM_NAME = @"ios";
 
@@ -88,9 +89,9 @@ static NSString *const EVENT_STAT = @"FlutterFFmpegStatisticsCallback";
 
     } else if ([@"getFFmpegVersion" isEqualToString:call.method]) {
 
-        result([FlutterFFmpegPlugin toStringDictionary:KEY_VERSION :[MobileFFmpeg getFFmpegVersion]]);
+        result([FlutterFFmpegPlugin toStringDictionary:KEY_VERSION :[MobileFFmpegConfig getFFmpegVersion]]);
 
-    } else if ([@"executeWithArguments" isEqualToString:call.method]) {
+    } else if ([@"executeFFmpegWithArguments" isEqualToString:call.method]) {
 
         NSLog(@"Running FFmpeg with arguments: %@.\n", arguments);
 
@@ -103,18 +104,15 @@ static NSString *const EVENT_STAT = @"FlutterFFmpegStatisticsCallback";
             result([FlutterFFmpegPlugin toIntDictionary:KEY_RC :[NSNumber numberWithInt:rc]]);
         });
 
-    } else if ([@"execute" isEqualToString:call.method]) {
+    } else if ([@"executeFFprobeWithArguments" isEqualToString:call.method]) {
 
-        if (delimiter == nil) {
-            delimiter = @" ";
-        }
-
-        NSLog(@"Running FFmpeg command: %@ with delimiter %@.\n", command, delimiter);
+        NSLog(@"Running FFprobe with arguments: %@.\n", arguments);
 
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            int rc = [MobileFFmpeg execute:command delimiter:delimiter];
 
-            NSLog(@"FFmpeg exited with rc: %d\n", rc);
+            int rc = [MobileFFprobe executeWithArguments:arguments];
+
+            NSLog(@"FFprobe exited with rc: %d\n", rc);
 
             result([FlutterFFmpegPlugin toIntDictionary:KEY_RC :[NSNumber numberWithInt:rc]]);
         });
@@ -189,23 +187,22 @@ static NSString *const EVENT_STAT = @"FlutterFFmpegStatisticsCallback";
 
     } else if ([@"getLastReturnCode" isEqualToString:call.method]) {
 
-        int lastReturnCode = [MobileFFmpeg getLastReturnCode];
+        int lastReturnCode = [MobileFFmpegConfig getLastReturnCode];
         result([FlutterFFmpegPlugin toIntDictionary:KEY_LAST_RC :[NSNumber numberWithInt:lastReturnCode]]);
 
     } else if ([@"getLastCommandOutput" isEqualToString:call.method]) {
 
-        NSString *lastCommandOutput = [MobileFFmpeg getLastCommandOutput];
+        NSString *lastCommandOutput = [MobileFFmpegConfig getLastCommandOutput];
         result([FlutterFFmpegPlugin toStringDictionary:KEY_LAST_COMMAND_OUTPUT :lastCommandOutput]);
 
     } else if ([@"getMediaInformation" isEqualToString:call.method]) {
 
         NSString* path = call.arguments[@"path"];
-        NSNumber* timeout = call.arguments[@"timeout"];
 
-        NSLog(@"Getting media information for %@ with timeout %d.\n", path, [timeout intValue]);
+        NSLog(@"Getting media information for %@.\n", path);
 
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            MediaInformation *mediaInformation = [MobileFFmpeg getMediaInformation:path timeout:[timeout intValue]];
+            MediaInformation *mediaInformation = [MobileFFprobe getMediaInformation:path];
             result([FlutterFFmpegPlugin toMediaInformationDictionary:mediaInformation]);
         });
 

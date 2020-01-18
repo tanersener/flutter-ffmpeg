@@ -1,3 +1,9 @@
+## 0.2.9
+- Implements FFprobe
+- Add concurrent execution support
+- Re-organises plugin classes
+- iOS releases depend on iconv system library instead of iconv external library
+
 ## 0.2.8
 - Uses ffmpeg v4.3
 - Implements registerNewFFmpegPipe API method

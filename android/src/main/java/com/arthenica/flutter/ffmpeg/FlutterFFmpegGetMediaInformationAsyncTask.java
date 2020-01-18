@@ -22,46 +22,33 @@ package com.arthenica.flutter.ffmpeg;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.arthenica.mobileffmpeg.FFmpeg;
+import com.arthenica.mobileffmpeg.FFprobe;
 import com.arthenica.mobileffmpeg.MediaInformation;
 
 import io.flutter.plugin.common.MethodChannel;
 
 /**
- * Asynchronous task which performs {@link FFmpeg#getMediaInformation(String, Long)} method invocations.
+ * Asynchronous task which performs {@link FFprobe#getMediaInformation(String, Long)} method invocations.
  *
  * @author Taner Sener
  * @since 0.1.0
  */
 public class FlutterFFmpegGetMediaInformationAsyncTask extends AsyncTask<String, Integer, MediaInformation> {
 
-    private Integer timeout;
+    private final String path;
     private final MethodChannel.Result result;
     private final FlutterFFmpegResultHandler flutterFFmpegResultHandler;
 
-    FlutterFFmpegGetMediaInformationAsyncTask(final FlutterFFmpegResultHandler flutterFFmpegResultHandler, final Integer timeout, final MethodChannel.Result result) {
-        this.timeout = timeout;
+    FlutterFFmpegGetMediaInformationAsyncTask(final String path, final FlutterFFmpegResultHandler flutterFFmpegResultHandler, final MethodChannel.Result result) {
+        this.path = path;
         this.result = result;
         this.flutterFFmpegResultHandler = flutterFFmpegResultHandler;
     }
 
     @Override
-    protected MediaInformation doInBackground(final String... strings) {
-        MediaInformation mediaInformation = null;
-
-        if ((strings != null) && (strings.length > 0)) {
-            final String path = strings[0];
-
-            if (timeout == null) {
-                Log.d(FlutterFFmpegPlugin.LIBRARY_NAME, String.format("Getting media information for %s", path));
-                mediaInformation = FFmpeg.getMediaInformation(path);
-            } else {
-                Log.d(FlutterFFmpegPlugin.LIBRARY_NAME, String.format("Getting media information for %s with timeout %d.", path, timeout.longValue()));
-                mediaInformation = FFmpeg.getMediaInformation(path, timeout.longValue());
-            }
-        }
-
-        return mediaInformation;
+    protected MediaInformation doInBackground(final String... unusedArgs) {
+        Log.d(FlutterFFmpegPlugin.LIBRARY_NAME, String.format("Getting media information for %s.", path));
+        return FFprobe.getMediaInformation(path);
     }
 
     @Override

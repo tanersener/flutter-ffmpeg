@@ -11,7 +11,7 @@ String safeExtGet(String prop, String fallback) {
 }
 
 group 'com.arthenica.flutter.ffmpeg'
-version '0.2.8'
+version '0.2.9'
 
 buildscript {
     repositories {
@@ -20,7 +20,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.3.2'
+        classpath 'com.android.tools.build:gradle:3.5.3'
     }
 }
 
@@ -34,7 +34,7 @@ rootProject.allprojects {
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 29
 
     defaultConfig {
         minSdkVersion safeExtGet('flutterFFmpegPackage', 'https').contains("-lts") ? 16 : 24
@@ -45,5 +45,5 @@ android {
 }
 
 dependencies {
-    implementation 'com.arthenica:mobile-ffmpeg-' + safePackageName(safeExtGet('flutterFFmpegPackage', 'https')) + ':' + safePackageVersion(safeExtGet('flutterFFmpegPackage', 'https'), '4.3', '4.2.2')
+    implementation 'com.arthenica:mobile-ffmpeg-' + safePackageName(safeExtGet('flutterFFmpegPackage', 'https')) + ':' + safePackageVersion(safeExtGet('flutterFFmpegPackage', 'https'), '4.3.1', '4.3.1')
 }

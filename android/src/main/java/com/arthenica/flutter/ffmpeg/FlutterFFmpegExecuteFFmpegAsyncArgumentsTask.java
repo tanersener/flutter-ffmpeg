@@ -24,44 +24,38 @@ import android.util.Log;
 
 import com.arthenica.mobileffmpeg.FFmpeg;
 
+import java.util.Arrays;
+import java.util.List;
+
 import io.flutter.plugin.common.MethodChannel;
 
 /**
- * Asynchronous task which performs {@link FFmpeg#execute(String, String)} method invocations.
+ * Asynchronous task which performs {@link FFmpeg#execute(String[])} method invocations.
  *
  * @author Taner Sener
  * @since 0.1.0
  */
-public class FlutterFFmpegExecuteAsyncCommandTask extends AsyncTask<String, Integer, Integer> {
+public class FlutterFFmpegExecuteFFmpegAsyncArgumentsTask extends AsyncTask<String, Integer, Integer> {
 
-    private String delimiter;
     private final MethodChannel.Result result;
+    private final List<String> arguments;
     private final FlutterFFmpegResultHandler flutterFFmpegResultHandler;
 
-    FlutterFFmpegExecuteAsyncCommandTask(final FlutterFFmpegResultHandler flutterFFmpegResultHandler, final String delimiter, final MethodChannel.Result result) {
-        if (delimiter == null) {
-            this.delimiter = " ";
-        } else {
-            this.delimiter = delimiter;
-        }
-
+    FlutterFFmpegExecuteFFmpegAsyncArgumentsTask(final List<String> arguments, final FlutterFFmpegResultHandler flutterFFmpegResultHandler, final MethodChannel.Result result) {
+        this.arguments = arguments;
         this.result = result;
         this.flutterFFmpegResultHandler = flutterFFmpegResultHandler;
     }
 
     @Override
-    protected Integer doInBackground(final String... strings) {
-        int rc = -1;
+    protected Integer doInBackground(final String... unusedArgs) {
+        final String[] argumentsArray = arguments.toArray(new String[0]);
 
-        if ((strings != null) && (strings.length > 0)) {
-            final String command = strings[0];
+        Log.d(FlutterFFmpegPlugin.LIBRARY_NAME, String.format("Running FFmpeg with arguments: %s.", Arrays.toString(argumentsArray)));
 
-            Log.d(FlutterFFmpegPlugin.LIBRARY_NAME, String.format("Running FFmpeg command: %s with delimiter %s.", command, delimiter));
+        int rc = FFmpeg.execute(argumentsArray);
 
-            rc = FFmpeg.execute(command);
-
-            Log.d(FlutterFFmpegPlugin.LIBRARY_NAME, String.format("FFmpeg exited with rc: %d", rc));
-        }
+        Log.d(FlutterFFmpegPlugin.LIBRARY_NAME, String.format("FFmpeg exited with rc: %d", rc));
 
         return rc;
     }
