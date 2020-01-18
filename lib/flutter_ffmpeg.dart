@@ -21,7 +21,7 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 
-class FlutterFFmpeg {
+class FlutterFFmpegConfig {
   static const MethodChannel _methodChannel =
       const MethodChannel('flutter_ffmpeg');
   static const EventChannel _eventChannel =
@@ -37,7 +37,7 @@ class FlutterFFmpeg {
       double videoQuality,
       double videoFps) statisticsCallback;
 
-  FlutterFFmpeg() {
+  FlutterFFmpegConfig() {
     logCallback = null;
     statisticsCallback = null;
 
@@ -129,39 +129,6 @@ class FlutterFFmpeg {
     } on PlatformException catch (e) {
       print("Plugin error: ${e.message}");
       return null;
-    }
-  }
-
-  /// Executes FFmpeg with [commandArguments] provided.
-  Future<int> executeWithArguments(List<String> arguments) async {
-    try {
-      final Map<dynamic, dynamic> result = await _methodChannel
-          .invokeMethod('executeWithArguments', {'arguments': arguments});
-      return result['rc'];
-    } on PlatformException catch (e) {
-      print("Plugin error: ${e.message}");
-      return -1;
-    }
-  }
-
-  /// Executes FFmpeg [command] provided.
-  Future<int> execute(String command) async {
-    try {
-      final Map<dynamic, dynamic> result = await _methodChannel.invokeMethod(
-          'executeWithArguments', {'arguments': parseArguments(command)});
-      return result['rc'];
-    } on PlatformException catch (e) {
-      print("Plugin error: ${e.message}");
-      return -1;
-    }
-  }
-
-  /// Cancels an ongoing operation.
-  Future<void> cancel() async {
-    try {
-      await _methodChannel.invokeMethod('cancel');
-    } on PlatformException catch (e) {
-      print("Plugin error: ${e.message}");
     }
   }
 
@@ -356,24 +323,13 @@ class FlutterFFmpeg {
   }
 
   /// Returns log output of last executed command. Please note that disabling redirection using
+  /// This method does not support executing multiple concurrent commands. If you execute multiple commands at the same time, this method will return output from all executions.
   /// [disableRedirection()] method also disables this functionality.
   Future<String> getLastCommandOutput() async {
     try {
       final Map<dynamic, dynamic> result =
           await _methodChannel.invokeMethod('getLastCommandOutput');
       return result['lastCommandOutput'];
-    } on PlatformException catch (e) {
-      print("Plugin error: ${e.message}");
-      return null;
-    }
-  }
-
-  /// Returns media information for given [path] using optional [timeout]
-  Future<Map<dynamic, dynamic>> getMediaInformation(String path,
-      [int timeout = 10000]) async {
-    try {
-      return await _methodChannel.invokeMethod(
-          'getMediaInformation', {'path': path, 'timeout': timeout});
     } on PlatformException catch (e) {
       print("Plugin error: ${e.message}");
       return null;
@@ -391,9 +347,47 @@ class FlutterFFmpeg {
       return null;
     }
   }
+}
+
+class FlutterFFmpeg {
+  static const MethodChannel _methodChannel =
+      const MethodChannel('flutter_ffmpeg');
+
+  /// Executes FFmpeg with [commandArguments] provided.
+  Future<int> executeWithArguments(List<String> arguments) async {
+    try {
+      final Map<dynamic, dynamic> result = await _methodChannel
+          .invokeMethod('executeFFmpegWithArguments', {'arguments': arguments});
+      return result['rc'];
+    } on PlatformException catch (e) {
+      print("Plugin error: ${e.message}");
+      return -1;
+    }
+  }
+
+  /// Executes FFmpeg [command] provided.
+  Future<int> execute(String command) async {
+    try {
+      final Map<dynamic, dynamic> result = await _methodChannel.invokeMethod(
+          'executeFFmpegWithArguments', {'arguments': FlutterFFmpeg.parseArguments(command)});
+      return result['rc'];
+    } on PlatformException catch (e) {
+      print("Plugin error: ${e.message}");
+      return -1;
+    }
+  }
+
+  /// Cancels an ongoing operation.
+  Future<void> cancel() async {
+    try {
+      await _methodChannel.invokeMethod('cancel');
+    } on PlatformException catch (e) {
+      print("Plugin error: ${e.message}");
+    }
+  }
 
   /// Parses the given [command] into arguments.
-  List<String> parseArguments(String command) {
+  static List<String> parseArguments(String command) {
     List<String> argumentList = new List();
     StringBuffer currentArgument = new StringBuffer();
 
@@ -445,4 +439,45 @@ class FlutterFFmpeg {
 
     return argumentList;
   }
+}
+
+class FlutterFFprobe {
+  static const MethodChannel _methodChannel =
+      const MethodChannel('flutter_ffmpeg');
+
+  /// Executes FFprobe with [commandArguments] provided.
+  Future<int> executeWithArguments(List<String> arguments) async {
+    try {
+      final Map<dynamic, dynamic> result = await _methodChannel
+          .invokeMethod('executeFFprobeWithArguments', {'arguments': arguments});
+      return result['rc'];
+    } on PlatformException catch (e) {
+      print("Plugin error: ${e.message}");
+      return -1;
+    }
+  }
+
+  /// Executes FFprobe [command] provided.
+  Future<int> execute(String command) async {
+    try {
+      final Map<dynamic, dynamic> result = await _methodChannel.invokeMethod(
+          'executeFFprobeWithArguments', {'arguments': FlutterFFmpeg.parseArguments(command)});
+      return result['rc'];
+    } on PlatformException catch (e) {
+      print("Plugin error: ${e.message}");
+      return -1;
+    }
+  }
+
+  /// Returns media information for given [path]
+  Future<Map<dynamic, dynamic>> getMediaInformation(String path) async {
+    try {
+      return await _methodChannel.invokeMethod(
+          'getMediaInformation', {'path': path});
+    } on PlatformException catch (e) {
+      print("Plugin error: ${e.message}");
+      return null;
+    }
+  }
+
 }

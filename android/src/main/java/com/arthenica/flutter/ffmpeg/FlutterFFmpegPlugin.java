@@ -121,23 +121,22 @@ public class FlutterFFmpegPlugin implements MethodCallHandler, EventChannel.Stre
 
         } else if (call.method.equals("getFFmpegVersion")) {
 
-            final String version = FFmpeg.getFFmpegVersion();
+            final String version = Config.getFFmpegVersion();
             flutterFFmpegResultHandler.success(result, toStringMap(KEY_VERSION, version));
 
-        } else if (call.method.equals("executeWithArguments")) {
+        } else if (call.method.equals("executeFFmpegWithArguments")) {
 
             List<String> arguments = call.argument("arguments");
 
-            final FlutterFFmpegExecuteAsyncArgumentsTask asyncTask = new FlutterFFmpegExecuteAsyncArgumentsTask(flutterFFmpegResultHandler, arguments, result);
+            final FlutterFFmpegExecuteFFmpegAsyncArgumentsTask asyncTask = new FlutterFFmpegExecuteFFmpegAsyncArgumentsTask(arguments, flutterFFmpegResultHandler, result);
             asyncTask.execute("dummy-trigger");
 
-        } else if (call.method.equals("execute")) {
+        } else if (call.method.equals("executeFFprobeWithArguments")) {
 
-            String command = call.argument("command");
-            String delimiter = call.argument("delimiter");
+            List<String> arguments = call.argument("arguments");
 
-            final FlutterFFmpegExecuteAsyncCommandTask asyncTask = new FlutterFFmpegExecuteAsyncCommandTask(flutterFFmpegResultHandler, delimiter, result);
-            asyncTask.execute(command);
+            final FlutterFFmpegExecuteFFprobeAsyncArgumentsTask asyncTask = new FlutterFFmpegExecuteFFprobeAsyncArgumentsTask(arguments, flutterFFmpegResultHandler, result);
+            asyncTask.execute("dummy-trigger");
 
         } else if (call.method.equals("cancel")) {
 
@@ -224,12 +223,12 @@ public class FlutterFFmpegPlugin implements MethodCallHandler, EventChannel.Stre
 
         } else if (call.method.equals("getLastReturnCode")) {
 
-            int lastReturnCode = FFmpeg.getLastReturnCode();
+            int lastReturnCode = Config.getLastReturnCode();
             flutterFFmpegResultHandler.success(result, toIntMap(KEY_LAST_RC, lastReturnCode));
 
         } else if (call.method.equals("getLastCommandOutput")) {
 
-            final String lastCommandOutput = FFmpeg.getLastCommandOutput();
+            final String lastCommandOutput = Config.getLastCommandOutput();
             flutterFFmpegResultHandler.success(result, toStringMap(KEY_LAST_COMMAND_OUTPUT, lastCommandOutput));
 
         } else if (call.method.equals("getMediaInformation")) {
@@ -239,8 +238,8 @@ public class FlutterFFmpegPlugin implements MethodCallHandler, EventChannel.Stre
                 timeout = 10000;
             }
 
-            final FlutterFFmpegGetMediaInformationAsyncTask asyncTask = new FlutterFFmpegGetMediaInformationAsyncTask(flutterFFmpegResultHandler, timeout, result);
-            asyncTask.execute(path);
+            final FlutterFFmpegGetMediaInformationAsyncTask asyncTask = new FlutterFFmpegGetMediaInformationAsyncTask(path, flutterFFmpegResultHandler, result);
+            asyncTask.execute();
 
         } else if (call.method.equals("registerNewFFmpegPipe")) {
 

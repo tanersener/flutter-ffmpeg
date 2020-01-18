@@ -113,7 +113,9 @@ class FlutterFFmpegTestAppState extends State<MainPage>
   static const String ASSET_2 = "2.jpg";
   static const String ASSET_3 = "3.jpg";
 
+  final FlutterFFmpegConfig _flutterFFmpegConfig = new FlutterFFmpegConfig();
   final FlutterFFmpeg _flutterFFmpeg = new FlutterFFmpeg();
+  final FlutterFFprobe _flutterFFprobe = new FlutterFFprobe();
 
   TextEditingController _commandController;
   TabController _controller;
@@ -169,7 +171,7 @@ class FlutterFFmpegTestAppState extends State<MainPage>
     testParseDoubleQuotesAndEscapesInCommand();
   }
 
-  void testRunCommand() {
+  void testRunFFmpegCommand() {
     getLastReturnCode().then((rc) => print("Last rc: $rc"));
     getLastCommandOutput().then((output) =>
         debugPrint("Last command output: \"$output\"", wrapWidth: 1024));
@@ -179,11 +181,11 @@ class FlutterFFmpegTestAppState extends State<MainPage>
     testParseArguments();
     registerNewFFmpegPipe().then((path) => print("New FFmpeg pipe: $path"));
 
-    print("Testing COMMAND.");
+    print("Testing FFmpeg COMMAND.");
 
     // ENABLE LOG CALLBACK ON EACH CALL
-    _flutterFFmpeg.enableLogCallback(commandOutputLogCallback);
-    _flutterFFmpeg.enableStatisticsCallback(statisticsCallback);
+    _flutterFFmpegConfig.enableLogCallback(commandOutputLogCallback);
+    _flutterFFmpegConfig.enableStatisticsCallback(statisticsCallback);
 
     // CLEAR OUTPUT ON EACH EXECUTION
     _commandOutput = "";
@@ -204,9 +206,38 @@ class FlutterFFmpegTestAppState extends State<MainPage>
     // disableLogs();
     // enableLogs();
 
-    execute(_commandController.text)
+    executeFFmpeg(_commandController.text)
         .then((rc) => print("FFmpeg process exited with rc $rc"));
     // executeWithArguments(_commandController.text.split(" ")).then((rc) => print("FFmpeg process exited with rc $rc"));
+
+    setState(() {});
+  }
+
+  void testRunFFprobeCommand() {
+    getLastReturnCode().then((rc) => print("Last rc: $rc"));
+    getLastCommandOutput().then((output) =>
+        debugPrint("Last command output: \"$output\"", wrapWidth: 1024));
+
+    print("Testing ParseArguments.");
+
+    testParseArguments();
+    registerNewFFmpegPipe().then((path) => print("New FFmpeg pipe: $path"));
+
+    print("Testing FFprobe COMMAND.");
+
+    // ENABLE LOG CALLBACK ON EACH CALL
+    _flutterFFmpegConfig.enableLogCallback(commandOutputLogCallback);
+    _flutterFFmpegConfig.enableStatisticsCallback(statisticsCallback);
+
+    // CLEAR OUTPUT ON EACH EXECUTION
+    _commandOutput = "";
+
+    VideoUtil.tempDirectory.then((tempDirectory) {
+      setFontconfigConfigurationPath(tempDirectory.path);
+    });
+
+    executeFFprobe(_commandController.text)
+        .then((rc) => print("FFprobe process exited with rc $rc"));
 
     setState(() {});
   }
@@ -215,8 +246,8 @@ class FlutterFFmpegTestAppState extends State<MainPage>
     print("Testing Get Media Information.");
 
     // ENABLE LOG CALLBACK ON EACH CALL
-    _flutterFFmpeg.enableLogCallback(commandOutputLogCallback);
-    _flutterFFmpeg.enableStatisticsCallback(null);
+    _flutterFFmpegConfig.enableLogCallback(commandOutputLogCallback);
+    _flutterFFmpegConfig.enableStatisticsCallback(null);
 
     // CLEAR OUTPUT ON EACH EXECUTION
     _commandOutput = "";
@@ -284,8 +315,8 @@ class FlutterFFmpegTestAppState extends State<MainPage>
     print("Testing VIDEO.");
 
     // ENABLE LOG CALLBACK ON EACH CALL
-    _flutterFFmpeg.enableLogCallback(encodeOutputLogCallback);
-    _flutterFFmpeg.enableStatisticsCallback(statisticsCallback);
+    _flutterFFmpegConfig.enableLogCallback(encodeOutputLogCallback);
+    _flutterFFmpegConfig.enableStatisticsCallback(statisticsCallback);
 
     // CLEAR OUTPUT ON EACH EXECUTION
     _encodeOutput = "";
@@ -301,13 +332,11 @@ class FlutterFFmpegTestAppState extends State<MainPage>
           final String ffmpegCodec = getFFmpegCodecName();
 
           VideoUtil.assetPath(videoPath).then((fullVideoPath) {
-            execute(VideoUtil.generateEncodeVideoScript(image1Path, image2Path,
+            executeFFmpeg(VideoUtil.generateEncodeVideoScript(image1Path, image2Path,
                     image3Path, fullVideoPath, ffmpegCodec, customOptions))
                 .then((rc) {
               if (rc == 0) {
-                getLastCommandOutput().then((output) => debugPrint(
-                    "Last command output: \"$output\"",
-                    wrapWidth: 1024));
+                executeFFprobe("-i " + fullVideoPath);
               }
             });
 
@@ -359,19 +388,27 @@ class FlutterFFmpegTestAppState extends State<MainPage>
   }
 
   Future<String> getFFmpegVersion() async {
-    return await _flutterFFmpeg.getFFmpegVersion();
+    return await _flutterFFmpegConfig.getFFmpegVersion();
   }
 
   Future<String> getPlatform() async {
-    return await _flutterFFmpeg.getPlatform();
+    return await _flutterFFmpegConfig.getPlatform();
   }
 
-  Future<int> executeWithArguments(List arguments) async {
+  Future<int> executeFFmpegWithArguments(List arguments) async {
     return await _flutterFFmpeg.executeWithArguments(arguments);
   }
 
-  Future<int> execute(String command) async {
+  Future<int> executeFFmpeg(String command) async {
     return await _flutterFFmpeg.execute(command);
+  }
+
+  Future<int> executeFFprobeWithArguments(List arguments) async {
+    return await _flutterFFprobe.executeWithArguments(arguments);
+  }
+
+  Future<int> executeFFprobe(String command) async {
+    return await _flutterFFprobe.execute(command);
   }
 
   Future<void> cancel() async {
@@ -379,72 +416,72 @@ class FlutterFFmpegTestAppState extends State<MainPage>
   }
 
   Future<void> disableRedirection() async {
-    return await _flutterFFmpeg.disableRedirection();
+    return await _flutterFFmpegConfig.disableRedirection();
   }
 
   Future<int> getLogLevel() async {
-    return await _flutterFFmpeg.getLogLevel();
+    return await _flutterFFmpegConfig.getLogLevel();
   }
 
   Future<void> setLogLevel(int logLevel) async {
-    return await _flutterFFmpeg.setLogLevel(logLevel);
+    return await _flutterFFmpegConfig.setLogLevel(logLevel);
   }
 
   Future<void> enableLogs() async {
-    return await _flutterFFmpeg.enableLogs();
+    return await _flutterFFmpegConfig.enableLogs();
   }
 
   Future<void> disableLogs() async {
-    return await _flutterFFmpeg.disableLogs();
+    return await _flutterFFmpegConfig.disableLogs();
   }
 
   Future<void> enableStatistics() async {
-    return await _flutterFFmpeg.enableStatistics();
+    return await _flutterFFmpegConfig.enableStatistics();
   }
 
   Future<void> disableStatistics() async {
-    return await _flutterFFmpeg.disableStatistics();
+    return await _flutterFFmpegConfig.disableStatistics();
   }
 
   Future<Map<dynamic, dynamic>> getLastReceivedStatistics() async {
-    return await _flutterFFmpeg.getLastReceivedStatistics();
+    return await _flutterFFmpegConfig.getLastReceivedStatistics();
   }
 
   Future<void> resetStatistics() async {
-    return await _flutterFFmpeg.resetStatistics();
+    return await _flutterFFmpegConfig.resetStatistics();
   }
 
   Future<void> setFontconfigConfigurationPath(String path) async {
-    return await _flutterFFmpeg.setFontconfigConfigurationPath(path);
+    return await _flutterFFmpegConfig.setFontconfigConfigurationPath(path);
   }
 
   Future<void> setFontDirectory(
       String fontDirectory, Map<String, String> fontNameMap) async {
-    return await _flutterFFmpeg.setFontDirectory(fontDirectory, fontNameMap);
+    return await _flutterFFmpegConfig.setFontDirectory(fontDirectory, fontNameMap);
   }
 
   Future<String> getPackageName() async {
-    return await _flutterFFmpeg.getPackageName();
+    return await _flutterFFmpegConfig.getPackageName();
   }
 
   Future<List<dynamic>> getExternalLibraries() async {
-    return await _flutterFFmpeg.getExternalLibraries();
+    return await _flutterFFmpegConfig.getExternalLibraries();
   }
 
   Future<int> getLastReturnCode() async {
-    return await _flutterFFmpeg.getLastReturnCode();
+    return await _flutterFFmpegConfig.getLastReturnCode();
   }
 
   Future<String> getLastCommandOutput() async {
-    return await _flutterFFmpeg.getLastCommandOutput();
+    return await _flutterFFmpegConfig.getLastCommandOutput();
   }
 
   Future<Map<dynamic, dynamic>> getMediaInformation(String path) async {
-    return await _flutterFFmpeg.getMediaInformation(path);
+    return await _flutterFFprobe.getMediaInformation(path);
   }
 
   Future<String> registerNewFFmpegPipe() async {
-    return await _flutterFFmpeg.registerNewFFmpegPipe();
+    return await _flutterFFmpegConfig.registerNewFFmpegPipe();
   }
 
   void _changedCodec(String selectedCodec) {
@@ -595,9 +632,9 @@ class FlutterFFmpegTestAppState extends State<MainPage>
                 Container(
                   padding: const EdgeInsets.only(bottom: 20),
                   child: new InkWell(
-                    onTap: () => testRunCommand(),
+                    onTap: () => testRunFFmpegCommand(),
                     child: new Container(
-                      width: 100,
+                      width: 130,
                       height: 38,
                       decoration: new BoxDecoration(
                         color: Color(0xFF2ECC71),
@@ -605,7 +642,30 @@ class FlutterFFmpegTestAppState extends State<MainPage>
                       ),
                       child: new Center(
                         child: new Text(
-                          'RUN',
+                          'RUN FFMPEG',
+                          style: new TextStyle(
+                              fontSize: 14.0,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.only(bottom: 20),
+                  child: new InkWell(
+                    onTap: () => testRunFFprobeCommand(),
+                    child: new Container(
+                      width: 130,
+                      height: 38,
+                      decoration: new BoxDecoration(
+                        color: Color(0xFF2ECC71),
+                        borderRadius: new BorderRadius.circular(5),
+                      ),
+                      child: new Center(
+                        child: new Text(
+                          'RUN FFPROBE',
                           style: new TextStyle(
                               fontSize: 14.0,
                               fontWeight: FontWeight.bold,
@@ -702,7 +762,7 @@ class FlutterFFmpegTestAppState extends State<MainPage>
   }
 
   void testParseSimpleCommand() {
-    var argumentArray = _flutterFFmpeg.parseArguments(
+    var argumentArray = FlutterFFmpeg.parseArguments(
         "-hide_banner   -loop 1  -i file.jpg  -filter_complex  [0:v]setpts=PTS-STARTPTS[video] -map [video] -vsync 2 -async 1  video.mp4");
 
     assert(argumentArray != null);
@@ -725,7 +785,7 @@ class FlutterFFmpegTestAppState extends State<MainPage>
   }
 
   void testParseSingleQuotesInCommand() {
-    var argumentArray = _flutterFFmpeg.parseArguments(
+    var argumentArray = FlutterFFmpeg.parseArguments(
         "-loop 1 'file one.jpg'  -filter_complex  '[0:v]setpts=PTS-STARTPTS[video]'  -map  [video]  video.mp4 ");
 
     assert(argumentArray != null);
@@ -742,7 +802,7 @@ class FlutterFFmpegTestAppState extends State<MainPage>
   }
 
   void testParseDoubleQuotesInCommand() {
-    var argumentArray = _flutterFFmpeg.parseArguments(
+    var argumentArray = FlutterFFmpeg.parseArguments(
         "-loop  1 \"file one.jpg\"   -filter_complex \"[0:v]setpts=PTS-STARTPTS[video]\"  -map  [video]  video.mp4 ");
 
     assert(argumentArray != null);
@@ -757,7 +817,7 @@ class FlutterFFmpegTestAppState extends State<MainPage>
     assert("[video]" == argumentArray[6]);
     assert("video.mp4" == argumentArray[7]);
 
-    argumentArray = _flutterFFmpeg.parseArguments(
+    argumentArray = FlutterFFmpeg.parseArguments(
         " -i   file:///tmp/input.mp4 -vcodec libx264 -vf \"scale=1024:1024,pad=width=1024:height=1024:x=0:y=0:color=black\"  -acodec copy  -q:v 0  -q:a   0 video.mp4");
 
     assert(argumentArray != null);
@@ -780,7 +840,7 @@ class FlutterFFmpegTestAppState extends State<MainPage>
   }
 
   void testParseDoubleQuotesAndEscapesInCommand() {
-    var argumentArray = _flutterFFmpeg.parseArguments(
+    var argumentArray = FlutterFFmpeg.parseArguments(
         "  -i   file:///tmp/input.mp4 -vf \"subtitles=file:///tmp/subtitles.srt:force_style=\'FontSize=16,PrimaryColour=&HFFFFFF&\'\" -vcodec libx264   -acodec copy  -q:v 0 -q:a  0  video.mp4");
 
     assert(argumentArray != null);
@@ -802,7 +862,7 @@ class FlutterFFmpegTestAppState extends State<MainPage>
     assert("0" == argumentArray[11]);
     assert("video.mp4" == argumentArray[12]);
 
-    argumentArray = _flutterFFmpeg.parseArguments(
+    argumentArray = FlutterFFmpeg.parseArguments(
         "  -i   file:///tmp/input.mp4 -vf \"subtitles=file:///tmp/subtitles.srt:force_style=\\\"FontSize=16,PrimaryColour=&HFFFFFF&\\\"\" -vcodec libx264   -acodec copy  -q:v 0 -q:a  0  video.mp4");
 
     assert(argumentArray != null);

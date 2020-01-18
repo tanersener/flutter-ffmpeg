@@ -18,6 +18,11 @@
  */
 
 class LogLevel {
+  ///
+  /// This log level is used to specify logs printed to stderr by ffmpeg.
+  /// Logs that has this level are not filtered and always redirected.
+  static const int AV_LOG_STDERR = -16;
+
   /// Print no output.
   static const int AV_LOG_QUIET = -8;
 
@@ -68,6 +73,8 @@ class LogLevel {
         return "FATAL";
       case LogLevel.AV_LOG_PANIC:
         return "PANIC";
+      case LogLevel.AV_LOG_STDERR:
+        return "STDERR";
       case LogLevel.AV_LOG_QUIET:
       default:
         return "";
