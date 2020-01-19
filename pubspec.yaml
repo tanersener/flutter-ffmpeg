@@ -16,5 +16,8 @@ dev_dependencies:
 
 flutter:
   plugin:
-    androidPackage: com.arthenica.flutter.ffmpeg
-    pluginClass: FlutterFFmpegPlugin
+    android:
+      package: com.arthenica.flutter.ffmpeg
+      pluginClass: FlutterFFmpegPlugin
+    ios:
+      pluginClass: FlutterFFmpegPlugin
