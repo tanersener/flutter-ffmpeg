@@ -1,9 +1,9 @@
 PODS:
   - Flutter (1.0.0)
-  - flutter_ffmpeg/full (0.2.8):
+  - flutter_ffmpeg/full (0.2.10):
     - Flutter
-    - mobile-ffmpeg-full (= 4.3)
-  - mobile-ffmpeg-full (4.3)
+    - mobile-ffmpeg-full (= 4.3.1)
+  - mobile-ffmpeg-full (4.3.1)
   - path_provider (0.0.1):
     - Flutter
 
@@ -26,8 +26,8 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
-  flutter_ffmpeg: c515a3a8a2d4e070fd684e85b2dd2084c749a585
-  mobile-ffmpeg-full: af38edede256cb1d4fcbf10dddef39bf529ecd50
+  flutter_ffmpeg: cf0a6941ef67e88248c998cc3e34f8acb0b4e454
+  mobile-ffmpeg-full: 0da7d44a6f9d5573daec359dafa7537f4682278f
   path_provider: fb74bd0465e96b594bb3b5088ee4a4e7bb1f2a9d
 
 PODFILE CHECKSUM: 67dc48fdfc7437590697cf64597a0949c9173184

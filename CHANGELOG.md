@@ -1,3 +1,6 @@
+## 0.2.10
+- Fixes issue #94
+
 ## 0.2.9
 - Implements FFprobe
 - Add concurrent execution support

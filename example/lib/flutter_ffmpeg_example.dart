@@ -336,7 +336,7 @@ class FlutterFFmpegTestAppState extends State<MainPage>
                     image3Path, fullVideoPath, ffmpegCodec, customOptions))
                 .then((rc) {
               if (rc == 0) {
-                executeFFprobe("-i " + fullVideoPath);
+                testGetMediaInformation(fullVideoPath);
               }
             });
 
