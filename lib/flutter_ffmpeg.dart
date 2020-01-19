@@ -369,7 +369,8 @@ class FlutterFFmpeg {
   Future<int> execute(String command) async {
     try {
       final Map<dynamic, dynamic> result = await _methodChannel.invokeMethod(
-          'executeFFmpegWithArguments', {'arguments': FlutterFFmpeg.parseArguments(command)});
+          'executeFFmpegWithArguments',
+          {'arguments': FlutterFFmpeg.parseArguments(command)});
       return result['rc'];
     } on PlatformException catch (e) {
       print("Plugin error: ${e.message}");
@@ -448,8 +449,8 @@ class FlutterFFprobe {
   /// Executes FFprobe with [commandArguments] provided.
   Future<int> executeWithArguments(List<String> arguments) async {
     try {
-      final Map<dynamic, dynamic> result = await _methodChannel
-          .invokeMethod('executeFFprobeWithArguments', {'arguments': arguments});
+      final Map<dynamic, dynamic> result = await _methodChannel.invokeMethod(
+          'executeFFprobeWithArguments', {'arguments': arguments});
       return result['rc'];
     } on PlatformException catch (e) {
       print("Plugin error: ${e.message}");
@@ -461,7 +462,8 @@ class FlutterFFprobe {
   Future<int> execute(String command) async {
     try {
       final Map<dynamic, dynamic> result = await _methodChannel.invokeMethod(
-          'executeFFprobeWithArguments', {'arguments': FlutterFFmpeg.parseArguments(command)});
+          'executeFFprobeWithArguments',
+          {'arguments': FlutterFFmpeg.parseArguments(command)});
       return result['rc'];
     } on PlatformException catch (e) {
       print("Plugin error: ${e.message}");
@@ -472,12 +474,11 @@ class FlutterFFprobe {
   /// Returns media information for given [path]
   Future<Map<dynamic, dynamic>> getMediaInformation(String path) async {
     try {
-      return await _methodChannel.invokeMethod(
-          'getMediaInformation', {'path': path});
+      return await _methodChannel
+          .invokeMethod('getMediaInformation', {'path': path});
     } on PlatformException catch (e) {
       print("Plugin error: ${e.message}");
       return null;
     }
   }
-
 }
