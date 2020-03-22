@@ -175,7 +175,13 @@ public class FlutterFFmpegPlugin implements MethodCallHandler, EventChannel.Stre
 
         } else if (call.method.equals("disableLogs")) {
 
-            Config.enableLogCallback(null);
+            Config.enableLogCallback(new LogCallback() {
+
+                @Override
+                public void apply(LogMessage message) {
+                    // EMPTY LOG CALLBACK
+                }
+            });
 
         } else if (call.method.equals("enableStatistics")) {
 

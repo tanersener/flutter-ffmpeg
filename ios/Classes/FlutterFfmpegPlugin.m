@@ -18,6 +18,7 @@
  */
 
 #import "FlutterFFmpegPlugin.h"
+#import "EmptyLogDelegate.h"
 
 #import <mobileffmpeg/ArchDetect.h>
 #import <mobileffmpeg/MobileFFmpegConfig.h>
@@ -53,6 +54,16 @@ static NSString *const EVENT_STAT = @"FlutterFFmpegStatisticsCallback";
  */
 @implementation FlutterFFmpegPlugin {
     FlutterEventSink _eventSink;
+    EmptyLogDelegate *_emptyLogDelegate;
+}
+
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        _emptyLogDelegate = [[EmptyLogDelegate alloc] init];
+    }
+
+    return self;
 }
 
 - (FlutterError *)onListenWithArguments:(id)arguments eventSink:(FlutterEventSink)eventSink {
@@ -145,7 +156,7 @@ static NSString *const EVENT_STAT = @"FlutterFFmpegStatisticsCallback";
 
     } else if ([@"disableLogs" isEqualToString:call.method]) {
 
-        [MobileFFmpegConfig setLogDelegate:nil];
+        [MobileFFmpegConfig setLogDelegate:_emptyLogDelegate];
 
     } else if ([@"enableStatistics" isEqualToString:call.method]) {
 
