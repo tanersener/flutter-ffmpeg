@@ -1,9 +1,12 @@
+## 0.2.11
+- Allows modifying mobile-ffmpeg version for android
+
 ## 0.2.10
 - Fixes issue #94
 
 ## 0.2.9
 - Implements FFprobe
-- Add concurrent execution support
+- Adds concurrent execution support
 - Re-organises plugin classes
 - iOS releases depend on iconv system library instead of iconv external library
 
