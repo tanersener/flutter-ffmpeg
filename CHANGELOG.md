@@ -1,5 +1,7 @@
 ## 0.2.11
+- Depends on mobile-ffmpeg v4.4
 - Allows modifying mobile-ffmpeg version for android
+- Fixes issue #115, #120 and #178
 
 ## 0.2.10
 - Fixes issue #94
