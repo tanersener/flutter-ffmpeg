@@ -20,6 +20,7 @@
 import 'dart:async';
 
 import 'package:flutter/services.dart';
+import 'package:flutter_ffmpeg/media_information.dart';
 
 class FlutterFFmpegConfig {
   static const MethodChannel _methodChannel =
@@ -27,8 +28,9 @@ class FlutterFFmpegConfig {
   static const EventChannel _eventChannel =
       const EventChannel('flutter_ffmpeg_event');
 
-  Function(int level, String message) logCallback;
+  Function(int executionId, int level, String message) logCallback;
   Function(
+      int executionId,
       int time,
       int size,
       double bitrate,
@@ -61,12 +63,13 @@ class FlutterFFmpegConfig {
           eventMap['FlutterFFmpegStatisticsCallback'];
 
       if (logEvent != null) {
+        int executionId = logEvent['executionId'];
         int level = logEvent['level'];
         String message = logEvent['log'];
 
         if (this.logCallback == null) {
           if (message.length > 0) {
-            // PRINT ALREADY ADDS NEW LINE. SO REMOVE THIS ONE
+            // PRINT ALREADY ADDS A NEW LINE. SO REMOVE THE EXISTING ONE
             if (message.endsWith('\n')) {
               print(message.substring(0, message.length - 1));
             } else {
@@ -74,12 +77,13 @@ class FlutterFFmpegConfig {
             }
           }
         } else {
-          this.logCallback(level, message);
+          this.logCallback(executionId, level, message);
         }
       }
 
       if (statisticsEvent != null) {
         if (this.statisticsCallback != null) {
+          int executionId = statisticsEvent['executionId'];
           int time = statisticsEvent['time'];
           int size = statisticsEvent['size'];
           double bitrate = _doublePrecision(statisticsEvent['bitrate'], 2);
@@ -89,8 +93,8 @@ class FlutterFFmpegConfig {
               _doublePrecision(statisticsEvent['videoQuality'], 2);
           double videoFps = _doublePrecision(statisticsEvent['videoFps'], 2);
 
-          this.statisticsCallback(time, size, bitrate, speed, videoFrameNumber,
-              videoQuality, videoFps);
+          this.statisticsCallback(executionId, time, size, bitrate, speed,
+              videoFrameNumber, videoQuality, videoFps);
         }
       }
     }
@@ -114,9 +118,9 @@ class FlutterFFmpegConfig {
       final Map<dynamic, dynamic> result =
           await _methodChannel.invokeMethod('getFFmpegVersion');
       return result['version'];
-    } on PlatformException catch (e) {
-      print("Plugin error: ${e.message}");
-      return null;
+    } on PlatformException catch (e, stack) {
+      print("Plugin getFFmpegVersion error: ${e.message}");
+      return Future.error("getFFmpegVersion failed.", stack);
     }
   }
 
@@ -126,9 +130,9 @@ class FlutterFFmpegConfig {
       final Map<dynamic, dynamic> result =
           await _methodChannel.invokeMethod('getPlatform');
       return result['platform'];
-    } on PlatformException catch (e) {
-      print("Plugin error: ${e.message}");
-      return null;
+    } on PlatformException catch (e, stack) {
+      print("Plugin getPlatform error: ${e.message}");
+      return Future.error("getPlatform failed.", stack);
     }
   }
 
@@ -137,7 +141,7 @@ class FlutterFFmpegConfig {
     try {
       await _methodChannel.invokeMethod('enableRedirection');
     } on PlatformException catch (e) {
-      print("Plugin error: ${e.message}");
+      print("Plugin enableRedirection error: ${e.message}");
     }
   }
 
@@ -152,7 +156,7 @@ class FlutterFFmpegConfig {
     try {
       await _methodChannel.invokeMethod('disableRedirection');
     } on PlatformException catch (e) {
-      print("Plugin error: ${e.message}");
+      print("Plugin disableRedirection error: ${e.message}");
     }
   }
 
@@ -162,9 +166,9 @@ class FlutterFFmpegConfig {
       final Map<dynamic, dynamic> result =
           await _methodChannel.invokeMethod('getLogLevel');
       return result['level'];
-    } on PlatformException catch (e) {
-      print("Plugin error: ${e.message}");
-      return -1;
+    } on PlatformException catch (e, stack) {
+      print("Plugin getLogLevel error: ${e.message}");
+      return Future.error("getLogLevel failed.", stack);
     }
   }
 
@@ -173,7 +177,7 @@ class FlutterFFmpegConfig {
     try {
       await _methodChannel.invokeMethod('setLogLevel', {'level': logLevel});
     } on PlatformException catch (e) {
-      print("Plugin error: ${e.message}");
+      print("Plugin setLogLevel error: ${e.message}");
     }
   }
 
@@ -182,7 +186,7 @@ class FlutterFFmpegConfig {
     try {
       await _methodChannel.invokeMethod('enableLogs');
     } on PlatformException catch (e) {
-      print("Plugin error: ${e.message}");
+      print("Plugin enableLogs error: ${e.message}");
     }
   }
 
@@ -192,7 +196,7 @@ class FlutterFFmpegConfig {
     try {
       await _methodChannel.invokeMethod('disableLogs');
     } on PlatformException catch (e) {
-      print("Plugin error: ${e.message}");
+      print("Plugin disableLogs error: ${e.message}");
     }
   }
 
@@ -201,7 +205,7 @@ class FlutterFFmpegConfig {
     try {
       await _methodChannel.invokeMethod('enableStatistics');
     } on PlatformException catch (e) {
-      print("Plugin error: ${e.message}");
+      print("Plugin enableStatistics error: ${e.message}");
     }
   }
 
@@ -212,28 +216,36 @@ class FlutterFFmpegConfig {
     try {
       await _methodChannel.invokeMethod('disableStatistics');
     } on PlatformException catch (e) {
-      print("Plugin error: ${e.message}");
+      print("Plugin disableStatistics error: ${e.message}");
     }
   }
 
   /// Sets a callback to redirect FFmpeg logs. [newCallback] is a new log callback function, use null to disable a previously defined callback
-  void enableLogCallback(Function(int level, String message) newCallback) {
+  void enableLogCallback(
+      Function(int executionId, int level, String message) newCallback) {
     try {
       this.logCallback = newCallback;
     } on PlatformException catch (e) {
-      print("Plugin error: ${e.message}");
+      print("Plugin enableLogCallback error: ${e.message}");
     }
   }
 
   /// Sets a callback to redirect FFmpeg statistics. [newCallback] is a new statistics callback function, use null to disable a previously defined callback
   void enableStatisticsCallback(
-      Function(int time, int size, double bitrate, double speed,
-              int videoFrameNumber, double videoQuality, double videoFps)
+      Function(
+              int executionId,
+              int time,
+              int size,
+              double bitrate,
+              double speed,
+              int videoFrameNumber,
+              double videoQuality,
+              double videoFps)
           newCallback) {
     try {
       this.statisticsCallback = newCallback;
     } on PlatformException catch (e) {
-      print("Plugin error: ${e.message}");
+      print("Plugin enableStatisticsCallback error: ${e.message}");
     }
   }
 
@@ -244,9 +256,9 @@ class FlutterFFmpegConfig {
       final Map<dynamic, dynamic> result =
           await _methodChannel.invokeMethod('getLastReceivedStatistics');
       return result;
-    } on PlatformException catch (e) {
-      print("Plugin error: ${e.message}");
-      return null;
+    } on PlatformException catch (e, stack) {
+      print("Plugin getLastReceivedStatistics error: ${e.message}");
+      return Future.error("getLastReceivedStatistics failed.", stack);
     }
   }
 
@@ -255,7 +267,7 @@ class FlutterFFmpegConfig {
     try {
       await _methodChannel.invokeMethod('resetStatistics');
     } on PlatformException catch (e) {
-      print("Plugin error: ${e.message}");
+      print("Plugin resetStatistics error: ${e.message}");
     }
   }
 
@@ -265,7 +277,7 @@ class FlutterFFmpegConfig {
       await _methodChannel
           .invokeMethod('setFontconfigConfigurationPath', {'path': path});
     } on PlatformException catch (e) {
-      print("Plugin error: ${e.message}");
+      print("Plugin setFontconfigConfigurationPath error: ${e.message}");
     }
   }
 
@@ -282,7 +294,7 @@ class FlutterFFmpegConfig {
     try {
       await _methodChannel.invokeMethod('setFontDirectory', parameters);
     } on PlatformException catch (e) {
-      print("Plugin error: ${e.message}");
+      print("Plugin setFontDirectory error: ${e.message}");
     }
   }
 
@@ -292,9 +304,9 @@ class FlutterFFmpegConfig {
       final Map<dynamic, dynamic> result =
           await _methodChannel.invokeMethod('getPackageName');
       return result['packageName'];
-    } on PlatformException catch (e) {
-      print("Plugin error: ${e.message}");
-      return null;
+    } on PlatformException catch (e, stack) {
+      print("Plugin getPackageName error: ${e.message}");
+      return Future.error("getPackageName failed.", stack);
     }
   }
 
@@ -304,9 +316,9 @@ class FlutterFFmpegConfig {
       final List<dynamic> result =
           await _methodChannel.invokeMethod('getExternalLibraries');
       return result;
-    } on PlatformException catch (e) {
-      print("Plugin error: ${e.message}");
-      return null;
+    } on PlatformException catch (e, stack) {
+      print("Plugin getExternalLibraries error: ${e.message}");
+      return Future.error("getExternalLibraries failed.", stack);
     }
   }
 
@@ -316,9 +328,9 @@ class FlutterFFmpegConfig {
       final Map<dynamic, dynamic> result =
           await _methodChannel.invokeMethod('getLastReturnCode');
       return result['lastRc'];
-    } on PlatformException catch (e) {
-      print("Plugin error: ${e.message}");
-      return -1;
+    } on PlatformException catch (e, stack) {
+      print("Plugin getLastReturnCode error: ${e.message}");
+      return Future.error("getLastReturnCode failed.", stack);
     }
   }
 
@@ -330,9 +342,9 @@ class FlutterFFmpegConfig {
       final Map<dynamic, dynamic> result =
           await _methodChannel.invokeMethod('getLastCommandOutput');
       return result['lastCommandOutput'];
-    } on PlatformException catch (e) {
-      print("Plugin error: ${e.message}");
-      return null;
+    } on PlatformException catch (e, stack) {
+      print("Plugin getLastCommandOutput error: ${e.message}");
+      return Future.error("getLastCommandOutput failed.", stack);
     }
   }
 
@@ -342,9 +354,23 @@ class FlutterFFmpegConfig {
       final Map<dynamic, dynamic> result =
           await _methodChannel.invokeMethod('registerNewFFmpegPipe');
       return result['pipe'];
+    } on PlatformException catch (e, stack) {
+      print("Plugin registerNewFFmpegPipe error: ${e.message}");
+      return Future.error("registerNewFFmpegPipe failed.", stack);
+    }
+  }
+
+  /// Sets an environment variable
+  Future<void> setEnvironmentVariable(
+      String variableName, String variableValue) async {
+    try {
+      var parameters = {
+        'variableName': variableName,
+        'variableValue': variableValue
+      };
+      await _methodChannel.invokeMethod('setEnvironmentVariable', parameters);
     } on PlatformException catch (e) {
-      print("Plugin error: ${e.message}");
-      return null;
+      print("Plugin setEnvironmentVariable error: ${e.message}");
     }
   }
 }
@@ -359,9 +385,9 @@ class FlutterFFmpeg {
       final Map<dynamic, dynamic> result = await _methodChannel
           .invokeMethod('executeFFmpegWithArguments', {'arguments': arguments});
       return result['rc'];
-    } on PlatformException catch (e) {
-      print("Plugin error: ${e.message}");
-      return -1;
+    } on PlatformException catch (e, stack) {
+      print("Plugin executeWithArguments error: ${e.message}");
+      return Future.error("executeWithArguments failed.", stack);
     }
   }
 
@@ -372,9 +398,9 @@ class FlutterFFmpeg {
           'executeFFmpegWithArguments',
           {'arguments': FlutterFFmpeg.parseArguments(command)});
       return result['rc'];
-    } on PlatformException catch (e) {
-      print("Plugin error: ${e.message}");
-      return -1;
+    } on PlatformException catch (e, stack) {
+      print("Plugin execute error: ${e.message}");
+      return Future.error("execute failed for $command.", stack);
     }
   }
 
@@ -383,7 +409,7 @@ class FlutterFFmpeg {
     try {
       await _methodChannel.invokeMethod('cancel');
     } on PlatformException catch (e) {
-      print("Plugin error: ${e.message}");
+      print("Plugin cancel error: ${e.message}");
     }
   }
 
@@ -452,9 +478,9 @@ class FlutterFFprobe {
       final Map<dynamic, dynamic> result = await _methodChannel.invokeMethod(
           'executeFFprobeWithArguments', {'arguments': arguments});
       return result['rc'];
-    } on PlatformException catch (e) {
-      print("Plugin error: ${e.message}");
-      return -1;
+    } on PlatformException catch (e, stack) {
+      print("Plugin executeWithArguments error: ${e.message}");
+      return Future.error("executeWithArguments failed.", stack);
     }
   }
 
@@ -465,20 +491,20 @@ class FlutterFFprobe {
           'executeFFprobeWithArguments',
           {'arguments': FlutterFFmpeg.parseArguments(command)});
       return result['rc'];
-    } on PlatformException catch (e) {
-      print("Plugin error: ${e.message}");
-      return -1;
+    } on PlatformException catch (e, stack) {
+      print("Plugin execute error: ${e.message}");
+      return Future.error("execute failed for $command.", stack);
     }
   }
 
-  /// Returns media information for given [path]
-  Future<Map<dynamic, dynamic>> getMediaInformation(String path) async {
+  /// Returns media information for given [path].
+  Future<MediaInformation> getMediaInformation(String path) async {
     try {
-      return await _methodChannel
-          .invokeMethod('getMediaInformation', {'path': path});
-    } on PlatformException catch (e) {
-      print("Plugin error: ${e.message}");
-      return null;
+      return await _methodChannel.invokeMethod('getMediaInformation',
+          {'path': path}).then((value) => new MediaInformation(value));
+    } on PlatformException catch (e, stack) {
+      print("Plugin getMediaInformation error: ${e.message}");
+      return Future.error("getMediaInformation failed for $path.", stack);
     }
   }
 }

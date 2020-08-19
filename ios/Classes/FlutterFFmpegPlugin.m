@@ -20,6 +20,7 @@
 #import "FlutterFFmpegPlugin.h"
 #import "EmptyLogDelegate.h"
 
+#include <stdlib.h>
 #import <mobileffmpeg/ArchDetect.h>
 #import <mobileffmpeg/MobileFFmpegConfig.h>
 #import <mobileffmpeg/MobileFFmpeg.h>
@@ -35,9 +36,11 @@ static NSString *const KEY_LAST_RC = @"lastRc";
 static NSString *const KEY_LAST_COMMAND_OUTPUT = @"lastCommandOutput";
 static NSString *const KEY_PIPE = @"pipe";
 
-static NSString *const KEY_LOG_TEXT = @"log";
+static NSString *const KEY_LOG_EXECUTION_ID = @"executionId";
 static NSString *const KEY_LOG_LEVEL = @"level";
+static NSString *const KEY_LOG_TEXT = @"log";
 
+static NSString *const KEY_STAT_EXECUTION_ID = @"executionId";
 static NSString *const KEY_STAT_TIME = @"time";
 static NSString *const KEY_STAT_SIZE = @"size";
 static NSString *const KEY_STAT_BITRATE = @"bitrate";
@@ -90,8 +93,6 @@ static NSString *const EVENT_STAT = @"FlutterFFmpegStatisticsCallback";
 
     // ARGUMENTS
     NSArray* arguments = call.arguments[@"arguments"];
-    NSString* command = call.arguments[@"command"];
-    NSString* delimiter = call.arguments[@"delimiter"];
 
     if ([@"getPlatform" isEqualToString:call.method]) {
 
@@ -222,6 +223,13 @@ static NSString *const EVENT_STAT = @"FlutterFFmpegStatisticsCallback";
         NSString *pipe = [MobileFFmpegConfig registerNewFFmpegPipe];
         result([FlutterFFmpegPlugin toStringDictionary:KEY_PIPE :pipe]);
 
+    } else if ([@"setEnvironmentVariable" isEqualToString:call.method]) {
+
+        NSString* variableName = call.arguments[@"variableName"];
+        NSString* variableValue = call.arguments[@"variableValue"];
+
+        setenv([variableName UTF8String], [variableValue UTF8String], true);
+
     } else {
 
         result(FlutterMethodNotImplemented);
@@ -229,9 +237,10 @@ static NSString *const EVENT_STAT = @"FlutterFFmpegStatisticsCallback";
     }
 }
 
-- (void)logCallback: (int)level :(NSString*)message {
+- (void)logCallback: (long)executionId :(int)level :(NSString*)message {
     dispatch_async(dispatch_get_main_queue(), ^{
         NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] init];
+        dictionary[KEY_LOG_EXECUTION_ID] = [NSNumber numberWithLong:executionId];
         dictionary[KEY_LOG_LEVEL] = [NSNumber numberWithInt:level];
         dictionary[KEY_LOG_TEXT] = message;
 
@@ -279,6 +288,8 @@ static NSString *const EVENT_STAT = @"FlutterFFmpegStatisticsCallback";
     NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] init];
 
     if (statistics != nil) {
+        dictionary[KEY_STAT_EXECUTION_ID] = [NSNumber numberWithLong: [statistics getExecutionId]];
+
         dictionary[KEY_STAT_TIME] = [NSNumber numberWithInt: [statistics getTime]];
         dictionary[KEY_STAT_SIZE] = [NSNumber numberWithLong: [statistics getSize]];
 
@@ -297,113 +308,11 @@ static NSString *const EVENT_STAT = @"FlutterFFmpegStatisticsCallback";
     NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] init];
 
     if (mediaInformation != nil) {
-        if ([mediaInformation getFormat] != nil) {
-            dictionary[@"format"] =  [mediaInformation getFormat];
-        }
-        if ([mediaInformation getPath] != nil) {
-            dictionary[@"path"] = [mediaInformation getPath];
-        }
-        if ([mediaInformation getStartTime] != nil) {
-            dictionary[@"startTime"] = [mediaInformation getStartTime];
-        }
-        if ([mediaInformation getDuration] != nil) {
-            dictionary[@"duration"] = [mediaInformation getDuration];
-        }
-        if ([mediaInformation getBitrate] != nil) {
-            dictionary[@"bitrate"] = [mediaInformation getBitrate];
-        }
-        if ([mediaInformation getRawInformation] != nil) {
-            dictionary[@"rawInformation"] = [mediaInformation getRawInformation];
-        }
-
-        NSDictionary *metadataDictionary = [mediaInformation getMetadataEntries];
-        if (metadataDictionary != nil && ([metadataDictionary count] > 0)) {
-            dictionary[@"metadata"] = metadataDictionary;
-        }
-
-        NSArray *streams = [mediaInformation getStreams];
-        if (streams != nil && ([streams count] > 0)) {
-            NSMutableArray *array = [[NSMutableArray alloc] init];
-
-            for (int i=0; i < [streams count]; i++) {
-                StreamInformation *streamInformation= [streams objectAtIndex:i];
-                [array addObject: [FlutterFFmpegPlugin toStreamInformationDictionary:streamInformation]];
+        NSDictionary* allProperties = [mediaInformation getAllProperties];
+        if (allProperties != nil) {
+            for(NSString *key in [allProperties allKeys]) {
+                dictionary[key] = [allProperties objectForKey:key];
             }
-
-            dictionary[@"streams"] = array;
-        }
-    }
-
-    return dictionary;
-}
-
-+ (NSDictionary *)toStreamInformationDictionary:(StreamInformation*)streamInformation {
-    NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] init];
-
-    if (streamInformation != nil) {
-        if ([streamInformation getIndex] != nil) {
-            dictionary[@"index"] = [streamInformation getIndex];
-        }
-        if ([streamInformation getType] != nil) {
-            dictionary[@"type"] = [streamInformation getType];
-        }
-        if ([streamInformation getCodec] != nil) {
-            dictionary[@"codec"] = [streamInformation getCodec];
-        }
-        if ([streamInformation getFullCodec] != nil) {
-            dictionary[@"fullCodec"] = [streamInformation getFullCodec];
-        }
-        if ([streamInformation getFormat] != nil) {
-            dictionary[@"format"] = [streamInformation getFormat];
-        }
-        if ([streamInformation getFullFormat] != nil) {
-            dictionary[@"fullFormat"] = [streamInformation getFullFormat];
-        }
-        if ([streamInformation getWidth] != nil) {
-            dictionary[@"width"] = [streamInformation getWidth];
-        }
-        if ([streamInformation getHeight] != nil) {
-            dictionary[@"height"] = [streamInformation getHeight];
-        }
-        if ([streamInformation getBitrate] != nil) {
-            dictionary[@"bitrate"] = [streamInformation getBitrate];
-        }
-        if ([streamInformation getSampleRate] != nil) {
-            dictionary[@"sampleRate"] = [streamInformation getSampleRate];
-        }
-        if ([streamInformation getSampleFormat] != nil) {
-            dictionary[@"sampleFormat"] = [streamInformation getSampleFormat];
-        }
-        if ([streamInformation getChannelLayout] != nil) {
-            dictionary[@"channelLayout"] = [streamInformation getChannelLayout];
-        }
-        if ([streamInformation getSampleAspectRatio] != nil) {
-            dictionary[@"sampleAspectRatio"] = [streamInformation getSampleAspectRatio];
-        }
-        if ([streamInformation getDisplayAspectRatio] != nil) {
-            dictionary[@"displayAspectRatio"] = [streamInformation getDisplayAspectRatio];
-        }
-        if ([streamInformation getAverageFrameRate] != nil) {
-            dictionary[@"averageFrameRate"] = [streamInformation getAverageFrameRate];
-        }
-        if ([streamInformation getRealFrameRate] != nil) {
-            dictionary[@"realFrameRate"] = [streamInformation getRealFrameRate];
-        }
-        if ([streamInformation getTimeBase] != nil) {
-            dictionary[@"timeBase"] = [streamInformation getTimeBase];
-        }
-        if ([streamInformation getCodecTimeBase] != nil) {
-            dictionary[@"codecTimeBase"] = [streamInformation getCodecTimeBase];
-        }
-
-        NSDictionary *metadataDictionary = [streamInformation getMetadataEntries];
-        if (metadataDictionary != nil && ([metadataDictionary count] > 0)) {
-            dictionary[@"metadata"] = metadataDictionary;
-        }
-
-        NSDictionary *sidedataDictionary = [streamInformation getSidedataEntries];
-        if (sidedataDictionary != nil && ([sidedataDictionary count] > 0)) {
-            dictionary[@"sidedata"] = sidedataDictionary;
         }
     }
 

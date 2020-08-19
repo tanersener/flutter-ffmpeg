@@ -1,4 +1,7 @@
-## 0.2.11
+## 0.3.0
+- LogCallback and StatisticsCallback functions updated with executionId
+- Updates getMediaInformation implementation
+- Adds setEnvironmentVariable API method
 - Depends on mobile-ffmpeg v4.4
 - Allows modifying mobile-ffmpeg version for android
 - Fixes issue #115, #120 and #178

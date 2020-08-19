@@ -30,13 +30,15 @@ import com.arthenica.mobileffmpeg.LogMessage;
 import com.arthenica.mobileffmpeg.MediaInformation;
 import com.arthenica.mobileffmpeg.Statistics;
 import com.arthenica.mobileffmpeg.StatisticsCallback;
-import com.arthenica.mobileffmpeg.StreamInformation;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodCall;
@@ -63,9 +65,12 @@ public class FlutterFFmpegPlugin implements MethodCallHandler, EventChannel.Stre
     public static final String KEY_PIPE = "pipe";
 
     public static final String KEY_LAST_COMMAND_OUTPUT = "lastCommandOutput";
+
+    public static final String KEY_LOG_EXECUTION_ID = "executionId";
+    public static final String KEY_LOG_LEVEL = "level";
     public static final String KEY_LOG_TEXT = "log";
 
-    public static final String KEY_LOG_LEVEL = "level";
+    public static final String KEY_STAT_EXECUTION_ID = "executionId";
     public static final String KEY_STAT_TIME = "time";
     public static final String KEY_STAT_SIZE = "size";
     public static final String KEY_STAT_BITRATE = "bitrate";
@@ -252,6 +257,12 @@ public class FlutterFFmpegPlugin implements MethodCallHandler, EventChannel.Stre
             final String pipe = Config.registerNewFFmpegPipe(getActiveContext());
             flutterFFmpegResultHandler.success(result, toStringMap(KEY_PIPE, pipe));
 
+        } else if (call.method.equals("setEnvironmentVariable")) {
+            String variableName = call.argument("variableName");
+            String variableValue = call.argument("variableValue");
+
+            Config.setEnvironmentVariable(variableName, variableValue);
+
         } else {
             flutterFFmpegResultHandler.notImplemented(result);
         }
@@ -271,6 +282,7 @@ public class FlutterFFmpegPlugin implements MethodCallHandler, EventChannel.Stre
         final HashMap<String, Object> logWrapperMap = new HashMap<>();
         final HashMap<String, Object> logMap = new HashMap<>();
 
+        logMap.put(KEY_LOG_EXECUTION_ID, logMessage.getExecutionId());
         logMap.put(KEY_LOG_LEVEL, levelToInt(logMessage.getLevel()));
         logMap.put(KEY_LOG_TEXT, logMessage.getText());
 
@@ -305,6 +317,8 @@ public class FlutterFFmpegPlugin implements MethodCallHandler, EventChannel.Stre
         final HashMap<String, Object> statisticsMap = new HashMap<>();
 
         if (statistics != null) {
+            statisticsMap.put(KEY_STAT_EXECUTION_ID, statistics.getExecutionId());
+
             statisticsMap.put(KEY_STAT_TIME, statistics.getTime());
             statisticsMap.put(KEY_STAT_SIZE, (statistics.getSize() < Integer.MAX_VALUE) ? (int) statistics.getSize() : (int) (statistics.getSize() % Integer.MAX_VALUE));
             statisticsMap.put(KEY_STAT_BITRATE, statistics.getBitrate());
@@ -318,138 +332,55 @@ public class FlutterFFmpegPlugin implements MethodCallHandler, EventChannel.Stre
         return statisticsMap;
     }
 
-    public static HashMap<String, Object> toMediaInformationMap(final MediaInformation mediaInformation) {
-        final HashMap<String, Object> map = new HashMap<>();
+    public static Map<String, Object> toMediaInformationMap(final MediaInformation mediaInformation) {
+        Map<String, Object> map = new HashMap<>();
 
         if (mediaInformation != null) {
-            if (mediaInformation.getFormat() != null) {
-                map.put("format", mediaInformation.getFormat());
-            }
-            if (mediaInformation.getPath() != null) {
-                map.put("path", mediaInformation.getPath());
-            }
-            if (mediaInformation.getStartTime() != null) {
-                map.put("startTime", mediaInformation.getStartTime().intValue());
-            }
-            if (mediaInformation.getDuration() != null) {
-                map.put("duration", mediaInformation.getDuration().intValue());
-            }
-            if (mediaInformation.getBitrate() != null) {
-                map.put("bitrate", mediaInformation.getBitrate().intValue());
-            }
-            if (mediaInformation.getRawInformation() != null) {
-                map.put("rawInformation", mediaInformation.getRawInformation());
-            }
-
-            final Set<Map.Entry<String, String>> metadata = mediaInformation.getMetadataEntries();
-            if ((metadata != null) && (metadata.size() > 0)) {
-                final HashMap<String, String> metadataMap = new HashMap<>();
-
-                for (Map.Entry<String, String> entry : metadata) {
-                    metadataMap.put(entry.getKey(), entry.getValue());
+            if (mediaInformation.getAllProperties() != null) {
+                JSONObject allProperties = mediaInformation.getAllProperties();
+                if (allProperties != null) {
+                    map = toMap(allProperties);
                 }
-
-                map.put("metadata", metadataMap);
-            }
-
-            final List<StreamInformation> streams = mediaInformation.getStreams();
-            if ((streams != null) && (streams.size() > 0)) {
-                final ArrayList<Map<String, Object>> array = new ArrayList<>();
-
-                for (StreamInformation streamInformation : streams) {
-                    array.add(toStreamInformationMap(streamInformation));
-                }
-
-                map.put("streams", array);
             }
         }
 
         return map;
     }
 
-    public static Map<String, Object> toStreamInformationMap(final StreamInformation streamInformation) {
+    public static Map<String, Object> toMap(final JSONObject jsonObject) {
         final HashMap<String, Object> map = new HashMap<>();
 
-        if (streamInformation != null) {
-            if (streamInformation.getIndex() != null) {
-                map.put("index", streamInformation.getIndex().intValue());
-            }
-            if (streamInformation.getType() != null) {
-                map.put("type", streamInformation.getType());
-            }
-            if (streamInformation.getCodec() != null) {
-                map.put("codec", streamInformation.getCodec());
-            }
-            if (streamInformation.getFullCodec() != null) {
-                map.put("fullCodec", streamInformation.getFullCodec());
-            }
-            if (streamInformation.getFormat() != null) {
-                map.put("format", streamInformation.getFormat());
-            }
-            if (streamInformation.getFullFormat() != null) {
-                map.put("fullFormat", streamInformation.getFullFormat());
-            }
-            if (streamInformation.getWidth() != null) {
-                map.put("width", streamInformation.getWidth().intValue());
-            }
-            if (streamInformation.getHeight() != null) {
-                map.put("height", streamInformation.getHeight().intValue());
-            }
-            if (streamInformation.getBitrate() != null) {
-                map.put("bitrate", streamInformation.getBitrate().intValue());
-            }
-            if (streamInformation.getSampleRate() != null) {
-                map.put("sampleRate", streamInformation.getSampleRate().intValue());
-            }
-            if (streamInformation.getSampleFormat() != null) {
-                map.put("sampleFormat", streamInformation.getSampleFormat());
-            }
-            if (streamInformation.getChannelLayout() != null) {
-                map.put("channelLayout", streamInformation.getChannelLayout());
-            }
-            if (streamInformation.getSampleAspectRatio() != null) {
-                map.put("sampleAspectRatio", streamInformation.getSampleAspectRatio());
-            }
-            if (streamInformation.getDisplayAspectRatio() != null) {
-                map.put("displayAspectRatio", streamInformation.getDisplayAspectRatio());
-            }
-            if (streamInformation.getAverageFrameRate() != null) {
-                map.put("averageFrameRate", streamInformation.getAverageFrameRate());
-            }
-            if (streamInformation.getRealFrameRate() != null) {
-                map.put("realFrameRate", streamInformation.getRealFrameRate());
-            }
-            if (streamInformation.getTimeBase() != null) {
-                map.put("timeBase", streamInformation.getTimeBase());
-            }
-            if (streamInformation.getCodecTimeBase() != null) {
-                map.put("codecTimeBase", streamInformation.getCodecTimeBase());
-            }
-
-            final Set<Map.Entry<String, String>> metadata = streamInformation.getMetadataEntries();
-            if ((metadata != null) && (metadata.size() > 0)) {
-                final HashMap<String, String> metadataMap = new HashMap<>();
-
-                for (Map.Entry<String, String> entry : metadata) {
-                    metadataMap.put(entry.getKey(), entry.getValue());
+        if (jsonObject != null) {
+            Iterator<String> keys = jsonObject.keys();
+            while (keys.hasNext()) {
+                String key = keys.next();
+                Object value = jsonObject.opt(key);
+                if (value instanceof JSONArray) {
+                    value = toList((JSONArray) value);
+                } else if (value instanceof JSONObject) {
+                    value = toMap((JSONObject) value);
                 }
-
-                map.put("metadata", metadataMap);
-            }
-
-            final Set<Map.Entry<String, String>> sidedata = streamInformation.getSidedataEntries();
-            if ((sidedata != null) && (sidedata.size() > 0)) {
-                final HashMap<String, String> sidedataMap = new HashMap<>();
-
-                for (Map.Entry<String, String> entry : sidedata) {
-                    sidedataMap.put(entry.getKey(), entry.getValue());
-                }
-
-                map.put("sidedata", sidedataMap);
+                map.put(key, value);
             }
         }
 
         return map;
+    }
+
+    public static List<Object> toList(final JSONArray array) {
+        final List<Object> list = new ArrayList<>();
+
+        for (int i = 0; i < array.length(); i++) {
+            Object value = array.opt(i);
+            if (value instanceof JSONArray) {
+                value = toList((JSONArray) value);
+            } else if (value instanceof JSONObject) {
+                value = toMap((JSONObject) value);
+            }
+            list.add(value);
+        }
+
+        return list;
     }
 
 }

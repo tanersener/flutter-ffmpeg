@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_ffmpeg/flutter_ffmpeg.dart';
 import 'package:flutter_ffmpeg/log_level.dart';
+import 'package:flutter_ffmpeg/media_information.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -139,6 +140,15 @@ class FlutterFFmpegTestAppState extends State<MainPage>
     startupTests();
 
     prepareAssets();
+
+    VideoUtil.tempDirectory.then((tempDirectory) {
+      setFontconfigConfigurationPath(tempDirectory.path);
+      setEnvironmentVariable(
+          "FFREPORT",
+          "file=" +
+              new File(tempDirectory.path + "/" + today() + "-ffreport.txt")
+                  .path);
+    });
   }
 
   void startupTests() {
@@ -246,7 +256,7 @@ class FlutterFFmpegTestAppState extends State<MainPage>
     print("Testing Get Media Information.");
 
     // ENABLE LOG CALLBACK ON EACH CALL
-    _flutterFFmpegConfig.enableLogCallback(commandOutputLogCallback);
+    _flutterFFmpegConfig.enableLogCallback(encodeOutputLogCallback);
     _flutterFFmpegConfig.enableStatisticsCallback(null);
 
     // CLEAR OUTPUT ON EACH EXECUTION
@@ -256,55 +266,44 @@ class FlutterFFmpegTestAppState extends State<MainPage>
       getMediaInformation(image1Path).then((info) {
         print('Media Information');
 
-        print('Path: ${info['path']}');
-        print('Format: ${info['format']}');
-        print('Duration: ${info['duration']}');
-        print('Start time: ${info['startTime']}');
-        print('Bitrate: ${info['bitrate']}');
-
-        if (info['streams'] != null) {
-          final streamsInfoArray = info['streams'];
-
-          if (streamsInfoArray.length > 0) {
-            for (var streamsInfo in streamsInfoArray) {
-              print('Stream id: ${streamsInfo['index']}');
-              print('Stream type: ${streamsInfo['type']}');
-              print('Stream codec: ${streamsInfo['codec']}');
-              print('Stream full codec: ${streamsInfo['fullCodec']}');
-              print('Stream format: ${streamsInfo['format']}');
-              print('Stream full format: ${streamsInfo['fullFormat']}');
-              print('Stream width: ${streamsInfo['width']}');
-              print('Stream height: ${streamsInfo['height']}');
-              print('Stream bitrate: ${streamsInfo['bitrate']}');
-              print('Stream sample rate: ${streamsInfo['sampleRate']}');
-              print('Stream sample format: ${streamsInfo['sampleFormat']}');
-              print('Stream channel layout: ${streamsInfo['channelLayout']}');
-              print('Stream sar: ${streamsInfo['sampleAspectRatio']}');
-              print('Stream dar: ${streamsInfo['displayAspectRatio']}');
-              print(
-                  'Stream average frame rate: ${streamsInfo['averageFrameRate']}');
-              print('Stream real frame rate: ${streamsInfo['realFrameRate']}');
-              print('Stream time base: ${streamsInfo['timeBase']}');
-              print('Stream codec time base: ${streamsInfo['codecTimeBase']}');
-
-              final metadataMap = streamsInfo['metadata'];
-              if (metadataMap != null) {
-                print('Stream metadata encoder: ${metadataMap['encoder']}');
-                print('Stream metadata rotate: ${metadataMap['rotate']}');
-                print(
-                    'Stream metadata creation time: ${metadataMap['creation_time']}');
-                print(
-                    'Stream metadata handler name: ${metadataMap['handler_name']}');
-              }
-
-              final sideDataMap = streamsInfo['sidedata'];
-              if (sideDataMap != null) {
-                print(
-                    'Stream side data displaymatrix: ${sideDataMap['displaymatrix']}');
-              }
+        var mediaProperties = info.getMediaProperties().entries;
+        if (mediaProperties != null) {
+          mediaProperties.forEach((element) {
+            if (element.key == 'tags') {
+              var tags = element.value as Map<dynamic, dynamic>;
+              print('Tag Count: ${tags.length}');
+              tags.forEach((key, value) {
+                print('-> $key: $value');
+              });
+            } else {
+              print('${element.key}: ${element.value}');
             }
-          }
+          });
         }
+
+        var number = 0;
+        var streams = info.getStreams();
+        print('Stream Count: ${streams.length}');
+        streams.forEach((element) {
+          print('Stream Information ${number++}');
+          element.getAllProperties().entries.forEach((element) {
+            if (element.key == 'tags') {
+              var tags = element.value as Map<dynamic, dynamic>;
+              print('Tag Count: ${tags.length}');
+              tags.forEach((key, value) {
+                print('--> $key: $value');
+              });
+            } else if (element.key == 'disposition') {
+              var dispositions = element.value as Map<dynamic, dynamic>;
+              print('Disposition Count: ${dispositions.length}');
+              dispositions.forEach((key, value) {
+                print('--> $key: $value');
+              });
+            } else {
+              print('-> ${element.key}: ${element.value}');
+            }
+          });
+        });
       });
     });
 
@@ -332,8 +331,13 @@ class FlutterFFmpegTestAppState extends State<MainPage>
           final String ffmpegCodec = getFFmpegCodecName();
 
           VideoUtil.assetPath(videoPath).then((fullVideoPath) {
-            executeFFmpeg(VideoUtil.generateEncodeVideoScript(image1Path, image2Path,
-                    image3Path, fullVideoPath, ffmpegCodec, customOptions))
+            executeFFmpeg(VideoUtil.generateEncodeVideoScript(
+                    image1Path,
+                    image2Path,
+                    image3Path,
+                    fullVideoPath,
+                    ffmpegCodec,
+                    customOptions))
                 .then((rc) {
               if (rc == 0) {
                 testGetMediaInformation(fullVideoPath);
@@ -348,6 +352,7 @@ class FlutterFFmpegTestAppState extends State<MainPage>
               } else {
                 print('Last statistics');
 
+                int executionId = lastStatistics['executionId'];
                 int time = lastStatistics['time'];
                 int size = lastStatistics['size'];
 
@@ -359,8 +364,8 @@ class FlutterFFmpegTestAppState extends State<MainPage>
                 double videoFps =
                     _doublePrecision(lastStatistics['videoFps'], 2);
 
-                statisticsCallback(time, size, bitrate, speed, videoFrameNumber,
-                    videoQuality, videoFps);
+                statisticsCallback(executionId, time, size, bitrate, speed,
+                    videoFrameNumber, videoQuality, videoFps);
               }
             });
           });
@@ -371,20 +376,29 @@ class FlutterFFmpegTestAppState extends State<MainPage>
     setState(() {});
   }
 
-  void commandOutputLogCallback(int level, String message) {
+  void commandOutputLogCallback(int executionId, int level, String message) {
     _commandOutput += message;
     setState(() {});
   }
 
-  void encodeOutputLogCallback(int level, String message) {
-    _encodeOutput += message;
+  void encodeOutputLogCallback(int executionId, int level, String message) {
+    if (level != LogLevel.AV_LOG_STDERR) {
+      _encodeOutput += message;
+    }
     setState(() {});
   }
 
-  void statisticsCallback(int time, int size, double bitrate, double speed,
-      int videoFrameNumber, double videoQuality, double videoFps) {
+  void statisticsCallback(
+      int executionId,
+      int time,
+      int size,
+      double bitrate,
+      double speed,
+      int videoFrameNumber,
+      double videoQuality,
+      double videoFps) {
     print(
-        "Statistics: time: $time, size: $size, bitrate: $bitrate, speed: $speed, videoFrameNumber: $videoFrameNumber, videoQuality: $videoQuality, videoFps: $videoFps");
+        "Statistics: executionId: $executionId, time: $time, size: $size, bitrate: $bitrate, speed: $speed, videoFrameNumber: $videoFrameNumber, videoQuality: $videoQuality, videoFps: $videoFps");
   }
 
   Future<String> getFFmpegVersion() async {
@@ -457,7 +471,8 @@ class FlutterFFmpegTestAppState extends State<MainPage>
 
   Future<void> setFontDirectory(
       String fontDirectory, Map<String, String> fontNameMap) async {
-    return await _flutterFFmpegConfig.setFontDirectory(fontDirectory, fontNameMap);
+    return await _flutterFFmpegConfig.setFontDirectory(
+        fontDirectory, fontNameMap);
   }
 
   Future<String> getPackageName() async {
@@ -476,12 +491,18 @@ class FlutterFFmpegTestAppState extends State<MainPage>
     return await _flutterFFmpegConfig.getLastCommandOutput();
   }
 
-  Future<Map<dynamic, dynamic>> getMediaInformation(String path) async {
+  Future<MediaInformation> getMediaInformation(String path) async {
     return await _flutterFFprobe.getMediaInformation(path);
   }
 
   Future<String> registerNewFFmpegPipe() async {
     return await _flutterFFmpegConfig.registerNewFFmpegPipe();
+  }
+
+  Future<void> setEnvironmentVariable(
+      String variableName, String variableValue) async {
+    return await _flutterFFmpegConfig.setEnvironmentVariable(
+        variableName, variableValue);
   }
 
   void _changedCodec(String selectedCodec) {
@@ -759,6 +780,11 @@ class FlutterFFmpegTestAppState extends State<MainPage>
   void dispose() {
     super.dispose();
     _commandController.dispose();
+  }
+
+  String today() {
+    var now = new DateTime.now();
+    return "${now.year}-${now.month}-${now.day}";
   }
 
   void testParseSimpleCommand() {
