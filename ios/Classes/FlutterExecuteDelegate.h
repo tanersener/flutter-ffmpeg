@@ -17,10 +17,14 @@
  * along with FlutterFFmpeg.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <mobileffmpeg/LogDelegate.h>
+#import <Flutter/Flutter.h>
+#import <mobileffmpeg/ExecuteDelegate.h>
 
 /**
- * Empty log delegate.
+ * Execute delegate for async executions.
  */
-@interface EmptyLogDelegate : NSObject<LogDelegate>
+@interface FlutterExecuteDelegate : NSObject<ExecuteDelegate>
+
+- (instancetype)initWithEventSink:(FlutterEventSink)eventSink;
+
 @end

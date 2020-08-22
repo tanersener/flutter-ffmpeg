@@ -17,10 +17,11 @@
  * along with FlutterFFmpeg.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#import "FlutterFFmpegPlugin.h"
 #import "EmptyLogDelegate.h"
+#import "FlutterExecuteDelegate.h"
+#import "FlutterFFmpegPlugin.h"
 
-#include <stdlib.h>
+#import <stdlib.h>
 #import <mobileffmpeg/ArchDetect.h>
 #import <mobileffmpeg/MobileFFmpegConfig.h>
 #import <mobileffmpeg/MobileFFmpeg.h>
@@ -48,6 +49,10 @@ static NSString *const KEY_STAT_SPEED = @"speed";
 static NSString *const KEY_STAT_VIDEO_FRAME_NUMBER = @"videoFrameNumber";
 static NSString *const KEY_STAT_VIDEO_QUALITY = @"videoQuality";
 static NSString *const KEY_STAT_VIDEO_FPS = @"videoFps";
+
+static NSString *const KEY_EXECUTION_ID = @"executionId";
+static NSString *const KEY_EXECUTION_START_TIME = @"startTime";
+static NSString *const KEY_EXECUTION_COMMAND = @"command";
 
 static NSString *const EVENT_LOG = @"FlutterFFmpegLogCallback";
 static NSString *const EVENT_STAT = @"FlutterFFmpegStatisticsCallback";
@@ -105,33 +110,33 @@ static NSString *const EVENT_STAT = @"FlutterFFmpegStatisticsCallback";
 
     } else if ([@"executeFFmpegWithArguments" isEqualToString:call.method]) {
 
-        NSLog(@"Running FFmpeg with arguments: %@.\n", arguments);
-
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-
             int rc = [MobileFFmpeg executeWithArguments:arguments];
-
-            NSLog(@"FFmpeg exited with rc: %d\n", rc);
-
             result([FlutterFFmpegPlugin toIntDictionary:KEY_RC :[NSNumber numberWithInt:rc]]);
         });
 
+    } else if ([@"executeFFmpegAsyncWithArguments" isEqualToString:call.method]) {
+
+        FlutterExecuteDelegate* executeDelegate = [[FlutterExecuteDelegate alloc] initWithEventSink:_eventSink];
+        long executionId = [MobileFFmpeg executeWithArgumentsAsync:arguments withCallback:executeDelegate];
+
+        result([FlutterFFmpegPlugin toIntDictionary:KEY_EXECUTION_ID :[NSNumber numberWithInt:executionId]]);
+
     } else if ([@"executeFFprobeWithArguments" isEqualToString:call.method]) {
 
-        NSLog(@"Running FFprobe with arguments: %@.\n", arguments);
-
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-
             int rc = [MobileFFprobe executeWithArguments:arguments];
-
-            NSLog(@"FFprobe exited with rc: %d\n", rc);
-
             result([FlutterFFmpegPlugin toIntDictionary:KEY_RC :[NSNumber numberWithInt:rc]]);
         });
 
     } else if ([@"cancel" isEqualToString:call.method]) {
 
-        [MobileFFmpeg cancel];
+        NSNumber* executionId = call.arguments[@"executionId"];
+        if (executionId == nil) {
+            [MobileFFmpeg cancel];
+        } else {
+            [MobileFFmpeg cancel:[executionId longValue]];
+        }
 
     } else if ([@"enableRedirection" isEqualToString:call.method]) {
 
@@ -211,8 +216,6 @@ static NSString *const EVENT_STAT = @"FlutterFFmpegStatisticsCallback";
 
         NSString* path = call.arguments[@"path"];
 
-        NSLog(@"Getting media information for %@.\n", path);
-
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             MediaInformation *mediaInformation = [MobileFFprobe getMediaInformation:path];
             result([FlutterFFmpegPlugin toMediaInformationDictionary:mediaInformation]);
@@ -229,6 +232,11 @@ static NSString *const EVENT_STAT = @"FlutterFFmpegStatisticsCallback";
         NSString* variableValue = call.arguments[@"variableValue"];
 
         setenv([variableName UTF8String], [variableValue UTF8String], true);
+
+    } else if ([@"listExecutions" isEqualToString:call.method]) {
+
+        NSArray* executionsArray = [FlutterFFmpegPlugin toExecutionsArray:[MobileFFmpeg listExecutions]];
+        result(executionsArray);
 
     } else {
 
@@ -302,6 +310,23 @@ static NSString *const EVENT_STAT = @"FlutterFFmpegStatisticsCallback";
     }
 
     return dictionary;
+}
+
++ (NSArray *)toExecutionsArray:(NSArray*)ffmpegExecutions {
+    NSMutableArray *executions = [[NSMutableArray alloc] init];
+
+    for (int i = 0; i < [ffmpegExecutions count]; i++) {
+        FFmpegExecution* execution = [ffmpegExecutions objectAtIndex:i];
+
+        NSMutableDictionary *executionDictionary = [[NSMutableDictionary alloc] init];
+        executionDictionary[KEY_EXECUTION_ID] = [NSNumber numberWithLong: [execution getExecutionId]];
+        executionDictionary[KEY_EXECUTION_START_TIME] = [NSNumber numberWithDouble:[[execution getStartTime] timeIntervalSince1970]*1000];
+        executionDictionary[KEY_EXECUTION_COMMAND] = [execution getCommand];
+
+        [executions addObject: executionDictionary];
+    }
+
+    return executions;
 }
 
 + (NSDictionary *)toMediaInformationDictionary:(MediaInformation*)mediaInformation {

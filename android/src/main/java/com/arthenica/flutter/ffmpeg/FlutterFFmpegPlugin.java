@@ -23,7 +23,9 @@ import android.content.Context;
 
 import com.arthenica.mobileffmpeg.AbiDetect;
 import com.arthenica.mobileffmpeg.Config;
+import com.arthenica.mobileffmpeg.ExecuteCallback;
 import com.arthenica.mobileffmpeg.FFmpeg;
+import com.arthenica.mobileffmpeg.FFmpegExecution;
 import com.arthenica.mobileffmpeg.Level;
 import com.arthenica.mobileffmpeg.LogCallback;
 import com.arthenica.mobileffmpeg.LogMessage;
@@ -79,8 +81,13 @@ public class FlutterFFmpegPlugin implements MethodCallHandler, EventChannel.Stre
     public static final String KEY_STAT_VIDEO_QUALITY = "videoQuality";
     public static final String KEY_STAT_VIDEO_FPS = "videoFps";
 
+    public static final String KEY_EXECUTION_ID = "executionId";
+    public static final String KEY_EXECUTION_START_TIME = "startTime";
+    public static final String KEY_EXECUTION_COMMAND = "command";
+
     public static final String EVENT_LOG = "FlutterFFmpegLogCallback";
     public static final String EVENT_STAT = "FlutterFFmpegStatisticsCallback";
+    public static final String EVENT_EXECUTE = "FlutterFFmpegExecuteCallback";
 
     private EventChannel.EventSink eventSink;
     private final Registrar registrar;
@@ -136,6 +143,27 @@ public class FlutterFFmpegPlugin implements MethodCallHandler, EventChannel.Stre
             final FlutterFFmpegExecuteFFmpegAsyncArgumentsTask asyncTask = new FlutterFFmpegExecuteFFmpegAsyncArgumentsTask(arguments, flutterFFmpegResultHandler, result);
             asyncTask.execute("dummy-trigger");
 
+        } else if (call.method.equals("executeFFmpegAsyncWithArguments")) {
+
+            List<String> arguments = call.argument("arguments");
+
+            long executionId = FFmpeg.executeAsync(arguments.toArray(new String[0]), new ExecuteCallback() {
+
+                @Override
+                public void apply(long executionId, int returnCode) {
+                    final HashMap<String, Object> executeMap = new HashMap<>();
+                    executeMap.put("executionId", executionId);
+                    executeMap.put("returnCode", returnCode);
+
+                    final HashMap<String, Object> eventMap = new HashMap<>();
+                    eventMap.put(EVENT_EXECUTE, executeMap);
+
+                    flutterFFmpegResultHandler.success(eventSink, eventMap);
+                }
+            });
+
+            flutterFFmpegResultHandler.success(result, FlutterFFmpegPlugin.toLongMap(FlutterFFmpegPlugin.KEY_EXECUTION_ID, executionId));
+
         } else if (call.method.equals("executeFFprobeWithArguments")) {
 
             List<String> arguments = call.argument("arguments");
@@ -145,7 +173,12 @@ public class FlutterFFmpegPlugin implements MethodCallHandler, EventChannel.Stre
 
         } else if (call.method.equals("cancel")) {
 
-            FFmpeg.cancel();
+            Integer executionId = call.argument("executionId");
+            if (executionId == null) {
+                FFmpeg.cancel();
+            } else {
+                FFmpeg.cancel(executionId);
+            }
 
         } else if (call.method.equals("enableRedirection")) {
 
@@ -263,6 +296,11 @@ public class FlutterFFmpegPlugin implements MethodCallHandler, EventChannel.Stre
 
             Config.setEnvironmentVariable(variableName, variableValue);
 
+        } else if (call.method.equals("listExecutions")) {
+
+            final List<Map<String, Object>> executionsList = toExecutionsList(FFmpeg.listExecutions());
+            flutterFFmpegResultHandler.success(result, executionsList);
+
         } else {
             flutterFFmpegResultHandler.notImplemented(result);
         }
@@ -313,6 +351,12 @@ public class FlutterFFmpegPlugin implements MethodCallHandler, EventChannel.Stre
         return map;
     }
 
+    public static HashMap<String, Long> toLongMap(final String key, final long value) {
+        final HashMap<String, Long> map = new HashMap<>();
+        map.put(key, value);
+        return map;
+    }
+
     public static Map<String, Object> toMap(final Statistics statistics) {
         final HashMap<String, Object> statisticsMap = new HashMap<>();
 
@@ -331,6 +375,24 @@ public class FlutterFFmpegPlugin implements MethodCallHandler, EventChannel.Stre
 
         return statisticsMap;
     }
+
+    public static List<Map<String, Object>> toExecutionsList(final List<FFmpegExecution> ffmpegExecutions) {
+        final List<Map<String, Object>> executions = new ArrayList<>();
+
+        for (int i = 0; i < ffmpegExecutions.size(); i++) {
+            FFmpegExecution execution = ffmpegExecutions.get(i);
+
+            Map<String, Object> executionMap = new HashMap<>();
+            executionMap.put(KEY_EXECUTION_ID, execution.getExecutionId());
+            executionMap.put(KEY_EXECUTION_START_TIME, execution.getStartTime().getTime());
+            executionMap.put(KEY_EXECUTION_COMMAND, execution.getCommand());
+
+            executions.add(executionMap);
+        }
+
+        return executions;
+    }
+
 
     public static Map<String, Object> toMediaInformationMap(final MediaInformation mediaInformation) {
         Map<String, Object> map = new HashMap<>();

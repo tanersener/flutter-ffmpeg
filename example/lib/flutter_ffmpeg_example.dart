@@ -3,13 +3,34 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_ffmpeg/ffmpeg_execution.dart';
 import 'package:flutter_ffmpeg/flutter_ffmpeg.dart';
+import 'package:flutter_ffmpeg/log.dart';
 import 'package:flutter_ffmpeg/log_level.dart';
 import 'package:flutter_ffmpeg/media_information.dart';
+import 'package:flutter_ffmpeg/statistics.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
 void main() => runApp(FlutterFFmpegTestApp());
+
+String today() {
+  var now = new DateTime.now();
+  return "${now.year}-${now.month}-${now.day}";
+}
+
+String now() {
+  var now = new DateTime.now();
+  return "${now.year}-${now.month}-${now.day} ${now.hour}:${now.minute}:${now.second}.${now.millisecond}";
+}
+
+void ffprint(String text) {
+  final pattern = new RegExp('.{1,900}');
+  var nowString = now();
+  pattern
+      .allMatches(text)
+      .forEach((match) => print("$nowString - " + match.group(0)));
+}
 
 class FlutterFFmpegTestApp extends StatelessWidget {
   @override
@@ -152,26 +173,27 @@ class FlutterFFmpegTestAppState extends State<MainPage>
   }
 
   void startupTests() {
-    getFFmpegVersion().then((version) => print("FFmpeg version: $version"));
-    getPlatform().then((platform) => print("Platform: $platform"));
+    getFFmpegVersion().then((version) => ffprint("FFmpeg version: $version"));
+    getPlatform().then((platform) => ffprint("Platform: $platform"));
     getLogLevel().then(
-        (level) => print("Old log level: " + LogLevel.levelToString(level)));
+        (level) => ffprint("Old log level: " + LogLevel.levelToString(level)));
     setLogLevel(LogLevel.AV_LOG_INFO);
     getLogLevel().then(
-        (level) => print("New log level: " + LogLevel.levelToString(level)));
-    getPackageName().then((packageName) => print("Package name: $packageName"));
+        (level) => ffprint("New log level: " + LogLevel.levelToString(level)));
+    getPackageName()
+        .then((packageName) => ffprint("Package name: $packageName"));
     getExternalLibraries().then((packageList) {
-      packageList.forEach((value) => print("External library: $value"));
+      packageList.forEach((value) => ffprint("External library: $value"));
     });
   }
 
   void prepareAssets() {
     VideoUtil.copyFileAssets('assets/pyramid.jpg', ASSET_1)
-        .then((path) => print('Loaded asset $path.'));
+        .then((path) => ffprint('Loaded asset $path.'));
     VideoUtil.copyFileAssets('assets/colosseum.jpg', ASSET_2)
-        .then((path) => print('Loaded asset $path.'));
+        .then((path) => ffprint('Loaded asset $path.'));
     VideoUtil.copyFileAssets('assets/tajmahal.jpg', ASSET_3)
-        .then((path) => print('Loaded asset $path.'));
+        .then((path) => ffprint('Loaded asset $path.'));
   }
 
   void testParseArguments() {
@@ -182,16 +204,16 @@ class FlutterFFmpegTestAppState extends State<MainPage>
   }
 
   void testRunFFmpegCommand() {
-    getLastReturnCode().then((rc) => print("Last rc: $rc"));
-    getLastCommandOutput().then((output) =>
-        debugPrint("Last command output: \"$output\"", wrapWidth: 1024));
+    getLastReturnCode().then((rc) => ffprint("Last rc: $rc"));
+    getLastCommandOutput()
+        .then((output) => ffprint("Last command output: \"$output\""));
 
-    print("Testing ParseArguments.");
+    ffprint("Testing ParseArguments.");
 
     testParseArguments();
-    registerNewFFmpegPipe().then((path) => print("New FFmpeg pipe: $path"));
+    registerNewFFmpegPipe().then((path) => ffprint("New FFmpeg pipe: $path"));
 
-    print("Testing FFmpeg COMMAND.");
+    ffprint("Testing FFmpeg COMMAND.");
 
     // ENABLE LOG CALLBACK ON EACH CALL
     _flutterFFmpegConfig.enableLogCallback(commandOutputLogCallback);
@@ -217,23 +239,23 @@ class FlutterFFmpegTestAppState extends State<MainPage>
     // enableLogs();
 
     executeFFmpeg(_commandController.text)
-        .then((rc) => print("FFmpeg process exited with rc $rc"));
-    // executeWithArguments(_commandController.text.split(" ")).then((rc) => print("FFmpeg process exited with rc $rc"));
+        .then((rc) => ffprint("FFmpeg process exited with rc $rc"));
+    // executeWithArguments(_commandController.text.split(" ")).then((rc) => ffprint("FFmpeg process exited with rc $rc"));
 
     setState(() {});
   }
 
   void testRunFFprobeCommand() {
-    getLastReturnCode().then((rc) => print("Last rc: $rc"));
-    getLastCommandOutput().then((output) =>
-        debugPrint("Last command output: \"$output\"", wrapWidth: 1024));
+    getLastReturnCode().then((rc) => ffprint("Last rc: $rc"));
+    getLastCommandOutput()
+        .then((output) => ffprint("Last command output: \"$output\""));
 
-    print("Testing ParseArguments.");
+    ffprint("Testing ParseArguments.");
 
     testParseArguments();
-    registerNewFFmpegPipe().then((path) => print("New FFmpeg pipe: $path"));
+    registerNewFFmpegPipe().then((path) => ffprint("New FFmpeg pipe: $path"));
 
-    print("Testing FFprobe COMMAND.");
+    ffprint("Testing FFprobe COMMAND.");
 
     // ENABLE LOG CALLBACK ON EACH CALL
     _flutterFFmpegConfig.enableLogCallback(commandOutputLogCallback);
@@ -247,13 +269,13 @@ class FlutterFFmpegTestAppState extends State<MainPage>
     });
 
     executeFFprobe(_commandController.text)
-        .then((rc) => print("FFprobe process exited with rc $rc"));
+        .then((rc) => ffprint("FFprobe process exited with rc $rc"));
 
     setState(() {});
   }
 
   void testGetMediaInformation(String mediaPath) {
-    print("Testing Get Media Information.");
+    ffprint("Testing Get Media Information.");
 
     // ENABLE LOG CALLBACK ON EACH CALL
     _flutterFFmpegConfig.enableLogCallback(encodeOutputLogCallback);
@@ -264,43 +286,43 @@ class FlutterFFmpegTestAppState extends State<MainPage>
 
     VideoUtil.assetPath(mediaPath).then((image1Path) {
       getMediaInformation(image1Path).then((info) {
-        print('Media Information');
+        ffprint('Media Information');
 
         var mediaProperties = info.getMediaProperties().entries;
         if (mediaProperties != null) {
           mediaProperties.forEach((element) {
             if (element.key == 'tags') {
               var tags = element.value as Map<dynamic, dynamic>;
-              print('Tag Count: ${tags.length}');
+              ffprint('Tag Count: ${tags.length}');
               tags.forEach((key, value) {
-                print('-> $key: $value');
+                ffprint('-> $key: $value');
               });
             } else {
-              print('${element.key}: ${element.value}');
+              ffprint('${element.key}: ${element.value}');
             }
           });
         }
 
         var number = 0;
         var streams = info.getStreams();
-        print('Stream Count: ${streams.length}');
+        ffprint('Stream Count: ${streams.length}');
         streams.forEach((element) {
-          print('Stream Information ${number++}');
+          ffprint('Stream Information ${number++}');
           element.getAllProperties().entries.forEach((element) {
             if (element.key == 'tags') {
               var tags = element.value as Map<dynamic, dynamic>;
-              print('Tag Count: ${tags.length}');
+              ffprint('Tag Count: ${tags.length}');
               tags.forEach((key, value) {
-                print('--> $key: $value');
+                ffprint('--> $key: $value');
               });
             } else if (element.key == 'disposition') {
               var dispositions = element.value as Map<dynamic, dynamic>;
-              print('Disposition Count: ${dispositions.length}');
+              ffprint('Disposition Count: ${dispositions.length}');
               dispositions.forEach((key, value) {
-                print('--> $key: $value');
+                ffprint('--> $key: $value');
               });
             } else {
-              print('-> ${element.key}: ${element.value}');
+              ffprint('-> ${element.key}: ${element.value}');
             }
           });
         });
@@ -311,7 +333,7 @@ class FlutterFFmpegTestAppState extends State<MainPage>
   }
 
   void testEncodeVideo() {
-    print("Testing VIDEO.");
+    ffprint("Testing VIDEO.");
 
     // ENABLE LOG CALLBACK ON EACH CALL
     _flutterFFmpegConfig.enableLogCallback(encodeOutputLogCallback);
@@ -331,6 +353,7 @@ class FlutterFFmpegTestAppState extends State<MainPage>
           final String ffmpegCodec = getFFmpegCodecName();
 
           VideoUtil.assetPath(videoPath).then((fullVideoPath) {
+            /*
             executeFFmpeg(VideoUtil.generateEncodeVideoScript(
                     image1Path,
                     image2Path,
@@ -343,29 +366,41 @@ class FlutterFFmpegTestAppState extends State<MainPage>
                 testGetMediaInformation(fullVideoPath);
               }
             });
+            */
+
+            executeAsyncFFmpeg(
+                VideoUtil.generateEncodeVideoScript(
+                    image1Path,
+                    image2Path,
+                    image3Path,
+                    fullVideoPath,
+                    ffmpegCodec,
+                    customOptions), (int executionId, int returnCode) {
+              ffprint('Execution: $executionId '
+                  'completed with return code: $returnCode');
+              if (returnCode == 0) {
+                testGetMediaInformation(fullVideoPath);
+              }
+            }).then(
+                (executionId) => ffprint('Execution: $executionId started'));
+
+            listFFmpegExecutions().then((list) {
+              for (var i = 0; i < list.length; ++i) {
+                ffprint("Execution -> "
+                    "id: ${list[i].executionId}, "
+                    "startTime: ${list[i].startTime}, "
+                    "command: ${list[i].command}");
+              }
+            });
 
             // resetStatistics();
 
             getLastReceivedStatistics().then((lastStatistics) {
               if (lastStatistics == null) {
-                print('No last statistics');
+                ffprint('No last statistics');
               } else {
-                print('Last statistics');
-
-                int executionId = lastStatistics['executionId'];
-                int time = lastStatistics['time'];
-                int size = lastStatistics['size'];
-
-                double bitrate = _doublePrecision(lastStatistics['bitrate'], 2);
-                double speed = _doublePrecision(lastStatistics['speed'], 2);
-                int videoFrameNumber = lastStatistics['videoFrameNumber'];
-                double videoQuality =
-                    _doublePrecision(lastStatistics['videoQuality'], 2);
-                double videoFps =
-                    _doublePrecision(lastStatistics['videoFps'], 2);
-
-                statisticsCallback(executionId, time, size, bitrate, speed,
-                    videoFrameNumber, videoQuality, videoFps);
+                ffprint('Last statistics ->');
+                statisticsCallback(lastStatistics);
               }
             });
           });
@@ -376,29 +411,28 @@ class FlutterFFmpegTestAppState extends State<MainPage>
     setState(() {});
   }
 
-  void commandOutputLogCallback(int executionId, int level, String message) {
-    _commandOutput += message;
+  void commandOutputLogCallback(Log log) {
+    _commandOutput += log.message;
     setState(() {});
   }
 
-  void encodeOutputLogCallback(int executionId, int level, String message) {
-    if (level != LogLevel.AV_LOG_STDERR) {
-      _encodeOutput += message;
+  void encodeOutputLogCallback(Log log) {
+    if (log.level != LogLevel.AV_LOG_STDERR) {
+      _encodeOutput += log.message;
     }
     setState(() {});
   }
 
-  void statisticsCallback(
-      int executionId,
-      int time,
-      int size,
-      double bitrate,
-      double speed,
-      int videoFrameNumber,
-      double videoQuality,
-      double videoFps) {
-    print(
-        "Statistics: executionId: $executionId, time: $time, size: $size, bitrate: $bitrate, speed: $speed, videoFrameNumber: $videoFrameNumber, videoQuality: $videoQuality, videoFps: $videoFps");
+  void statisticsCallback(Statistics statistics) {
+    ffprint("Statistics: "
+        "executionId: ${statistics.executionId}, "
+        "time: ${statistics.time}, "
+        "size: ${statistics.size}, "
+        "bitrate: ${statistics.bitrate}, "
+        "speed: ${statistics.speed}, "
+        "videoFrameNumber: ${statistics.videoFrameNumber}, "
+        "videoQuality: ${statistics.videoQuality}, "
+        "videoFps: ${statistics.videoFps}");
   }
 
   Future<String> getFFmpegVersion() async {
@@ -415,6 +449,11 @@ class FlutterFFmpegTestAppState extends State<MainPage>
 
   Future<int> executeFFmpeg(String command) async {
     return await _flutterFFmpeg.execute(command);
+  }
+
+  Future<int> executeAsyncFFmpeg(
+      String command, ExecuteCallback executeCallback) async {
+    return await _flutterFFmpeg.executeAsync(command, executeCallback);
   }
 
   Future<int> executeFFprobeWithArguments(List arguments) async {
@@ -457,7 +496,7 @@ class FlutterFFmpegTestAppState extends State<MainPage>
     return await _flutterFFmpegConfig.disableStatistics();
   }
 
-  Future<Map<dynamic, dynamic>> getLastReceivedStatistics() async {
+  Future<Statistics> getLastReceivedStatistics() async {
     return await _flutterFFmpegConfig.getLastReceivedStatistics();
   }
 
@@ -503,6 +542,10 @@ class FlutterFFmpegTestAppState extends State<MainPage>
       String variableName, String variableValue) async {
     return await _flutterFFmpegConfig.setEnvironmentVariable(
         variableName, variableValue);
+  }
+
+  Future<List<FFmpegExecution>> listFFmpegExecutions() async {
+    return await _flutterFFmpeg.listExecutions();
   }
 
   void _changedCodec(String selectedCodec) {
@@ -569,14 +612,6 @@ class FlutterFFmpegTestAppState extends State<MainPage>
     items.add(new DropdownMenuItem(value: "vp9", child: new Text("vp9")));
 
     return items;
-  }
-
-  double _doublePrecision(double value, int precision) {
-    if (value == null) {
-      return 0;
-    } else {
-      return num.parse(value.toStringAsFixed(precision));
-    }
   }
 
   @override
@@ -780,11 +815,6 @@ class FlutterFFmpegTestAppState extends State<MainPage>
   void dispose() {
     super.dispose();
     _commandController.dispose();
-  }
-
-  String today() {
-    var now = new DateTime.now();
-    return "${now.year}-${now.month}-${now.day}";
   }
 
   void testParseSimpleCommand() {

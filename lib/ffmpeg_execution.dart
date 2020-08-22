@@ -17,10 +17,9 @@
  * along with FlutterFFmpeg.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <mobileffmpeg/LogDelegate.h>
-
-/**
- * Empty log delegate.
- */
-@interface EmptyLogDelegate : NSObject<LogDelegate>
-@end
+/// Represents an ongoing FFmpeg execution.
+class FFmpegExecution {
+  int executionId;
+  DateTime startTime;
+  String command;
+}

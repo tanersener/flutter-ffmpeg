@@ -17,10 +17,16 @@
  * along with FlutterFFmpeg.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <mobileffmpeg/LogDelegate.h>
+class Statistics {
+  int executionId;
+  int videoFrameNumber;
+  double videoFps;
+  double videoQuality;
+  int size;
+  int time;
+  double bitrate;
+  double speed;
 
-/**
- * Empty log delegate.
- */
-@interface EmptyLogDelegate : NSObject<LogDelegate>
-@end
+  Statistics(this.executionId, this.videoFrameNumber, this.videoFps,
+      this.videoQuality, this.size, this.time, this.bitrate, this.speed);
+}

@@ -17,10 +17,10 @@
  * along with FlutterFFmpeg.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <mobileffmpeg/LogDelegate.h>
+class Log {
+  int executionId;
+  int level;
+  String message;
 
-/**
- * Empty log delegate.
- */
-@interface EmptyLogDelegate : NSObject<LogDelegate>
-@end
+  Log(this.executionId, this.level, this.message);
+}

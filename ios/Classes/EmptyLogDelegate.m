@@ -20,7 +20,7 @@
 #include "EmptyLogDelegate.h"
 
 /**
- * Empty log delegate
+ * Empty log delegate.
  */
 @implementation EmptyLogDelegate
 
