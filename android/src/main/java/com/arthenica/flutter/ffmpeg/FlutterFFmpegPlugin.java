@@ -20,6 +20,7 @@
 package com.arthenica.flutter.ffmpeg;
 
 import android.content.Context;
+import android.os.AsyncTask;
 
 import com.arthenica.mobileffmpeg.AbiDetect;
 import com.arthenica.mobileffmpeg.Config;
@@ -141,7 +142,7 @@ public class FlutterFFmpegPlugin implements MethodCallHandler, EventChannel.Stre
             List<String> arguments = call.argument("arguments");
 
             final FlutterFFmpegExecuteFFmpegAsyncArgumentsTask asyncTask = new FlutterFFmpegExecuteFFmpegAsyncArgumentsTask(arguments, flutterFFmpegResultHandler, result);
-            asyncTask.execute("dummy-trigger");
+            asyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
         } else if (call.method.equals("executeFFmpegAsyncWithArguments")) {
 
@@ -169,7 +170,7 @@ public class FlutterFFmpegPlugin implements MethodCallHandler, EventChannel.Stre
             List<String> arguments = call.argument("arguments");
 
             final FlutterFFmpegExecuteFFprobeAsyncArgumentsTask asyncTask = new FlutterFFmpegExecuteFFprobeAsyncArgumentsTask(arguments, flutterFFmpegResultHandler, result);
-            asyncTask.execute("dummy-trigger");
+            asyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
         } else if (call.method.equals("cancel")) {
 
@@ -277,13 +278,9 @@ public class FlutterFFmpegPlugin implements MethodCallHandler, EventChannel.Stre
 
         } else if (call.method.equals("getMediaInformation")) {
             final String path = call.argument("path");
-            Integer timeout = call.argument("timeout");
-            if (timeout == null) {
-                timeout = 10000;
-            }
 
             final FlutterFFmpegGetMediaInformationAsyncTask asyncTask = new FlutterFFmpegGetMediaInformationAsyncTask(path, flutterFFmpegResultHandler, result);
-            asyncTask.execute();
+            asyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
         } else if (call.method.equals("registerNewFFmpegPipe")) {
 
