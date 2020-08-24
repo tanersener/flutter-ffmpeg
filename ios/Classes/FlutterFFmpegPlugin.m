@@ -120,7 +120,7 @@ static NSString *const EVENT_STAT = @"FlutterFFmpegStatisticsCallback";
         FlutterExecuteDelegate* executeDelegate = [[FlutterExecuteDelegate alloc] initWithEventSink:_eventSink];
         long executionId = [MobileFFmpeg executeWithArgumentsAsync:arguments withCallback:executeDelegate];
 
-        result([FlutterFFmpegPlugin toIntDictionary:KEY_EXECUTION_ID :[NSNumber numberWithInt:executionId]]);
+        result([FlutterFFmpegPlugin toIntDictionary:KEY_EXECUTION_ID :[NSNumber numberWithLong:executionId]]);
 
     } else if ([@"executeFFprobeWithArguments" isEqualToString:call.method]) {
 
