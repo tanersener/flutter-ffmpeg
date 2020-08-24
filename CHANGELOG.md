@@ -1,4 +1,7 @@
 ## 0.3.0
+- Uses thread pool executor to process Android executions
+- Adds listExecutions API method
+- Implements async FFmpeg execution methods
 - LogCallback and StatisticsCallback functions updated with executionId
 - Updates getMediaInformation implementation
 - Adds setEnvironmentVariable API method

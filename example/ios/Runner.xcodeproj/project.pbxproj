@@ -145,7 +145,6 @@
 			buildPhases = (
 				21AF8DE8D9FF721314C951F3 /* [CP] Check Pods Manifest.lock */,
 				9740EEB61CF901F6004384FC /* Run Script */,
-				55480ECF17343B08D3A94269 /* [CP] Prepare Artifacts */,
 				97C146EA1CF9000F007C117D /* Sources */,
 				97C146EB1CF9000F007C117D /* Frameworks */,
 				97C146EC1CF9000F007C117D /* Resources */,
@@ -247,46 +246,6 @@
 			shellPath = /bin/sh;
 			shellScript = "/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" embed_and_thin";
 		};
-		55480ECF17343B08D3A94269 /* [CP] Prepare Artifacts */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-artifacts.sh",
-				"${PODS_ROOT}/mobile-ffmpeg-audio/mobileffmpeg.xcframework",
-				"${PODS_ROOT}/mobile-ffmpeg-audio/libavcodec.xcframework",
-				"${PODS_ROOT}/mobile-ffmpeg-audio/libavdevice.xcframework",
-				"${PODS_ROOT}/mobile-ffmpeg-audio/libavfilter.xcframework",
-				"${PODS_ROOT}/mobile-ffmpeg-audio/libavformat.xcframework",
-				"${PODS_ROOT}/mobile-ffmpeg-audio/libavutil.xcframework",
-				"${PODS_ROOT}/mobile-ffmpeg-audio/libswresample.xcframework",
-				"${PODS_ROOT}/mobile-ffmpeg-audio/libswscale.xcframework",
-				"${PODS_ROOT}/mobile-ffmpeg-audio/lame.xcframework",
-				"${PODS_ROOT}/mobile-ffmpeg-audio/libilbc.xcframework",
-				"${PODS_ROOT}/mobile-ffmpeg-audio/libogg.xcframework",
-				"${PODS_ROOT}/mobile-ffmpeg-audio/libopencore-amrnb.xcframework",
-				"${PODS_ROOT}/mobile-ffmpeg-audio/libsndfile.xcframework",
-				"${PODS_ROOT}/mobile-ffmpeg-audio/libvorbis.xcframework",
-				"${PODS_ROOT}/mobile-ffmpeg-audio/libvorbisenc.xcframework",
-				"${PODS_ROOT}/mobile-ffmpeg-audio/libvorbisfile.xcframework",
-				"${PODS_ROOT}/mobile-ffmpeg-audio/opus.xcframework",
-				"${PODS_ROOT}/mobile-ffmpeg-audio/shine.xcframework",
-				"${PODS_ROOT}/mobile-ffmpeg-audio/soxr.xcframework",
-				"${PODS_ROOT}/mobile-ffmpeg-audio/speex.xcframework",
-				"${PODS_ROOT}/mobile-ffmpeg-audio/twolame.xcframework",
-				"${PODS_ROOT}/mobile-ffmpeg-audio/vo-amrwbenc.xcframework",
-				"${PODS_ROOT}/mobile-ffmpeg-audio/wavpack.xcframework",
-			);
-			name = "[CP] Prepare Artifacts";
-			outputPaths = (
-				"${BUILT_PRODUCTS_DIR}/cocoapods-artifacts-${CONFIGURATION}.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-artifacts.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		9740EEB61CF901F6004384FC /* Run Script */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -308,7 +267,6 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/cocoapods-artifacts-${CONFIGURATION}.txt",
 				"${PODS_ROOT}/../Flutter/Flutter.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";

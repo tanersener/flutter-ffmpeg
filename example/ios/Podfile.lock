@@ -1,15 +1,15 @@
 PODS:
   - Flutter (1.0.0)
-  - flutter_ffmpeg/audio (0.2.10):
+  - flutter_ffmpeg/audio-lts (0.3.0):
     - Flutter
-    - mobile-ffmpeg-audio (= 4.4)
-  - mobile-ffmpeg-audio (4.4)
+    - mobile-ffmpeg-audio (= 4.4.LTS)
+  - mobile-ffmpeg-audio (4.4.LTS)
   - path_provider (0.0.1):
     - Flutter
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
-  - flutter_ffmpeg/audio (from `.symlinks/plugins/flutter_ffmpeg/ios`)
+  - flutter_ffmpeg/audio-lts (from `.symlinks/plugins/flutter_ffmpeg/ios`)
   - path_provider (from `.symlinks/plugins/path_provider/ios`)
 
 SPEC REPOS:
@@ -26,10 +26,10 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
-  flutter_ffmpeg: dea2b1946d8b57e5bde7eafa043c93d84a20b392
-  mobile-ffmpeg-audio: a5c6bb1e8e34d493188ccd9188b42623409b2eef
-  path_provider: fb74bd0465e96b594bb3b5088ee4a4e7bb1f2a9d
+  flutter_ffmpeg: 657ce8a1502c3d25bf34efc58b380b248836f772
+  mobile-ffmpeg-audio: 1e0a053f8a6de57114e50ff48b3a85ff1c60f902
+  path_provider: abfe2b5c733d04e238b0d8691db0cfd63a27a93c
 
-PODFILE CHECKSUM: b242fec97f167080ec90be47018847b5e3bf2267
+PODFILE CHECKSUM: 45c71b51796b78cb6a09bb97eb9786d4c7aa085f
 
 COCOAPODS: 1.9.2
