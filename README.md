@@ -91,29 +91,7 @@ Installation of `FlutterFFmpeg` using `pub` enables the default package, which i
 
     ```
 
-##### 2.1.2 iOS (Flutter < 1.20.x)
-
-- Edit `ios/Podfile` file and modify the default `# Plugin Pods` block as follows. 
-  Do not forget to specify package name in `<package name>` section.
-
-    ```
-    # Prepare symlinks folder. We use symlinks to avoid having Podfile.lock
-    # referring to absolute paths on developers' machines.
-    system('rm -rf .symlinks')
-    system('mkdir -p .symlinks/plugins')
-    plugin_pods = parse_KV_file('../.flutter-plugins')
-    plugin_pods.each do |name, path|
-      symlink = File.join('.symlinks', 'plugins', name)
-      File.symlink(path, symlink)
-      if name == 'flutter_ffmpeg'
-          pod name+'/<package name>', :path => File.join(symlink, 'ios')
-      else
-          pod name, :path => File.join(symlink, 'ios')
-      end
-    end
-    ```
-    
-##### 2.1.3 iOS (Flutter >= 1.20.x)
+##### 2.1.2 iOS (Flutter >= 1.20.x)
 
 - Edit `ios/Podfile` and add the following block **before** `target 'Runner do` section :
 
@@ -154,6 +132,28 @@ Installation of `FlutterFFmpeg` using `pub` enables the default package, which i
 - Ensure that `flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))` function is called
 within `target 'Runner' do` block. In that case, it is mandatory that the added function is
 named `flutter_install_ios_plugin_pods` and that you **do not** make an explicit call within that block.
+
+##### 2.1.3 iOS (Flutter < 1.20.x)
+
+- Edit `ios/Podfile` file and modify the default `# Plugin Pods` block as follows. 
+  Do not forget to specify package name in `<package name>` section.
+
+    ```
+    # Prepare symlinks folder. We use symlinks to avoid having Podfile.lock
+    # referring to absolute paths on developers' machines.
+    system('rm -rf .symlinks')
+    system('mkdir -p .symlinks/plugins')
+    plugin_pods = parse_KV_file('../.flutter-plugins')
+    plugin_pods.each do |name, path|
+      symlink = File.join('.symlinks', 'plugins', name)
+      File.symlink(path, symlink)
+      if name == 'flutter_ffmpeg'
+          pod name+'/<package name>', :path => File.join(symlink, 'ios')
+      else
+          pod name, :path => File.join(symlink, 'ios')
+      end
+    end
+    ```
 
 ##### 2.1.4 Package Names
 
