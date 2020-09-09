@@ -91,7 +91,7 @@ Installation of `FlutterFFmpeg` using `pub` enables the default package, which i
 
     ```
 
-##### 2.1.2 iOS
+##### 2.1.2 iOS (Flutter < 1.20.x)
 
 - Edit `ios/Podfile` file and modify the default `# Plugin Pods` block as follows. 
   Do not forget to specify package name in `<package name>` section.
@@ -112,8 +112,50 @@ Installation of `FlutterFFmpeg` using `pub` enables the default package, which i
       end
     end
     ```
+    
+##### 2.1.3 iOS (Flutter >= 1.20.x)
 
-##### 2.1.3 Package Names
+- Edit `ios/Podfile` and add the following block **before** `target 'Runner do` section :
+
+    ```
+    # "fork" of method flutter_install_ios_plugin_pods (in fluttertools podhelpers.rb) to get lts version of ffmpeg
+    def flutter_install_ios_plugin_pods(ios_application_path = nil)
+     # defined_in_file is set by CocoaPods and is a Pathname to the Podfile.
+      ios_application_path ||= File.dirname(defined_in_file.realpath) if self.respond_to?(:defined_in_file)
+      raise 'Could not find iOS application path' unless ios_application_path
+
+      # Prepare symlinks folder. We use symlinks to avoid having Podfile.lock
+      # referring to absolute paths on developers' machines.
+
+      symlink_dir = File.expand_path('.symlinks', ios_application_path)
+      system('rm', '-rf', symlink_dir) # Avoid the complication of dependencies like FileUtils.
+
+      symlink_plugins_dir = File.expand_path('plugins', symlink_dir)
+      system('mkdir', '-p', symlink_plugins_dir)
+
+      plugins_file = File.join(ios_application_path, '..', '.flutter-plugins-dependencies')
+      plugin_pods = flutter_parse_plugins_file(plugins_file)
+      plugin_pods.each do |plugin_hash|
+        plugin_name = plugin_hash['name']
+        plugin_path = plugin_hash['path']
+
+        if (plugin_name && plugin_path)
+            symlink = File.join(symlink_plugins_dir, plugin_name)
+            File.symlink(plugin_path, symlink)
+
+            if plugin_name == 'flutter_ffmpeg'
+                pod plugin_name+'/<package name>', :path => File.join('.symlinks', 'plugins', plugin_name, 'ios')
+            else
+                pod plugin_name, :path => File.join('.symlinks', 'plugins', plugin_name, 'ios')
+            end
+        end
+      end
+    ```
+- Ensure that `flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))` function is called
+within `target 'Runner' do` block. In that case, it is mandatory that the added function is
+named `flutter_install_ios_plugin_pods` and that you **do not** make an explicit call within that block.
+
+##### 2.1.4 Package Names
 
 The following table shows all package names defined for `flutter_ffmpeg`.
     
