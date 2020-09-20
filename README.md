@@ -1,6 +1,6 @@
 # flutter_ffmpeg 
 
-![GitHub release](https://img.shields.io/badge/release-v0.2.10-blue.svg)
+![GitHub release](https://img.shields.io/badge/release-v0.3.0-blue.svg)
 ![](https://img.shields.io/pub/v/flutter_ffmpeg.svg)
 
 FFmpeg plugin for Flutter. Supports iOS and Android.
@@ -13,12 +13,12 @@ FFmpeg plugin for Flutter. Supports iOS and Android.
 - Supports
     - Both `Android` and `iOS`
     - Both Android (API Level 16+) and iOS (SDK 9.3+)
-    - FFmpeg `v4.1`, `v4.2` and `v4.3-dev` releases
+    - FFmpeg `v4.1`, `v4.2` , `v4.3` and `v4.4-dev` releases
     - `arm-v7a`, `arm-v7a-neon`, `arm64-v8a`, `x86` and `x86_64` architectures on Android
     - `armv7`, `armv7s`, `arm64`, `arm64e`, `i386` and `x86_64` architectures on iOS
-    - 24 external libraries
+    - 25 external libraries
 
-        `fontconfig`, `freetype`, `fribidi`, `gmp`, `gnutls`, `kvazaar`, `lame`, `libaom`, `libass`, `libiconv`, `libilbc`, `libtheora`, `libvorbis`, `libvpx`, `libwebp`, `libxml2`, `opencore-amr`, `opus`, `shine`, `snappy`, `soxr`, `speex`, `twolame`, `wavpack`
+        `fontconfig`, `freetype`, `fribidi`, `gmp`, `gnutls`, `kvazaar`, `lame`, `libaom`, `libass`, `libiconv`, `libilbc`, `libtheora`, `libvorbis`, `libvpx`, `libwebp`, `libxml2`, `opencore-amr`, `opus`, `shine`, `snappy`, `soxr`, `speex`, `twolame`, `vo-amrwbenc`, `wavpack`
 
     - 4 external libraries with GPL license
 
@@ -26,23 +26,41 @@ FFmpeg plugin for Flutter. Supports iOS and Android.
 
     - Concurrent execution
     - `zlib` and `MediaCodec` Android system libraries
-    - `bzip2`, `zlib`, `iconv` iOS system libraries and `AudioToolbox`, `CoreImage`, `VideoToolbox`, `AVFoundation` iOS system frameworks
+    - `bzip2`, `iconv`, `libuuid`, `zlib` system libraries and `AudioToolbox`, `VideoToolbox`, `AVFoundation` system frameworks
 
 - Licensed under LGPL 3.0, can be customized to support GPL v3.0
-- Includes eight different packages with different external libraries enabled in FFmpeg
+
+### 2. Installation
+
+Add `flutter_ffmpeg` as a dependency in your `pubspec.yaml file`.
+  ```
+dependencies:
+    flutter_ffmpeg: ^0.3.0
+  ```
+
+#### 2.1 Packages
+
+`ffmpeg` includes built-in encoders for some popular formats bu not for all of them. External libraries are necessary 
+to encode some specific codecs/formats. For example, to encode an `mp3` file you need `lame` or `shine` library 
+enabled. You have to install `flutter_ffmpeg` a package that has them inside. To encode an `h264` video you need to
+install a package with `x264` inside. To encode `vp8` or `vp9` videos you need a package with `libvpx` inside.
+
+`flutter_ffmpeg` provides eight different packages that include different sets of external libraries. Packages are 
+named according to the external libraries included in them. Below you can see which libraries are enabled in each one 
+of them. 
 
 <table>
 <thead>
 <tr>
 <th align="center"></th>
-<th align="center">min</th>
-<th align="center">min-gpl</th>
-<th align="center">https</th>
-<th align="center">https-gpl</th>
-<th align="center">audio</th>
-<th align="center">video</th>
-<th align="center">full</th>
-<th align="center">full-gpl</th>
+<th align="center"><sup>min</sup></th>
+<th align="center"><sup>min-gpl</sup></th>
+<th align="center"><sup>https</sup></th>
+<th align="center"><sup>https-gpl</sup></th>
+<th align="center"><sup>audio</sup></th>
+<th align="center"><sup>video</sup></th>
+<th align="center"><sup>full</sup></th>
+<th align="center"><sup>full-gpl</sup></th>
 </tr>
 </thead>
 <tbody>
@@ -52,10 +70,10 @@ FFmpeg plugin for Flutter. Supports iOS and Android.
 <td align="center"><sup>vid.stab</sup><br><sup>x264</sup><br><sup>x265</sup><br><sup>xvidcore</sup></td>
 <td align="center"><sup>gmp</sup><br><sup>gnutls</sup></td>
 <td align="center"><sup>gmp</sup><br><sup>gnutls</sup><br><sup>vid.stab</sup><br><sup>x264</sup><br><sup>x265</sup><br><sup>xvidcore</sup></td>
-<td align="center"><sup>lame</sup><br><sup>libilbc</sup><br><sup>libvorbis</sup><br><sup>opencore-amr</sup><br><sup>opus</sup><br><sup>shine</sup><br><sup>soxr</sup><br><sup>speex</sup><br><sup>twolame</sup><br><sup>wavpack</sup></td>
+<td align="center"><sup>lame</sup><br><sup>libilbc</sup><br><sup>libvorbis</sup><br><sup>opencore-amr</sup><br><sup>opus</sup><br><sup>shine</sup><br><sup>soxr</sup><br><sup>speex</sup><br><sup>twolame</sup><br><sup>vo-amrwbenc</sup><br><sup>wavpack</sup></td>
 <td align="center"><sup>fontconfig</sup><br><sup>freetype</sup><br><sup>fribidi</sup><br><sup>kvazaar</sup><br><sup>libaom</sup><br><sup>libass</sup><br><sup>libiconv</sup><br><sup>libtheora</sup><br><sup>libvpx</sup><br><sup>libwebp</sup><br><sup>snappy</sup></td>
-<td align="center"><sup>fontconfig</sup><br><sup>freetype</sup><br><sup>fribidi</sup><br><sup>gmp</sup><br><sup>gnutls</sup><br><sup>kvazaar</sup><br><sup>lame</sup><br><sup>libaom</sup><br><sup>libass</sup><br><sup>libiconv</sup><br><sup>libilbc</sup><br><sup>libtheora</sup><br><sup>libvorbis</sup><br><sup>libvpx</sup><br><sup>libwebp</sup><br><sup>libxml2</sup><br><sup>opencore-amr</sup><br><sup>opus</sup><br><sup>shine</sup><br><sup>snappy</sup><br><sup>soxr</sup><br><sup>speex</sup><br><sup>twolame</sup><br><sup>wavpack</sup></td>
-<td align="center"><sup>fontconfig</sup><br><sup>freetype</sup><br><sup>fribidi</sup><br><sup>gmp</sup><br><sup>gnutls</sup><br><sup>kvazaar</sup><br><sup>lame</sup><br><sup>libaom</sup><br><sup>libass</sup><br><sup>libiconv</sup><br><sup>libilbc</sup><br><sup>libtheora</sup><br><sup>libvorbis</sup><br><sup>libvpx</sup><br><sup>libwebp</sup><br><sup>libxml2</sup><br><sup>opencore-amr</sup><br><sup>opus</sup><br><sup>shine</sup><br><sup>snappy</sup><br><sup>soxr</sup><br><sup>speex</sup><br><sup>twolame</sup><br><sup>vid.stab</sup><br><sup>wavpack</sup><br><sup>x264</sup><br><sup>x265</sup><br><sup>xvidcore</sup></td>
+<td align="center"><sup>fontconfig</sup><br><sup>freetype</sup><br><sup>fribidi</sup><br><sup>gmp</sup><br><sup>gnutls</sup><br><sup>kvazaar</sup><br><sup>lame</sup><br><sup>libaom</sup><br><sup>libass</sup><br><sup>libiconv</sup><br><sup>libilbc</sup><br><sup>libtheora</sup><br><sup>libvorbis</sup><br><sup>libvpx</sup><br><sup>libwebp</sup><br><sup>libxml2</sup><br><sup>opencore-amr</sup><br><sup>opus</sup><br><sup>shine</sup><br><sup>snappy</sup><br><sup>soxr</sup><br><sup>speex</sup><br><sup>twolame</sup><br><sup>vo-amrwbenc</sup><br><sup>wavpack</sup></td>
+<td align="center"><sup>fontconfig</sup><br><sup>freetype</sup><br><sup>fribidi</sup><br><sup>gmp</sup><br><sup>gnutls</sup><br><sup>kvazaar</sup><br><sup>lame</sup><br><sup>libaom</sup><br><sup>libass</sup><br><sup>libiconv</sup><br><sup>libilbc</sup><br><sup>libtheora</sup><br><sup>libvorbis</sup><br><sup>libvpx</sup><br><sup>libwebp</sup><br><sup>libxml2</sup><br><sup>opencore-amr</sup><br><sup>opus</sup><br><sup>shine</sup><br><sup>snappy</sup><br><sup>soxr</sup><br><sup>speex</sup><br><sup>twolame</sup><br><sup>vid.stab</sup><br><sup>vo-amrwbenc</sup><br><sup>wavpack</sup><br><sup>x264</sup><br><sup>x265</sup><br><sup>xvidcore</sup></td>
 </tr>
 <tr>
 <td align="center"><sup>android system libraries</sup></td>
@@ -63,22 +81,13 @@ FFmpeg plugin for Flutter. Supports iOS and Android.
 </tr>
 <tr>
 <td align="center"><sup>ios system libraries</sup></td>
-<td align="center" colspan=8><sup>zlib</sup><br><sup>AudioToolbox</sup><br><sup>AVFoundation</sup><br><sup>CoreImage</sup><br><sup>iconv</sup><br><sup>VideoToolbox</sup><br><sup>bzip2</sup></td>
+<td align="center" colspan=8><sup>zlib</sup><br><sup>AudioToolbox</sup><br><sup>AVFoundation</sup><br><sup>iconv</sup><br><sup>VideoToolbox</sup><br><sup>bzip2</sup></td>
 </tr>
 </tbody>
 </table>
 
-### 2. Installation
-
-Add `flutter_ffmpeg` as a dependency in your `pubspec.yaml file`.
-  ```
-dependencies:
-    flutter_ffmpeg: ^0.2.10
-  ```
-
-#### 2.1 Packages
-
-Installation of `FlutterFFmpeg` using `pub` enables the default package, which is based on `https` package. It is possible to enable other packages using the following steps.
+Installation of `FlutterFFmpeg` using `pub` enables the default package, which is based on `https` package. It is 
+possible to enable other packages using the following steps.
 
 ##### 2.1.1 Android
 
@@ -90,7 +99,6 @@ Installation of `FlutterFFmpeg` using `pub` enables the default package, which i
     }
 
     ```
-
 ##### 2.1.2 iOS (Flutter >= 1.20.x)
 
 - Edit `ios/Podfile` and add the following block **before** `target 'Runner do` section :
@@ -185,55 +193,23 @@ Please execute the following additional steps if you are integrating into an iOS
 
 #### 2.3 LTS Releases
 
-`flutter_ffmpeg` is published in two different variants: `Main Release` and `LTS Release`. Both releases share the same source code but is built with different settings. Below you can see the changes between the two.
+`flutter_ffmpeg` is published in two different variants: `Main Release` and `LTS Release`. Both releases share the same source code but is built with different settings. Below you can see the differences between the two.
 
 In order to install the `LTS` variant, install the `https-lts` package using instructions in `2.1` or append `-lts` to the package name you are using. 
 
-<table>
-<thead>
-    <tr>
-        <th align="center"></th>
-        <th align="center">Main Release</th>
-        <th align="center">LTS Release</th>
-    </tr>
-</thead>
-<tbody>
-    <tr>
-        <td align="center">Android API Level</td>
-        <td align="center">24</td>
-        <td align="center">16</td>
-    </tr>
-    <tr>
-        <td align="center">Android Camera Access</td>
-        <td align="center">Yes</td>
-        <td align="center">-</td>
-    </tr>
-    <tr>
-        <td align="center">Android Architectures</td>
-        <td align="center">arm-v7a-neon<br>arm64-v8a<br>x86<br>x86-64</td>
-        <td align="center">arm-v7a<br>arm-v7a-neon<br>arm64-v8a<br>x86<br>x86-64</td>
-    </tr>
-    <tr>
-        <td align="center">Xcode Support</td>
-        <td align="center">10.1</td>
-        <td align="center">7.3.1</td>
-    </tr>
-    <tr>
-        <td align="center">iOS SDK</td>
-        <td align="center">12.1</td>
-        <td align="center">9.3</td>
-    </tr>
-    <tr>
-        <td align="center">iOS Architectures</td>
-        <td align="center">arm64<br>arm64e<br>x86-64</td>
-        <td align="center">armv7<br>arm64<br>i386<br>x86-64</td>
-    </tr>
-</tbody>
-</table>
+|        | Main Release | LTS Release |
+| :----: | :----: | :----: |
+| Android API Level | 24 | 16 | 
+| Android Camera Access | Yes | - |
+| Android Architectures | arm-v7a-neon<br/>arm64-v8a<br/>x86<br/>x86-64 | arm-v7a<br/>arm-v7a-neon<br/>arm64-v8a<br/>x86<br/>x86-64 |
+| Xcode Support | 10.1 | 7.3.1 |
+| iOS SDK | 11.0 | 9.3 |
+| iOS AVFoundation | Yes | - |
+| iOS Architectures | arm64<br/>x86-64<br/>x86-64-mac-catalyst | armv7<br/>arm64<br/>i386<br/>x86-64 |
 
 ### 3. Using
 
-1. Execute FFmpeg commands.
+1. Execute synchronous FFmpeg commands.
 
     - Use execute() method with a single command line  
     ```
@@ -254,8 +230,15 @@ In order to install the `LTS` variant, install the `https-lts` package using ins
     var arguments = ["-i", "file1.mp4", "-c:v", "mpeg4", "file2.mp4"];
     _flutterFFmpeg.executeWithArguments(arguments).then((rc) => print("FFmpeg process exited with rc $rc"));
     ```
+2. Execute asynchronous FFmpeg commands.
 
-2. Execute FFprobe commands.
+    ```
+    _flutterFFmpeg.executeAsync(ffmpegCommand, (int executionId, int returnCode) {
+      print("FFmpeg process for executionId $executionId exited with rc $returnCode");
+    }).then((executionId) => print("Async FFmpeg process started with executionId $executionId."));
+    ```
+
+3. Execute FFprobe commands.
 
     - Use execute() method with a single command line  
     ```
@@ -277,7 +260,7 @@ In order to install the `LTS` variant, install the `https-lts` package using ins
     _flutterFFprobe.executeWithArguments(arguments).then((rc) => print("FFprobe process exited with rc $rc"));
     ```
 
-3. Check execution output. Zero represents successful execution, non-zero values represent failure.
+4. Check execution output. Zero represents successful execution, 255 means user cancel and non-zero values represent failure.
     ```
    
    final FlutterFFmpegConfig _flutterFFmpegConfig = new FlutterFFmpegConfig();
@@ -287,12 +270,17 @@ In order to install the `LTS` variant, install the `https-lts` package using ins
     _flutterFFmpegConfig.getLastCommandOutput().then((output) => print("Last command output: $output"));
     ```
 
-4. Stop an ongoing operation. Note that this function does not wait for termination to complete and returns immediately.
-    ```
-    _flutterFFmpeg.cancel();
-    ```
+5. Stop ongoing FFmpeg operations. Note that these two functions do not wait for termination to complete and return immediately.
+    - Stop all executions
+        ```
+        _flutterFFmpeg.cancel();
+        ```
+    - Stop a specific execution
+        ```
+        _flutterFFmpeg.cancelExecution(executionId);
+        ```
 
-5. Get media information for a file.
+6. Get media information for a file.
     - Print all fields
     ```
    final FlutterFFprobe _flutterFFprobe = new FlutterFFprobe();
@@ -306,37 +294,43 @@ In order to install the `LTS` variant, install the `https-lts` package using ins
     _flutterFFprobe.getMediaInformation("<file path or uri>").then((info) {
         print("Media Information");
 
-        print("Path: ${info['path']}");
-        print("Format: ${info['format']}");
-        print("Duration: ${info['duration']}");
-        print("Start time: ${info['startTime']}");
-        print("Bitrate: ${info['bitrate']}");
+        print("Path: ${info.getMediaProperties()['path']}");
+        print("Format: ${info.getMediaProperties()['format']}");
+        print("Duration: ${info.getMediaProperties()['duration']}");
+        print("Start time: ${info.getMediaProperties()['startTime']}");
+        print("Bitrate: ${info.getMediaProperties()['bitrate']}");
+        Map<dynamic, dynamic> tags = info.getMediaProperties()['tags'];
+        if (tags != null) {
+            tags.forEach((key, value) {
+                print("Tag: " + key + ":" + value + "\n");
+            });
+        }
 
-        if (info['streams'] != null) {
-            final streamsInfoArray = info['streams'];
+        if (info.getStreams() != null) {
+            List<StreamInformation> streams = info.getStreams();
 
-            if (streamsInfoArray.length > 0) {
-                for (var streamsInfo in streamsInfoArray) {
-                    print("Stream id: ${streamsInfo['index']}");
-                    print("Stream type: ${streamsInfo['type']}");
-                    print("Stream codec: ${streamsInfo['codec']}");
-                    print("Stream full codec: ${streamsInfo['fullCodec']}");
-                    print("Stream format: ${streamsInfo['format']}");
-                    print("Stream full format: ${streamsInfo['fullFormat']}");
-                    print("Stream width: ${streamsInfo['width']}");
-                    print("Stream height: ${streamsInfo['height']}");
-                    print("Stream bitrate: ${streamsInfo['bitrate']}");
-                    print("Stream sample rate: ${streamsInfo['sampleRate']}");
-                    print("Stream sample format: ${streamsInfo['sampleFormat']}");
-                    print("Stream channel layout: ${streamsInfo['channelLayout']}");
-                    print("Stream sar: ${streamsInfo['sampleAspectRatio']}");
-                    print("Stream dar: ${streamsInfo['displayAspectRatio']}");
-                    print("Stream average frame rate: ${streamsInfo['averageFrameRate']}");
-                    print("Stream real frame rate: ${streamsInfo['realFrameRate']}");
-                    print("Stream time base: ${streamsInfo['timeBase']}");
-                    print("Stream codec time base: ${streamsInfo['codecTimeBase']}");
+            if (streams.length > 0) {
+                for (var stream in streams) {
+                    print("Stream id: ${stream.getAllProperties()['index']}");
+                    print("Stream type: ${stream.getAllProperties()['type']}");
+                    print("Stream codec: ${stream.getAllProperties()['codec']}");
+                    print("Stream full codec: ${stream.getAllProperties()['fullCodec']}");
+                    print("Stream format: ${stream.getAllProperties()['format']}");
+                    print("Stream full format: ${stream.getAllProperties()['fullFormat']}");
+                    print("Stream width: ${stream.getAllProperties()['width']}");
+                    print("Stream height: ${stream.getAllProperties()['height']}");
+                    print("Stream bitrate: ${stream.getAllProperties()['bitrate']}");
+                    print("Stream sample rate: ${stream.getAllProperties()['sampleRate']}");
+                    print("Stream sample format: ${stream.getAllProperties()['sampleFormat']}");
+                    print("Stream channel layout: ${stream.getAllProperties()['channelLayout']}");
+                    print("Stream sar: ${stream.getAllProperties()['sampleAspectRatio']}");
+                    print("Stream dar: ${stream.getAllProperties()['displayAspectRatio']}");
+                    print("Stream average frame rate: ${stream.getAllProperties()['averageFrameRate']}");
+                    print("Stream real frame rate: ${stream.getAllProperties()['realFrameRate']}");
+                    print("Stream time base: ${stream.getAllProperties()['timeBase']}");
+                    print("Stream codec time base: ${stream.getAllProperties()['codecTimeBase']}");
 
-                    final metadataMap = streamsInfo['metadata'];
+                    final metadataMap = stream.getAllProperties()['metadata'];
                     if (metadataMap != null) {
                         print('Stream metadata encoder: ${metadataMap['encoder']}');
                         print('Stream metadata rotate: ${metadataMap['rotate']}');
@@ -344,7 +338,7 @@ In order to install the `LTS` variant, install the `https-lts` package using ins
                         print('Stream metadata handler name: ${metadataMap['handler_name']}');
                     }
     
-                    final sideDataMap = streamsInfo['sidedata'];
+                    final sideDataMap = stream.getAllProperties()['sidedata'];
                     if (sideDataMap != null) {
                         print('Stream side data displaymatrix: ${sideDataMap['displaymatrix']}');
                     }
@@ -354,78 +348,85 @@ In order to install the `LTS` variant, install the `https-lts` package using ins
 
     ```
 
-6. Enable log callback and redirect all `FFmpeg`/`FFprobe` logs to a console/file/widget.
+7. Enable log callback and redirect all `FFmpeg`/`FFprobe` logs to a console/file/widget.
     ```
-    void logCallback(int level, String message) {
-        print(message);
+    void logCallback(Log log) {
+        print("${log.executionId}:${log.message}");
     }
     ...
     _flutterFFmpegConfig.enableLogCallback(this.logCallback);
     ```
 
-7. Enable statistics callback and follow the progress of an ongoing `FFmpeg` operation.
+8. Enable statistics callback and follow the progress of an ongoing `FFmpeg` operation.
     ```
-    void statisticsCallback(int time, int size, double bitrate, double speed, int videoFrameNumber, double videoQuality, double videoFps) {
-        print("Statistics: time: $time, size: $size, bitrate: $bitrate, speed: $speed, videoFrameNumber: $videoFrameNumber, videoQuality: $videoQuality, videoFps: $videoFps");
+    void statisticsCallback(Statistics statistics) {
+        print("Statistics: executionId: ${statistics.executionId}, time: ${statistics.time}, size: ${statistics.size}, bitrate: ${statistics.bitrate}, speed: ${statistics.speed}, videoFrameNumber: ${statistics.videoFrameNumber}, videoQuality: ${statistics.videoQuality}, videoFps: ${statistics.videoFps}");
     }
     ...
     _flutterFFmpegConfig.enableStatisticsCallback(this.statisticsCallback);
     ```
 
-8. Poll statistics without implementing statistics callback.
+9. Poll statistics without implementing statistics callback.
     ```
     _flutterFFmpegConfig.getLastReceivedStatistics().then((stats) => print(stats));
     ```
 
-9. Reset statistics before starting a new operation.
+10. List ongoing executions.
     ```
-    _flutterFFmpegConfig.resetStatistics();
+    _flutterFFmpeg.listExecutions().then((ffmpegExecutions) {
+      ffmpegExecutions.forEach((execution) {
+        ffprint(
+            "Execution id:${execution.executionId}, startTime:${execution.command}, command:${execution.startTime}.");
+      });
+    });
     ```
 
-10. Set log level.
+11. Set log level.
     ```
     _flutterFFmpegConfig.setLogLevel(LogLevel.AV_LOG_WARNING);
     ```
 
-11. Register your own fonts by specifying a custom fonts directory, so they are available to use in `FFmpeg` filters. Please note that this function can not work on relative paths, you need to provide full file system path.
+12. Register your own fonts by specifying a custom fonts directory, so they are available to use in `FFmpeg` filters. Please note that this function can not work on relative paths, you need to provide full file system path.
     ```
     _flutterFFmpegConfig.setFontDirectory("<folder with fonts>");
     ```
 
-12. Use your own `fontconfig` configuration.
+13. Use your own `fontconfig` configuration.
     ```
     _flutterFFmpegConfig.setFontconfigConfigurationPath("<fontconfig configuration directory>");
     ```
 
-13. Disable log functionality of the library. Logs will not be printed to console and log callback will be disabled.
+14. Disable log functionality of the library. Logs will not be printed to console and log callback will be disabled.
     ```
     _flutterFFmpegConfig.disableLogs();
     ```
 
-14. Disable statistics functionality of the library. Statistics callback will be disabled but the last received statistics data will be still available.
+15. Disable statistics functionality of the library. Statistics callback will be disabled but the last received statistics data will be still available.
     ```
     _flutterFFmpegConfig.disableStatistics();
     ```
 
-15. List enabled external libraries.
-    ```
-    _flutterFFmpegConfig.getExternalLibraries().then((packageList) {
-         packageList.forEach((value) => print("External library: $value"));
-    });
-    ```
 16. Create new `FFmpeg` pipe. 
     ```
     _flutterFFmpegConfig.registerNewFFmpegPipe().then((path) {
          then((stats) => print("New ffmpeg pipe at $path"));
     });
     ```
+    
+### 4. Example Application
+You can see how FlutterFFmpeg is used inside an application by running the example application provided under the 
+`example` folder. It supports command execution, video encoding, accessing https, encoding audio, 
+burning subtitles, video stabilisation, pipe operations and concurrent command execution.
 
-### 4. Tips
+<img src="https://github.com/tanersener/flutter-ffmpeg/blob/development/doc/assets/flutter_test_app.gif" width="240">
+
+### 5. Tips
 
 - `flutter_ffmpeg` uses file system paths, it does not know what an `assets` folder or a `project` folder is. So you can't use resources on those folders directly, you need to provide full paths of those resources.
 
-- `flutter_ffmpeg` requires ios deployment target to be at least `9.3`. 
-  If you don't specify a deployment target or set a value smaller than `9.3` then your build will fail with the following error.
+- `flutter_ffmpeg` requires ios deployment target to be at least `11.0` for Main releases and `9.3` for LTS releases. 
+  If you don't specify a deployment target or set a value smaller than the required one then your build will fail with 
+  the following error.
    
    ```
     Resolving dependencies of `Podfile`
@@ -437,8 +438,13 @@ In order to install the `LTS` variant, install the `https-lts` package using ins
     deployment target.
     ```
     
-  You can fix this issue by adding `platform :ios, '9.3'` definition to your `ios/Podfile` file.
+  You can fix this issue by adding the definition to your `ios/Podfile` file.
 
+    - `Main` releases
+    ```
+    platform :ios, '11.0'
+    ```
+    - `LTS` releases
     ```
     platform :ios, '9.3'
     ```
@@ -489,21 +495,35 @@ You can overcome this situation by registering a font using `setFontDirectory` m
   }
   ```
 
-### 5. Updates
+### 6. Updates
 
 Refer to [Changelog](CHANGELOG.md) for updates.
 
-### 6. License
+### 7. License
 
-This project is licensed under the LGPL v3.0. However, if installation is customized to use a package with `-gpl` postfix (min-gpl, https-gpl, full-gpl) then `FlutterFFmpeg` is subject to the GPL v3.0 license.
+This project is licensed under the LGPL v3.0. However, if installation is customized to use a package with `-gpl` 
+postfix (min-gpl, https-gpl, full-gpl) then `FlutterFFmpeg` is subject to the GPL v3.0 license.
 
-Digital assets used in test applications are published in the public domain.
+In test application; embedded fonts are licensed under the
+[SIL Open Font License](https://opensource.org/licenses/OFL-1.1), other digital assets are published in the public
+domain.
 
-### 7. Contributing
+### 8. Patents
+
+It is not clearly explained in their documentation but it is believed that `FFmpeg`, `kvazaar`, `x264` and `x265`
+include algorithms which are subject to software patents. If you live in a country where software algorithms are
+patentable then you'll probably need to pay royalty fees to patent holders. We are not lawyers though, so we recommend
+that you seek legal advice first. See [FFmpeg Patent Mini-FAQ](https://ffmpeg.org/legal.html).
+
+### 9. Contributing
 
 Feel free to submit issues or pull requests.
 
-### 8. See Also
+Please note that `master` branch includes only the latest released source code. Changes planned for the next release 
+are implemented under the `development` branch. Therefore, if you want to create a pull request, please open it against
+the `development`.
+
+### 10. See Also
 
 - [FFmpeg](https://www.ffmpeg.org)
 - [Mobile FFmpeg Wiki](https://github.com/tanersener/mobile-ffmpeg/wiki)

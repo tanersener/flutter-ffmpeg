@@ -1,9 +1,21 @@
+## 0.3.0
+- Uses thread pool executor to process Android executions
+- Adds listExecutions API method
+- Implements async FFmpeg execution methods
+- LogCallback and StatisticsCallback functions updated with executionId
+- Updates getMediaInformation implementation
+- Adds setEnvironmentVariable API method
+- Depends on mobile-ffmpeg v4.4
+- Allows modifying mobile-ffmpeg version for android
+- Includes an updated example application
+- Fixes issue #115, #120, #157, #159, #170, #178 and #202
+
 ## 0.2.10
 - Fixes issue #94
 
 ## 0.2.9
 - Implements FFprobe
-- Add concurrent execution support
+- Adds concurrent execution support
 - Re-organises plugin classes
 - iOS releases depend on iconv system library instead of iconv external library
 
