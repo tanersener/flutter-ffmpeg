@@ -112,7 +112,7 @@ class ConcurrentExecutionTab {
                   }
               }
 
-              listFFmpegExecutions();
+              runListFFmpegExecutions();
             });
           });
         });
@@ -126,7 +126,7 @@ class ConcurrentExecutionTab {
     return new File("${documentsDirectory.path}/$video");
   }
 
-  void listFFmpegExecutio() {
+  void runListFFmpegExecutions() {
     listFFmpegExecutions().then((ffmpegExecutions) {
       ffprint("Listing ongoing FFmpeg executions.");
       int i = 0;

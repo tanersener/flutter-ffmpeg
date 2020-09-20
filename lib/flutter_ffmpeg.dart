@@ -450,7 +450,8 @@ class FlutterFFmpeg {
       List<String> arguments, ExecuteCallback executeCallback) async {
     try {
       return await _methodChannel.invokeMethod(
-          'executeFFmpegAsyncWithArguments', {'arguments': arguments}).then((map) {
+          'executeFFmpegAsyncWithArguments',
+          {'arguments': arguments}).then((map) {
         var executionId = map["executionId"];
         FlutterFFmpegConfig.addExecuteCallback(executionId, executeCallback);
         return executionId;

@@ -18,7 +18,6 @@
  */
 
 class StreamInformation {
-
   Map<dynamic, dynamic> _allProperties;
 
   /// Creates a new [StreamInformation] instance
@@ -28,5 +27,4 @@ class StreamInformation {
   Map<dynamic, dynamic> getAllProperties() {
     return _allProperties;
   }
-
 }

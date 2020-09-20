@@ -7,7 +7,8 @@
 - Adds setEnvironmentVariable API method
 - Depends on mobile-ffmpeg v4.4
 - Allows modifying mobile-ffmpeg version for android
-- Fixes issue #115, #120 and #178
+- Includes an updated example application
+- Fixes issue #115, #120, #157, #159, #170, #178 and #202
 
 ## 0.2.10
 - Fixes issue #94
