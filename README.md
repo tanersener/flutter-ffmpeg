@@ -40,14 +40,14 @@ dependencies:
 
 #### 2.1 Packages
 
-`ffmpeg` includes built-in encoders for some popular formats bu not for all of them. External libraries are necessary 
-to encode some specific codecs/formats. For example, to encode an `mp3` file you need `lame` or `shine` library 
-enabled. You have to install `flutter_ffmpeg` a package that has them inside. To encode an `h264` video you need to
-install a package with `x264` inside. To encode `vp8` or `vp9` videos you need a package with `libvpx` inside.
+`ffmpeg` includes built-in encoders for some popular formats. However, there are certain external libraries that needs 
+to be enabled in order to encode specific formats/codecs. For example, to encode an `mp3` file you need `lame` or 
+`shine` library enabled. You have to install a `flutter_ffmpeg` package that has at least one of them inside. 
+To encode an `h264` video, you need to install a package with `x264` inside. To encode `vp8` or `vp9` videos, you need 
+a `flutter_ffmpeg` package with `libvpx` inside.
 
-`flutter_ffmpeg` provides eight different packages that include different sets of external libraries. Packages are 
-named according to the external libraries included in them. Below you can see which libraries are enabled in each one 
-of them. 
+`flutter_ffmpeg` provides eight packages that include different sets of external libraries. These packages are named 
+according to the external libraries included in them. Below you can see which libraries are enabled in each package. 
 
 <table>
 <thead>
@@ -87,21 +87,22 @@ of them.
 </table>
 
 Installation of `FlutterFFmpeg` using `pub` enables the default package, which is based on `https` package. It is 
-possible to enable other packages using the following steps.
+possible to enable other `flutter_ffmpeg` packages using the following steps.
 
 ##### 2.1.1 Android
 
-- Edit `android/build.gradle` file and define package name in `ext.flutterFFmpegPackage` variable.
+- Edit `android/build.gradle` file and specify the package name in `ext.flutterFFmpegPackage` variable.
 
     ```
     ext {
-        flutterFFmpegPackage  = "<package name>"
+        flutterFFmpegPackage  = "<flutter ffmpeg package name listed in section 2.1>"
     }
 
     ```
 ##### 2.1.2 iOS (Flutter >= 1.20.x)
 
-- Edit `ios/Podfile` and add the following block **before** `target 'Runner do` section :
+- Edit `ios/Podfile`, add the following block **before** `target 'Runner do` and specify the package name in
+`<package name>` section :
 
     ```
     # "fork" of method flutter_install_ios_plugin_pods (in fluttertools podhelpers.rb) to get lts version of ffmpeg
@@ -137,14 +138,14 @@ possible to enable other packages using the following steps.
         end
       end
     ```
-- Ensure that `flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))` function is called
-within `target 'Runner' do` block. In that case, it is mandatory that the added function is
-named `flutter_install_ios_plugin_pods` and that you **do not** make an explicit call within that block.
+- Ensure that `flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))` function is called within 
+`target 'Runner' do` block. In that case, it is mandatory that the added function is named 
+`flutter_install_ios_plugin_pods` and that you **do not** make an explicit call within that block.
 
 ##### 2.1.3 iOS (Flutter < 1.20.x)
 
-- Edit `ios/Podfile` file and modify the default `# Plugin Pods` block as follows. 
-  Do not forget to specify package name in `<package name>` section.
+- Edit `ios/Podfile` file and modify the default `# Plugin Pods` block as follows. Do not forget to specify the package 
+name in `<package name>` section.
 
     ```
     # Prepare symlinks folder. We use symlinks to avoid having Podfile.lock
@@ -181,21 +182,28 @@ The following table shows all package names defined for `flutter_ffmpeg`.
 
 #### 2.2 Existing Applications
 
-It is possible to add `flutter_ffmpeg` to existing applications using [Add-to-App](https://github.com/flutter/flutter/wiki/Add-Flutter-to-existing-apps) guide.
+It is possible to add `flutter_ffmpeg` to existing applications using 
+[Add-to-App](https://github.com/flutter/flutter/wiki/Add-Flutter-to-existing-apps) guide.
 
 Please execute the following additional steps if you are integrating into an iOS application.
 
-1. Go to `Build Phases` of `Pods` -> `FlutterPluginRegistrant` target and add all frameworks under the `Pods/mobile-ffmpeg-<package name>` directory to the `Link Binary With Libraries` section
+1. Go to `Build Phases` of `Pods` -> `FlutterPluginRegistrant` target and add all frameworks under the 
+`Pods/mobile-ffmpeg-<package name>` directory to the `Link Binary With Libraries` section
 
-2. Go to `Build Phases` of `Pods` -> `FlutterPluginRegistrant` target and add all system libraries/frameworks listed in Step 4 of [Importing-Frameworks](https://github.com/tanersener/mobile-ffmpeg/wiki/Importing-Frameworks) guide to the `Link Binary With Libraries` section
+2. Go to `Build Phases` of `Pods` -> `FlutterPluginRegistrant` target and add all system libraries/frameworks listed 
+in Step 4 of [Importing-Frameworks](https://github.com/tanersener/mobile-ffmpeg/wiki/Importing-Frameworks) guide to 
+the `Link Binary With Libraries` section
 
-3. Go to `Build Phases` of `Pods` -> `FlutterPluginRegistrant` target and add `AVFoundation` system framework to the `Link Binary With Libraries` section
+3. Go to `Build Phases` of `Pods` -> `FlutterPluginRegistrant` target and add `AVFoundation` system framework to the 
+`Link Binary With Libraries` section
 
 #### 2.3 LTS Releases
 
-`flutter_ffmpeg` is published in two different variants: `Main Release` and `LTS Release`. Both releases share the same source code but is built with different settings. Below you can see the differences between the two.
+`flutter_ffmpeg` is published in two different variants: `Main Release` and `LTS Release`. Both releases share the same
+source code but is built with different settings. Below you can see the differences between the two.
 
-In order to install the `LTS` variant, install the `https-lts` package using instructions in `2.1` or append `-lts` to the package name you are using. 
+In order to install the `LTS` variant, install the `https-lts` package using instructions in `2.1` or append `-lts` to 
+the package name you are using. 
 
 |        | Main Release | LTS Release |
 | :----: | :----: | :----: |
@@ -414,18 +422,19 @@ In order to install the `LTS` variant, install the `https-lts` package using ins
     ```
     
 ### 4. Example Application
-You can see how FlutterFFmpeg is used inside an application by running the example application provided under the 
-`example` folder. It supports command execution, video encoding, accessing https, encoding audio, 
-burning subtitles, video stabilisation, pipe operations and concurrent command execution.
+You can see how `FlutterFFmpeg` is used inside an application by running example application provided under the 
+`example` folder. It supports command execution, video encoding, accessing https, encoding audio, burning subtitles, 
+video stabilisation, pipe operations and concurrent command execution.
 
-<img src="https://github.com/tanersener/flutter-ffmpeg/blob/development/doc/assets/flutter_test_app.gif" width="240">
+<img src="https://github.com/tanersener/flutter-ffmpeg/raw/development/doc/assets/flutter_test_app.gif" width="240">
 
 ### 5. Tips
 
-- `flutter_ffmpeg` uses file system paths, it does not know what an `assets` folder or a `project` folder is. So you can't use resources on those folders directly, you need to provide full paths of those resources.
+- `flutter_ffmpeg` uses file system paths, it does not know what an `assets` folder or a `project` folder is. So you 
+can't use resources on those folders directly, you need to provide full paths of those resources.
 
 - `flutter_ffmpeg` requires ios deployment target to be at least `11.0` for Main releases and `9.3` for LTS releases. 
-  If you don't specify a deployment target or set a value smaller than the required one then your build will fail with 
+  If you don't specify a deployment target or set a value smaller than the required one then your build may fail with 
   the following error.
    
    ```
@@ -438,7 +447,7 @@ burning subtitles, video stabilisation, pipe operations and concurrent command e
     deployment target.
     ```
     
-  You can fix this issue by adding the definition to your `ios/Podfile` file.
+  You can fix this issue by adding the following definition to your `ios/Podfile` file.
 
     - `Main` releases
     ```
@@ -449,21 +458,23 @@ burning subtitles, video stabilisation, pipe operations and concurrent command e
     platform :ios, '9.3'
     ```
     
-- `flutter_ffmpeg` includes native libraries that require ios deployment target to be at least `9.3`. 
-  If a deployment target is not set or a value smaller than `9.3` is used then your build will fail with the following error.
+- `flutter_ffmpeg` includes native libraries that require ios deployment target to be at least `9.3`. If a deployment 
+target is not set or a value smaller than `9.3` is used then your build will fail with the following error.
    
     ```
     ld: targeted OS version does not support use of thread local variables in __gnutls_rnd_deinit for architecture x86_64
     clang: error: linker command failed with exit code 1 (use -v to see invocation)
     ```
 
-  Unfortunately the latest versions of `Flutter` and `Cocoapods` have some issues about setting ios deployment target from `Podfile`.
-  Having `platform :ios, '9.3'` in your `Podfile` is not enough. `Runner` project still uses the default value `8.0`.
-  You need to open `Runner.xcworkspace` in `Xcode` and set `iOS Deployment Target` of `Runner` project to `9.3` manually.
+  Some versions of `Flutter` and `Cocoapods` have issues about setting ios deployment target from `Podfile`. On those 
+  versions, having `platform :ios, '9.3'` in your `Podfile` is not enough. `Runner` project still uses the default 
+  value `8.0`. You need to open `Runner.xcworkspace` in `Xcode` and set `iOS Deployment Target` of `Runner` project to 
+  `9.3` manually or create a new project.
     
     <img src="https://github.com/tanersener/flutter-ffmpeg/raw/development/doc/assets/tip_runner_deployment_target.png" width="480">
 
-- Enabling `ProGuard` on releases older than `v0.2.4` causes linking errors. Please add the following rule inside your `proguard-rules.pro` file to preserve necessary method names and prevent linking errors.
+- Enabling `ProGuard` on releases older than `v0.2.4` causes linking errors. Please add the following rule inside your 
+`proguard-rules.pro` file to preserve necessary method names and prevent linking errors.
 
     ```
     -keep class com.arthenica.mobileffmpeg.Config {
@@ -473,15 +484,21 @@ burning subtitles, video stabilisation, pipe operations and concurrent command e
     }
     ```
 
-- `ffmpeg` requires a valid `fontconfig` configuration to render subtitles. Unfortunately, Android does not include a default `fontconfig` configuration. 
-So if you do not register a font or specify a `fontconfig` configuration under Android, then the burning process will not produce any errors but subtitles won't be burned in your file. 
-You can overcome this situation by registering a font using `setFontDirectory` method or specifying your own `fontconfig` configuration using `setFontconfigConfigurationPath` method.
+- `ffmpeg` requires a valid `fontconfig` configuration to render subtitles. Unfortunately, Android does not include a 
+default `fontconfig` configuration. So, if you do not register a font or specify a `fontconfig` configuration under 
+Android, then the burning process will not produce any errors but subtitles won't be burned in your file. You can 
+overcome this behaviour by registering a font using `setFontDirectory` method or specifying your own `fontconfig` 
+configuration using `setFontconfigConfigurationPath` method.
 
-- By default, Xcode compresses `PNG` files during packaging. If you use `.png` files in your commands make sure you set the following two settings to `NO`. If one of them is set to `YES`, your operations may fail with `Error while decoding stream #0:0: Generic error in an external library` error.
+- By default, Xcode compresses `PNG` files during packaging. If you use `.png` files in your commands make sure you 
+set the following two settings to `NO`. If one of them is set to `YES`, your operations may fail with 
+`Error while decoding stream #0:0: Generic error in an external library` error.
 
     <img src="https://github.com/tanersener/flutter-ffmpeg/raw/development/doc/assets/tip_png_files.png" width="720">
 
-- Some `flutter_ffmpeg` packages include `libc++_shared.so` native library. If a second library which also includes `libc++_shared.so` is added as a dependency, `gradle` fails with `More than one file was found with OS independent path 'lib/x86/libc++_shared.so'` error message.
+- Some `flutter_ffmpeg` packages include `libc++_shared.so` native library. If a second library which also includes 
+`libc++_shared.so` is added as a dependency, `gradle` fails with 
+`More than one file was found with OS independent path 'lib/x86/libc++_shared.so'` error message.
 
   You can fix this error by adding the following block into your `build.gradle`.
   ```
