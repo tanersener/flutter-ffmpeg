@@ -160,7 +160,7 @@ class FlutterFFmpegConfig {
     }
   }
 
-  /// Returns platform name where library is loaded.
+  /// Returns platform name in which library is loaded.
   Future<String> getPlatform() async {
     try {
       final Map<dynamic, dynamic> result =
@@ -172,7 +172,7 @@ class FlutterFFmpegConfig {
     }
   }
 
-  /// Enables redirection.
+  /// Enables log and statistics redirection.
   Future<void> enableRedirection() async {
     try {
       await _methodChannel.invokeMethod('enableRedirection');
@@ -571,7 +571,11 @@ class FlutterFFprobe {
   static const MethodChannel _methodChannel =
       const MethodChannel('flutter_ffmpeg');
 
-  /// Executes FFprobe with [commandArguments] provided.
+  /// Executes FFprobe synchronously with [commandArguments] provided. This
+  /// method returns when execution completes.
+  ///
+  /// Returns zero on successful execution, 255 on user cancel and non-zero on
+  /// error.
   Future<int> executeWithArguments(List<String> arguments) async {
     try {
       final Map<dynamic, dynamic> result = await _methodChannel.invokeMethod(
@@ -583,7 +587,11 @@ class FlutterFFprobe {
     }
   }
 
-  /// Executes FFprobe [command] provided.
+  /// Executes FFprobe synchronously with [command] provided. This method
+  /// returns when execution completes.
+  ///
+  /// Returns zero on successful execution, 255 on user cancel and non-zero on
+  /// error.
   Future<int> execute(String command) async {
     try {
       final Map<dynamic, dynamic> result = await _methodChannel.invokeMethod(
@@ -597,6 +605,10 @@ class FlutterFFprobe {
   }
 
   /// Returns media information for the given [path].
+  ///
+  /// This method does not support executing multiple concurrent operations.
+  /// If you execute multiple operations (execute or getMediaInformation) at
+  /// the same time, the response of this method is not predictable.
   Future<MediaInformation> getMediaInformation(String path) async {
     try {
       return await _methodChannel.invokeMethod('getMediaInformation',
