@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Taner Sener
+ * Copyright (c) 2019-2020 Taner Sener
  *
  * This file is part of FlutterFFmpeg.
  *
@@ -58,16 +58,15 @@ import io.flutter.plugin.common.PluginRegistry.Registrar;
  */
 public class FlutterFFmpegPlugin implements MethodCallHandler, EventChannel.StreamHandler {
     public static final String LIBRARY_NAME = "flutter-ffmpeg";
-
     public static final String PLATFORM_NAME = "android";
+
     public static final String KEY_VERSION = "version";
     public static final String KEY_RC = "rc";
     public static final String KEY_PLATFORM = "platform";
     public static final String KEY_PACKAGE_NAME = "packageName";
     public static final String KEY_LAST_RC = "lastRc";
-    public static final String KEY_PIPE = "pipe";
-
     public static final String KEY_LAST_COMMAND_OUTPUT = "lastCommandOutput";
+    public static final String KEY_PIPE = "pipe";
 
     public static final String KEY_LOG_EXECUTION_ID = "executionId";
     public static final String KEY_LOG_LEVEL = "level";
@@ -389,7 +388,6 @@ public class FlutterFFmpegPlugin implements MethodCallHandler, EventChannel.Stre
 
         return executions;
     }
-
 
     public static Map<String, Object> toMediaInformationMap(final MediaInformation mediaInformation) {
         Map<String, Object> map = new HashMap<>();

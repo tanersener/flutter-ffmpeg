@@ -13,7 +13,7 @@ FFmpeg plugin for Flutter. Supports iOS and Android.
 - Supports
     - Both `Android` and `iOS`
     - Both Android (API Level 16+) and iOS (SDK 9.3+)
-    - FFmpeg `v4.1`, `v4.2` , `v4.3` and `v4.4-dev` releases
+    - FFmpeg `v4.1`, `v4.2`, `v4.3` and `v4.4-dev` releases
     - `arm-v7a`, `arm-v7a-neon`, `arm64-v8a`, `x86` and `x86_64` architectures on Android
     - `armv7`, `armv7s`, `arm64`, `arm64e`, `i386` and `x86_64` architectures on iOS
     - 25 external libraries
