@@ -412,12 +412,14 @@ public class FlutterFFmpegPlugin implements MethodCallHandler, EventChannel.Stre
             while (keys.hasNext()) {
                 String key = keys.next();
                 Object value = jsonObject.opt(key);
-                if (value instanceof JSONArray) {
-                    value = toList((JSONArray) value);
-                } else if (value instanceof JSONObject) {
-                    value = toMap((JSONObject) value);
+                if (value != null) {
+                    if (value instanceof JSONArray) {
+                        value = toList((JSONArray) value);
+                    } else if (value instanceof JSONObject) {
+                        value = toMap((JSONObject) value);
+                    }
+                    map.put(key, value);
                 }
-                map.put(key, value);
             }
         }
 
@@ -429,12 +431,14 @@ public class FlutterFFmpegPlugin implements MethodCallHandler, EventChannel.Stre
 
         for (int i = 0; i < array.length(); i++) {
             Object value = array.opt(i);
-            if (value instanceof JSONArray) {
-                value = toList((JSONArray) value);
-            } else if (value instanceof JSONObject) {
-                value = toMap((JSONObject) value);
+            if (value != null) {
+                if (value instanceof JSONArray) {
+                    value = toList((JSONArray) value);
+                } else if (value instanceof JSONObject) {
+                    value = toMap((JSONObject) value);
+                }
+                list.add(value);
             }
-            list.add(value);
         }
 
         return list;
