@@ -137,6 +137,7 @@ possible to enable other `flutter_ffmpeg` packages using the following steps.
             end
         end
       end
+    end
     ```
 - Ensure that `flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))` function is called within 
 `target 'Runner' do` block. In that case, it is mandatory that the added function is named 
