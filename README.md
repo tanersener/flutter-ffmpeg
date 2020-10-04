@@ -272,7 +272,7 @@ the package name you are using.
 4. Check execution output. Zero represents successful execution, 255 means user cancel and non-zero values represent failure.
     ```
    
-   final FlutterFFmpegConfig _flutterFFmpegConfig = new FlutterFFmpegConfig();
+    final FlutterFFmpegConfig _flutterFFmpegConfig = new FlutterFFmpegConfig();
    
     _flutterFFmpegConfig.getLastReturnCode().then((rc) => print("Last rc: $rc"));
 
@@ -292,22 +292,22 @@ the package name you are using.
 6. Get media information for a file.
     - Print all fields
     ```
-   final FlutterFFprobe _flutterFFprobe = new FlutterFFprobe();
+    final FlutterFFprobe _flutterFFprobe = new FlutterFFprobe();
 
     _flutterFFprobe.getMediaInformation("<file path or uri>").then((info) => print(info));
     ```
     - Print selected fields
     ```
-   final FlutterFFprobe _flutterFFprobe = new FlutterFFprobe();
+    final FlutterFFprobe _flutterFFprobe = new FlutterFFprobe();
 
     _flutterFFprobe.getMediaInformation("<file path or uri>").then((info) {
         print("Media Information");
 
-        print("Path: ${info.getMediaProperties()['path']}");
-        print("Format: ${info.getMediaProperties()['format']}");
+        print("Path: ${info.getMediaProperties()['filename']}");
+        print("Format: ${info.getMediaProperties()['format_name']}");
         print("Duration: ${info.getMediaProperties()['duration']}");
-        print("Start time: ${info.getMediaProperties()['startTime']}");
-        print("Bitrate: ${info.getMediaProperties()['bitrate']}");
+        print("Start time: ${info.getMediaProperties()['start_time']}");
+        print("Bitrate: ${info.getMediaProperties()['bit_rate']}");
         Map<dynamic, dynamic> tags = info.getMediaProperties()['tags'];
         if (tags != null) {
             tags.forEach((key, value) {
@@ -321,40 +321,33 @@ the package name you are using.
             if (streams.length > 0) {
                 for (var stream in streams) {
                     print("Stream id: ${stream.getAllProperties()['index']}");
-                    print("Stream type: ${stream.getAllProperties()['type']}");
-                    print("Stream codec: ${stream.getAllProperties()['codec']}");
-                    print("Stream full codec: ${stream.getAllProperties()['fullCodec']}");
-                    print("Stream format: ${stream.getAllProperties()['format']}");
-                    print("Stream full format: ${stream.getAllProperties()['fullFormat']}");
+                    print("Stream type: ${stream.getAllProperties()['codec_type']}");
+                    print("Stream codec: ${stream.getAllProperties()['codec_name']}");
+                    print("Stream full codec: ${stream.getAllProperties()['codec_long_name']}");
+                    print("Stream format: ${stream.getAllProperties()['pix_fmt']}");
                     print("Stream width: ${stream.getAllProperties()['width']}");
                     print("Stream height: ${stream.getAllProperties()['height']}");
-                    print("Stream bitrate: ${stream.getAllProperties()['bitrate']}");
-                    print("Stream sample rate: ${stream.getAllProperties()['sampleRate']}");
-                    print("Stream sample format: ${stream.getAllProperties()['sampleFormat']}");
-                    print("Stream channel layout: ${stream.getAllProperties()['channelLayout']}");
-                    print("Stream sar: ${stream.getAllProperties()['sampleAspectRatio']}");
-                    print("Stream dar: ${stream.getAllProperties()['displayAspectRatio']}");
-                    print("Stream average frame rate: ${stream.getAllProperties()['averageFrameRate']}");
-                    print("Stream real frame rate: ${stream.getAllProperties()['realFrameRate']}");
-                    print("Stream time base: ${stream.getAllProperties()['timeBase']}");
-                    print("Stream codec time base: ${stream.getAllProperties()['codecTimeBase']}");
+                    print("Stream bitrate: ${stream.getAllProperties()['bit_rate']}");
+                    print("Stream sample rate: ${stream.getAllProperties()['sample_rate']}");
+                    print("Stream sample format: ${stream.getAllProperties()['sample_fmt']}");
+                    print("Stream channel layout: ${stream.getAllProperties()['channel_layout']}");
+                    print("Stream sar: ${stream.getAllProperties()['sample_aspect_ratio']}");
+                    print("Stream dar: ${stream.getAllProperties()['display_aspect_ratio']}");
+                    print("Stream average frame rate: ${stream.getAllProperties()['avg_frame_rate']}");
+                    print("Stream real frame rate: ${stream.getAllProperties()['r_frame_rate']}");
+                    print("Stream time base: ${stream.getAllProperties()['time_base']}");
+                    print("Stream codec time base: ${stream.getAllProperties()['codec_time_base']}");
 
-                    final metadataMap = stream.getAllProperties()['metadata'];
-                    if (metadataMap != null) {
-                        print('Stream metadata encoder: ${metadataMap['encoder']}');
-                        print('Stream metadata rotate: ${metadataMap['rotate']}');
-                        print('Stream metadata creation time: ${metadataMap['creation_time']}');
-                        print('Stream metadata handler name: ${metadataMap['handler_name']}');
-                    }
-    
-                    final sideDataMap = stream.getAllProperties()['sidedata'];
-                    if (sideDataMap != null) {
-                        print('Stream side data displaymatrix: ${sideDataMap['displaymatrix']}');
+                    Map<dynamic, dynamic> tags = stream.getAllProperties()['tags'];
+                    if (tags != null) {
+                      tags.forEach((key, value) {
+                        print("Stream tag: " + key + ":" + value + "\n");
+                      });
                     }
                 }
             }
         }
-
+    });
     ```
 
 7. Enable log callback and redirect all `FFmpeg`/`FFprobe` logs to a console/file/widget.
