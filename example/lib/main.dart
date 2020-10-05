@@ -186,7 +186,7 @@ class FlutterFFmpegExampleAppState extends State<MainPage>
     return Scaffold(
         key: _globalKey,
         appBar: AppBar(
-          title: Text('FlutterFFmpeg Test'),
+          title: Text('FlutterFFmpegTest'),
           centerTitle: true,
         ),
         bottomNavigationBar: Material(
