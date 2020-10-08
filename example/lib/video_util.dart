@@ -27,25 +27,25 @@ import 'package:path_provider/path_provider.dart';
 import 'util.dart';
 
 class VideoUtil {
-  static const String ASSET_1 = "1.jpg";
-  static const String ASSET_2 = "2.jpg";
-  static const String ASSET_3 = "3.jpg";
+  static const String ASSET_1 = "pyramid.jpg";
+  static const String ASSET_2 = "colosseum.jpg";
+  static const String ASSET_3 = "tajmahal.jpg";
   static const String SUBTITLE_ASSET = "subtitle.srt";
   static const String FONT_ASSET_1 = "doppioone_regular.ttf";
   static const String FONT_ASSET_2 = "truenorg.otf";
 
   static void prepareAssets() {
-    VideoUtil.copyFileAssets('assets/pyramid.jpg', ASSET_1)
+    VideoUtil.copyFileAssets('assets/$ASSET_1', ASSET_1)
         .then((path) => ffprint('Loaded asset $path.'));
-    VideoUtil.copyFileAssets('assets/colosseum.jpg', ASSET_2)
+    VideoUtil.copyFileAssets('assets/$ASSET_2', ASSET_2)
         .then((path) => ffprint('Loaded asset $path.'));
-    VideoUtil.copyFileAssets('assets/tajmahal.jpg', ASSET_3)
+    VideoUtil.copyFileAssets('assets/$ASSET_3', ASSET_3)
         .then((path) => ffprint('Loaded asset $path.'));
-    VideoUtil.copyFileAssets('assets/subtitle.srt', SUBTITLE_ASSET)
+    VideoUtil.copyFileAssets('assets/$SUBTITLE_ASSET', SUBTITLE_ASSET)
         .then((path) => ffprint('Loaded asset $path.'));
-    VideoUtil.copyFileAssets('assets/doppioone_regular.ttf', FONT_ASSET_1)
+    VideoUtil.copyFileAssets('assets/$FONT_ASSET_1', FONT_ASSET_1)
         .then((path) => ffprint('Loaded asset $path.'));
-    VideoUtil.copyFileAssets('assets/truenorg.otf', FONT_ASSET_2)
+    VideoUtil.copyFileAssets('assets/$FONT_ASSET_2', FONT_ASSET_2)
         .then((path) => ffprint('Loaded asset $path.'));
   }
 
