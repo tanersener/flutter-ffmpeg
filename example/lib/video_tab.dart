@@ -94,13 +94,13 @@ class VideoTab implements PlayerTab {
                 getCustomOptions());
 
             ffprint(
-                "FFmpeg process started with arguments\n\'$ffmpegCommand\'.");
+                "Async FFmpeg process started with arguments\n\'$ffmpegCommand\'.");
 
             executeAsyncFFmpeg(ffmpegCommand,
                 (int executionId, int returnCode) {
-              ffprint("FFmpeg process exited with rc $returnCode.");
+              ffprint("Async FFmpeg process exited with rc $returnCode.");
 
-              ffprint("FFmpeg process output:");
+              ffprint("Async FFmpeg process output:");
 
               getLastCommandOutput().then((output) => ffprint(output));
 
@@ -110,8 +110,8 @@ class VideoTab implements PlayerTab {
                 ffprint("Encode completed successfully; playing video.");
                 playVideo();
               } else {
-                showPopup("Encode failed. Please check log for the details.");
                 ffprint("Encode failed with rc=$returnCode.");
+                showPopup("Encode failed. Please check log for the details.");
               }
             }).then((executionId) => ffprint(
                 "Async FFmpeg process started with executionId $executionId."));
