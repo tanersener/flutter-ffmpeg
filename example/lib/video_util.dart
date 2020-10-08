@@ -34,40 +34,30 @@ class VideoUtil {
   static const String FONT_ASSET_1 = "doppioone_regular.ttf";
   static const String FONT_ASSET_2 = "truenorg.otf";
 
-  static void prepareAssets() {
-    VideoUtil.copyFileAssets('assets/$ASSET_1', ASSET_1)
-        .then((path) => ffprint('Loaded asset $path.'));
-    VideoUtil.copyFileAssets('assets/$ASSET_2', ASSET_2)
-        .then((path) => ffprint('Loaded asset $path.'));
-    VideoUtil.copyFileAssets('assets/$ASSET_3', ASSET_3)
-        .then((path) => ffprint('Loaded asset $path.'));
-    VideoUtil.copyFileAssets('assets/$SUBTITLE_ASSET', SUBTITLE_ASSET)
-        .then((path) => ffprint('Loaded asset $path.'));
-    VideoUtil.copyFileAssets('assets/$FONT_ASSET_1', FONT_ASSET_1)
-        .then((path) => ffprint('Loaded asset $path.'));
-    VideoUtil.copyFileAssets('assets/$FONT_ASSET_2', FONT_ASSET_2)
-        .then((path) => ffprint('Loaded asset $path.'));
+  static void prepareAssets() async {
+    await VideoUtil.assetToFile(ASSET_1);
+    await VideoUtil.assetToFile(ASSET_2);
+    await VideoUtil.assetToFile(ASSET_3);
+    await VideoUtil.assetToFile(SUBTITLE_ASSET);
+    await VideoUtil.assetToFile(FONT_ASSET_1);
+    await VideoUtil.assetToFile(FONT_ASSET_2);
   }
 
-  static Future<Directory> get tempDirectory async {
-    return await getTemporaryDirectory();
-  }
-
-  static Future<Directory> get documentsDirectory async {
-    return await getApplicationDocumentsDirectory();
-  }
-
-  static Future<File> copyFileAssets(String assetName, String localName) async {
-    final ByteData assetByteData = await rootBundle.load(assetName);
+  static Future<File> assetToFile(String assetName) async {
+    final ByteData assetByteData = await rootBundle.load('assets/$assetName');
 
     final List<int> byteList = assetByteData.buffer
         .asUint8List(assetByteData.offsetInBytes, assetByteData.lengthInBytes);
 
     final String fullTemporaryPath =
-        join((await tempDirectory).path, localName);
+        join((await tempDirectory).path, assetName);
 
-    return new File(fullTemporaryPath)
+    Future<File> fileFuture = new File(fullTemporaryPath)
         .writeAsBytes(byteList, mode: FileMode.writeOnly, flush: true);
+
+    ffprint('assets/$assetName saved to file at $fullTemporaryPath.');
+
+    return fileFuture;
   }
 
   static void assetToPipe(String assetName, String pipePath) async {
@@ -79,10 +69,20 @@ class VideoUtil {
             .asUint8List(byteData.offsetInBytes, byteData.lengthInBytes),
         mode: FileMode.writeOnly,
         flush: false);
+
+    ffprint('assets/$assetName saved to pipe at $pipePath.');
   }
 
   static Future<String> assetPath(String assetName) async {
     return join((await tempDirectory).path, assetName);
+  }
+
+  static Future<Directory> get documentsDirectory async {
+    return await getApplicationDocumentsDirectory();
+  }
+
+  static Future<Directory> get tempDirectory async {
+    return await getTemporaryDirectory();
   }
 
   static String generateEncodeVideoScript(
