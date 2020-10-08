@@ -55,7 +55,6 @@ class VideoTab implements PlayerTab {
 
   void logCallback(Log log) {
     ffprint(log.message);
-    _refreshablePlayerDialogFactory.refresh();
   }
 
   void statisticsCallback(Statistics statistics) {
