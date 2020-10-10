@@ -20,14 +20,17 @@
 import 'dart:async';
 
 import 'package:flutter/services.dart';
+import 'package:flutter_ffmpeg/completed_ffmpeg_execution.dart';
 import 'package:flutter_ffmpeg/ffmpeg_execution.dart';
 import 'package:flutter_ffmpeg/log.dart';
 import 'package:flutter_ffmpeg/media_information.dart';
 import 'package:flutter_ffmpeg/statistics.dart';
 
+import 'completed_ffmpeg_execution.dart';
+
 typedef LogCallback = void Function(Log log);
 typedef StatisticsCallback = void Function(Statistics statistics);
-typedef ExecuteCallback = void Function(int executionId, int returnCode);
+typedef ExecuteCallback = void Function(CompletedFFmpegExecution execution);
 
 class FlutterFFmpegConfig {
   static const MethodChannel _methodChannel =
@@ -125,7 +128,7 @@ class FlutterFFmpegConfig {
 
     ExecuteCallback executeCallback = executeCallbackMap[executionId];
     if (executeCallback != null) {
-      executeCallback(executionId, returnCode);
+      executeCallback(new CompletedFFmpegExecution(executionId, returnCode));
     }
   }
 

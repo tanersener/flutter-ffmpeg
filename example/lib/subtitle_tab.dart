@@ -19,6 +19,7 @@
 
 import 'dart:io';
 
+import 'package:flutter_ffmpeg/completed_ffmpeg_execution.dart';
 import 'package:flutter_ffmpeg/log.dart';
 import 'package:flutter_ffmpeg/statistics.dart';
 import 'package:flutter_ffmpeg_example/abstract.dart';
@@ -100,12 +101,13 @@ class SubtitleTab implements PlayerTab {
                 _state = _State.CREATING;
 
                 executeAsyncFFmpeg(ffmpegCommand,
-                    (int executionId, int returnCode) {
-                  ffprint("FFmpeg process exited with rc $returnCode.");
+                    (CompletedFFmpegExecution execution) {
+                  ffprint(
+                      "FFmpeg process exited with rc ${execution.returnCode}.");
 
                   hideProgressDialog();
 
-                  if (returnCode == 0) {
+                  if (execution.returnCode == 0) {
                     ffprint(
                         "Create completed successfully; burning subtitles.");
 
@@ -120,24 +122,26 @@ class SubtitleTab implements PlayerTab {
                     _state = _State.BURNING;
 
                     executeAsyncFFmpeg(burnSubtitlesCommand,
-                        (int executionId, int returnCode) {
-                      ffprint("FFmpeg process exited with rc $returnCode.");
+                        (CompletedFFmpegExecution secondExecution) {
+                      ffprint(
+                          "FFmpeg process exited with rc ${secondExecution.returnCode}.");
                       hideProgressDialog();
 
-                      if (returnCode == 0) {
+                      if (secondExecution.returnCode == 0) {
                         ffprint(
                             "Burn subtitles completed successfully; playing video.");
                         playVideo();
-                      } else if (returnCode == 255) {
+                      } else if (secondExecution.returnCode == 255) {
                         showPopup("Burn subtitles operation cancelled.");
                         ffprint("Burn subtitles operation cancelled");
                       } else {
                         showPopup(
                             "Burn subtitles failed. Please check log for the details.");
-                        ffprint("Burn subtitles failed with rc=$returnCode.");
+                        ffprint(
+                            "Burn subtitles failed with rc=${secondExecution.returnCode}.");
                       }
                     }).then((value) {
-                      _executionId = executionId;
+                      _executionId = execution.executionId;
                     });
                   }
                 }).then((int executionId) {

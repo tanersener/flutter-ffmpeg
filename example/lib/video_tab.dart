@@ -21,6 +21,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_ffmpeg/completed_ffmpeg_execution.dart';
 import 'package:flutter_ffmpeg/log.dart';
 import 'package:flutter_ffmpeg/statistics.dart';
 import 'package:flutter_ffmpeg_example/abstract.dart';
@@ -72,7 +73,6 @@ class VideoTab implements PlayerTab {
       VideoUtil.assetPath(VideoUtil.ASSET_2).then((image2Path) {
         VideoUtil.assetPath(VideoUtil.ASSET_3).then((image3Path) {
           getVideoFile().then((videoFile) {
-
             // IF VIDEO IS PLAYING STOP PLAYBACK
             pause();
 
@@ -98,8 +98,9 @@ class VideoTab implements PlayerTab {
                 "Async FFmpeg process started with arguments\n\'$ffmpegCommand\'.");
 
             executeAsyncFFmpeg(ffmpegCommand,
-                (int executionId, int returnCode) {
-              ffprint("Async FFmpeg process exited with rc $returnCode.");
+                (CompletedFFmpegExecution execution) {
+              ffprint(
+                  "Async FFmpeg process exited with rc ${execution.returnCode}.");
 
               ffprint("Async FFmpeg process output:");
 
@@ -107,11 +108,11 @@ class VideoTab implements PlayerTab {
 
               hideProgressDialog();
 
-              if (returnCode == 0) {
+              if (execution.returnCode == 0) {
                 ffprint("Encode completed successfully; playing video.");
                 playVideo();
               } else {
-                ffprint("Encode failed with rc=$returnCode.");
+                ffprint("Encode failed with rc=${execution.returnCode}.");
                 showPopup("Encode failed. Please check log for the details.");
               }
             }).then((executionId) => ffprint(

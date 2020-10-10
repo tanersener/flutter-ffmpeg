@@ -19,6 +19,7 @@
 
 import 'dart:io';
 
+import 'package:flutter_ffmpeg/completed_ffmpeg_execution.dart';
 import 'package:flutter_ffmpeg/log.dart';
 import 'package:flutter_ffmpeg_example/abstract.dart';
 import 'package:flutter_ffmpeg_example/flutter_ffmpeg_api_wrapper.dart';
@@ -96,12 +97,13 @@ class VidStabTab {
                     "FFmpeg process started with arguments\n\'$ffmpegCommand\'.");
 
                 executeAsyncFFmpeg(ffmpegCommand,
-                    (int executionId, int returnCode) {
-                  ffprint("FFmpeg process exited with rc $returnCode.");
+                    (CompletedFFmpegExecution execution) {
+                  ffprint(
+                      "FFmpeg process exited with rc ${execution.returnCode}.");
 
                   hideProgressDialog();
 
-                  if (returnCode == 0) {
+                  if (execution.returnCode == 0) {
                     ffprint(
                         "Create completed successfully; stabilizing video.");
 
@@ -114,8 +116,9 @@ class VidStabTab {
                         "FFmpeg process started with arguments\n\'$analyzeVideoCommand\'.");
 
                     executeAsyncFFmpeg(analyzeVideoCommand,
-                        (int executionId, int returnCode) {
-                      ffprint("FFmpeg process exited with rc $returnCode.");
+                        (CompletedFFmpegExecution secondExecution) {
+                      ffprint(
+                          "FFmpeg process exited with rc ${secondExecution.returnCode}.");
 
                       final String stabilizeVideoCommand =
                           "-y -i ${videoFile.path} -vf vidstabtransform=smoothing=30:input=${shakeResultsFile.path} -c:v mpeg4 ${stabilizedVideoFile.path}";
@@ -123,12 +126,13 @@ class VidStabTab {
                           "FFmpeg process started with arguments\n\'$stabilizeVideoCommand\'.");
 
                       executeAsyncFFmpeg(stabilizeVideoCommand,
-                          (int executionId, int returnCode) {
-                        ffprint("FFmpeg process exited with rc $returnCode.");
+                          (CompletedFFmpegExecution thirdExecution) {
+                        ffprint(
+                            "FFmpeg process exited with rc ${thirdExecution.returnCode}.");
 
                         hideProgressDialog();
 
-                        if (returnCode == 0) {
+                        if (thirdExecution.returnCode == 0) {
                           ffprint(
                               "Stabilize video completed successfully; playing videos.");
                           playVideo();
@@ -137,7 +141,7 @@ class VidStabTab {
                           showPopup(
                               "Stabilize video failed. Please check log for the details.");
                           ffprint(
-                              "Stabilize video failed with rc=$returnCode.");
+                              "Stabilize video failed with rc=${thirdExecution.returnCode}.");
                         }
                       });
                     });
