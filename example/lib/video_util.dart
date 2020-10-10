@@ -24,6 +24,7 @@ import 'package:flutter/services.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
+import 'flutter_ffmpeg_api_wrapper.dart';
 import 'util.dart';
 
 class VideoUtil {
@@ -33,6 +34,19 @@ class VideoUtil {
   static const String SUBTITLE_ASSET = "subtitle.srt";
   static const String FONT_ASSET_1 = "doppioone_regular.ttf";
   static const String FONT_ASSET_2 = "truenorg.otf";
+
+  static void registerAppFont() {
+    var fontNameMapping = Map<String, String>();
+    fontNameMapping["MyFontName"] = "Doppio One";
+    VideoUtil.tempDirectory.then((tempDirectory) {
+      setFontDirectory(tempDirectory.path, fontNameMapping);
+      setEnvironmentVariable(
+          "FFREPORT",
+          "file=" +
+              new File(tempDirectory.path + "/" + today() + "-ffreport.txt")
+                  .path);
+    });
+  }
 
   static void prepareAssets() async {
     await VideoUtil.assetToFile(ASSET_1);

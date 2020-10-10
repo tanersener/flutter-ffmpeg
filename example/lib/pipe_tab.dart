@@ -82,9 +82,6 @@ class PipeTab implements PlayerTab {
             final ffmpegCommand = VideoUtil.generateCreateVideoWithPipesScript(
                 pipe1, pipe2, pipe3, videoFile.path);
 
-            ffprint(
-                "FFmpeg process started with arguments\n\'$ffmpegCommand\'.");
-
             executeAsyncFFmpeg(ffmpegCommand,
                 (CompletedFFmpegExecution execution) {
               ffprint("FFmpeg process exited with rc ${execution.returnCode}.");
@@ -98,6 +95,9 @@ class PipeTab implements PlayerTab {
                 showPopup("Create failed. Please check log for the details.");
                 ffprint("Create failed with rc=${execution.returnCode}.");
               }
+            }).then((executionId) {
+              ffprint(
+                  "Async FFmpeg process started with arguments '$ffmpegCommand' and executionId $executionId.");
             });
 
             asyncAssetWriteToPipe("pyramid.jpg", pipe1);

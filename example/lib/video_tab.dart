@@ -27,6 +27,7 @@ import 'package:flutter_ffmpeg/statistics.dart';
 import 'package:flutter_ffmpeg_example/abstract.dart';
 import 'package:flutter_ffmpeg_example/player.dart';
 import 'package:flutter_ffmpeg_example/popup.dart';
+import 'package:flutter_ffmpeg_example/test_api.dart';
 import 'package:flutter_ffmpeg_example/tooltip.dart';
 import 'package:flutter_ffmpeg_example/util.dart';
 import 'package:flutter_ffmpeg_example/video_util.dart';
@@ -69,6 +70,10 @@ class VideoTab implements PlayerTab {
   }
 
   void encodeVideo() {
+    ffprint(
+        "Testing post execution commands before starting the new encoding.");
+    Test.testPostExecutionCommands();
+
     VideoUtil.assetPath(VideoUtil.ASSET_1).then((image1Path) {
       VideoUtil.assetPath(VideoUtil.ASSET_2).then((image2Path) {
         VideoUtil.assetPath(VideoUtil.ASSET_3).then((image3Path) {
@@ -84,6 +89,7 @@ class VideoTab implements PlayerTab {
 
             ffprint("Testing VIDEO encoding with '$videoCodec' codec");
 
+            hideProgressDialog();
             showProgressDialog();
 
             final ffmpegCommand = VideoUtil.generateEncodeVideoScript(
@@ -93,9 +99,6 @@ class VideoTab implements PlayerTab {
                 videoFile.path,
                 videoCodec,
                 getCustomOptions());
-
-            ffprint(
-                "Async FFmpeg process started with arguments\n\'$ffmpegCommand\'.");
 
             executeAsyncFFmpeg(ffmpegCommand,
                 (CompletedFFmpegExecution execution) {
@@ -108,8 +111,10 @@ class VideoTab implements PlayerTab {
                 ffprint("Encode failed with rc=${execution.returnCode}.");
                 showPopup("Encode failed. Please check log for the details.");
               }
-            }).then((executionId) => ffprint(
-                "Async FFmpeg process started with executionId $executionId."));
+            }).then((executionId) {
+              ffprint(
+                  "Async FFmpeg process started with arguments '$ffmpegCommand' and executionId $executionId.");
+            });
           });
         });
       });
@@ -270,11 +275,12 @@ class VideoTab implements PlayerTab {
   }
 
   void updateProgressDialog() {
-    if (_statistics == null) {
+    var statistics = this._statistics;
+    if (statistics == null) {
       return;
     }
 
-    int timeInMilliseconds = this._statistics.time;
+    int timeInMilliseconds = statistics.time;
     if (timeInMilliseconds > 0) {
       int totalVideoDuration = 9000;
 

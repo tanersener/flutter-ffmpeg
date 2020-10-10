@@ -93,9 +93,6 @@ class VidStabTab {
                 final ffmpegCommand = VideoUtil.generateShakingVideoScript(
                     image1Path, image2Path, image3Path, videoFile.path);
 
-                ffprint(
-                    "FFmpeg process started with arguments\n\'$ffmpegCommand\'.");
-
                 executeAsyncFFmpeg(ffmpegCommand,
                     (CompletedFFmpegExecution execution) {
                   ffprint(
@@ -112,9 +109,6 @@ class VidStabTab {
 
                     showStabilizeProgressDialog();
 
-                    ffprint(
-                        "FFmpeg process started with arguments\n\'$analyzeVideoCommand\'.");
-
                     executeAsyncFFmpeg(analyzeVideoCommand,
                         (CompletedFFmpegExecution secondExecution) {
                       ffprint(
@@ -122,8 +116,6 @@ class VidStabTab {
 
                       final String stabilizeVideoCommand =
                           "-y -i ${videoFile.path} -vf vidstabtransform=smoothing=30:input=${shakeResultsFile.path} -c:v mpeg4 ${stabilizedVideoFile.path}";
-                      ffprint(
-                          "FFmpeg process started with arguments\n\'$stabilizeVideoCommand\'.");
 
                       executeAsyncFFmpeg(stabilizeVideoCommand,
                           (CompletedFFmpegExecution thirdExecution) {
@@ -143,9 +135,18 @@ class VidStabTab {
                           ffprint(
                               "Stabilize video failed with rc=${thirdExecution.returnCode}.");
                         }
+                      }).then((executionId) {
+                        ffprint(
+                            "Async FFmpeg process started with arguments '$stabilizeVideoCommand' and executionId $executionId.");
                       });
+                    }).then((executionId) {
+                      ffprint(
+                          "Async FFmpeg process started with arguments '$analyzeVideoCommand' and executionId $executionId.");
                     });
                   }
+                }).then((executionId) {
+                  ffprint(
+                      "Async FFmpeg process started with arguments '$ffmpegCommand' and executionId $executionId.");
                 });
               });
             });

@@ -80,9 +80,6 @@ class ConcurrentExecutionTab {
                 "mpeg4",
                 "");
 
-            ffprint(
-                "FFmpeg process starting for button $buttonNumber with arguments \n'$ffmpegCommand'.");
-
             executeAsyncFFmpeg(ffmpegCommand,
                 (CompletedFFmpegExecution execution) {
               if (execution.returnCode == 255) {
@@ -94,7 +91,7 @@ class ConcurrentExecutionTab {
               }
             }).then((executionId) {
               ffprint(
-                  "Async FFmpeg process started for button $buttonNumber with executionId $executionId.");
+                  "Async FFmpeg process started for button $buttonNumber with arguments '$ffmpegCommand' and executionId $executionId.");
 
               switch (buttonNumber) {
                 case 1:

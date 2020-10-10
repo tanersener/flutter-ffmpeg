@@ -39,9 +39,6 @@ class HttpsTab {
     _refreshable = refreshable;
     _urlText = TextEditingController();
     clearLog();
-
-    getLastCommandOutput()
-        .then((output) => ffprint("Last command output was: $output"));
   }
 
   void setActive() {

@@ -26,6 +26,7 @@ import 'package:flutter_ffmpeg/log.dart';
 import 'package:flutter_ffmpeg_example/abstract.dart';
 import 'package:flutter_ffmpeg_example/flutter_ffmpeg_api_wrapper.dart';
 import 'package:flutter_ffmpeg_example/popup.dart';
+import 'package:flutter_ffmpeg_example/test_api.dart';
 import 'package:flutter_ffmpeg_example/tooltip.dart';
 import 'package:flutter_ffmpeg_example/video_util.dart';
 
@@ -85,11 +86,7 @@ class AudioTab {
 
         clearLog();
 
-        ffprint("FFmpeg process started with arguments\n'$ffmpegCommand'.");
-
         executeAsyncFFmpeg(ffmpegCommand, (CompletedFFmpegExecution execution) {
-          ffprint("FFmpeg process exited with rc ${execution.returnCode}.");
-
           hideProgressDialog();
 
           if (execution.returnCode == 0) {
@@ -99,6 +96,12 @@ class AudioTab {
             showPopup("Encode failed. Please check log for the details.");
             ffprint("Encode failed with rc=${execution.returnCode}.");
           }
+
+          ffprint("Testing post execution commands.");
+          Test.testPostExecutionCommands();
+        }).then((executionId) {
+          ffprint(
+              "Async FFmpeg process started with arguments '$ffmpegCommand' and executionId $executionId.");
         });
       });
     });

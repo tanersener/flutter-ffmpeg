@@ -95,9 +95,6 @@ class SubtitleTab implements PlayerTab {
                     "mpeg4",
                     "");
 
-                ffprint(
-                    "FFmpeg process started with arguments\n\'$ffmpegCommand\'.");
-
                 _state = _State.CREATING;
 
                 executeAsyncFFmpeg(ffmpegCommand,
@@ -140,14 +137,16 @@ class SubtitleTab implements PlayerTab {
                         ffprint(
                             "Burn subtitles failed with rc=${secondExecution.returnCode}.");
                       }
-                    }).then((value) {
-                      _executionId = execution.executionId;
+                    }).then((executionId) {
+                      _executionId = executionId;
+                      ffprint(
+                          "Async FFmpeg process started with arguments '$burnSubtitlesCommand' and executionId $executionId.");
                     });
                   }
-                }).then((int executionId) {
+                }).then((executionId) {
                   _executionId = executionId;
                   ffprint(
-                      "Async FFmpeg process started with executionId $executionId.");
+                      "Async FFmpeg process started with arguments '$ffmpegCommand' and executionId $executionId.");
                 });
               });
             });
