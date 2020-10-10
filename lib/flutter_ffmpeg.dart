@@ -125,6 +125,9 @@ class FlutterFFmpegConfig {
     ExecuteCallback executeCallback = _executeCallbackMap[executionId];
     if (executeCallback != null) {
       executeCallback(new CompletedFFmpegExecution(executionId, returnCode));
+    } else {
+      print(
+          "Async execution with id $executionId completed but no callback is found for it.");
     }
   }
 

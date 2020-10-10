@@ -99,13 +99,6 @@ class VideoTab implements PlayerTab {
 
             executeAsyncFFmpeg(ffmpegCommand,
                 (CompletedFFmpegExecution execution) {
-              ffprint(
-                  "Async FFmpeg process exited with rc ${execution.returnCode}.");
-
-              ffprint("Async FFmpeg process output:");
-
-              getLastCommandOutput().then((output) => ffprint(output));
-
               hideProgressDialog();
 
               if (execution.returnCode == 0) {
