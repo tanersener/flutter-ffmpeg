@@ -72,6 +72,7 @@ class VideoTab implements PlayerTab {
       VideoUtil.assetPath(VideoUtil.ASSET_2).then((image2Path) {
         VideoUtil.assetPath(VideoUtil.ASSET_3).then((image3Path) {
           getVideoFile().then((videoFile) {
+
             // IF VIDEO IS PLAYING STOP PLAYBACK
             pause();
 

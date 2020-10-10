@@ -97,7 +97,7 @@ class FlutterFFmpegConfig {
   void handleLogEvent(Map<dynamic, dynamic> logEvent) {
     int executionId = logEvent['executionId'];
     int level = logEvent['level'];
-    String message = logEvent['log'];
+    String message = logEvent['message'];
 
     if (this.logCallback == null) {
       if (message.length > 0) {

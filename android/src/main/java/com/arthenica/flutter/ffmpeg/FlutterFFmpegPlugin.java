@@ -70,7 +70,7 @@ public class FlutterFFmpegPlugin implements MethodCallHandler, EventChannel.Stre
 
     public static final String KEY_LOG_EXECUTION_ID = "executionId";
     public static final String KEY_LOG_LEVEL = "level";
-    public static final String KEY_LOG_TEXT = "log";
+    public static final String KEY_LOG_MESSAGE = "message";
 
     public static final String KEY_STAT_EXECUTION_ID = "executionId";
     public static final String KEY_STAT_TIME = "time";
@@ -318,7 +318,7 @@ public class FlutterFFmpegPlugin implements MethodCallHandler, EventChannel.Stre
 
         logMap.put(KEY_LOG_EXECUTION_ID, logMessage.getExecutionId());
         logMap.put(KEY_LOG_LEVEL, levelToInt(logMessage.getLevel()));
-        logMap.put(KEY_LOG_TEXT, logMessage.getText());
+        logMap.put(KEY_LOG_MESSAGE, logMessage.getText());
 
         logWrapperMap.put(EVENT_LOG, logMap);
 
