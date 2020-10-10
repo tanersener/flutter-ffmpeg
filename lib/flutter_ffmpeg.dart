@@ -37,7 +37,7 @@ class FlutterFFmpegConfig {
       const MethodChannel('flutter_ffmpeg');
   static const EventChannel _eventChannel =
       const EventChannel('flutter_ffmpeg_event');
-  static final Map<int, ExecuteCallback> executeCallbackMap = new Map();
+  static final Map<int, ExecuteCallback> _executeCallbackMap = new Map();
 
   LogCallback logCallback;
   StatisticsCallback statisticsCallback;
@@ -93,10 +93,6 @@ class FlutterFFmpegConfig {
     }
   }
 
-  static void addExecuteCallback(int executionId, ExecuteCallback newCallback) {
-    executeCallbackMap[executionId] = newCallback;
-  }
-
   void handleLogEvent(Map<dynamic, dynamic> logEvent) {
     int executionId = logEvent['executionId'];
     int level = logEvent['level'];
@@ -126,7 +122,7 @@ class FlutterFFmpegConfig {
     int executionId = executeEvent['executionId'];
     int returnCode = executeEvent['returnCode'];
 
-    ExecuteCallback executeCallback = executeCallbackMap[executionId];
+    ExecuteCallback executeCallback = _executeCallbackMap[executionId];
     if (executeCallback != null) {
       executeCallback(new CompletedFFmpegExecution(executionId, returnCode));
     }
@@ -456,7 +452,7 @@ class FlutterFFmpeg {
           'executeFFmpegAsyncWithArguments',
           {'arguments': arguments}).then((map) {
         var executionId = map["executionId"];
-        FlutterFFmpegConfig.addExecuteCallback(executionId, executeCallback);
+        FlutterFFmpegConfig._executeCallbackMap[executionId] = executeCallback;
         return executionId;
       });
     } on PlatformException catch (e, stack) {
