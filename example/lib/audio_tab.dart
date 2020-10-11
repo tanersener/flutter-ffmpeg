@@ -48,7 +48,6 @@ class AudioTab {
     print("Audio Tab Activated");
     enableLogCallback(null);
     _createAudioSample();
-    enableLogCallback(logCallback);
     enableStatisticsCallback(null);
     showPopup(AUDIO_TEST_TOOLTIP_TEXT);
   }
@@ -128,6 +127,7 @@ class AudioTab {
           showPopup(
               "Creating AUDIO sample failed. Please check log for the details.");
         }
+        enableLogCallback(logCallback);
       });
     });
   }
