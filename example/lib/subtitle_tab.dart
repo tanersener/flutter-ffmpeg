@@ -171,12 +171,6 @@ class SubtitleTab implements PlayerTab {
     _refreshablePlayerDialogFactory.refresh();
   }
 
-  Future<File> getSubtitleFile() async {
-    final String subtitle = "subtitle.srt";
-    Directory documentsDirectory = await VideoUtil.tempDirectory;
-    return new File("${documentsDirectory.path}/$subtitle");
-  }
-
   Future<File> getVideoFile() async {
     final String video = "video.mp4";
     Directory documentsDirectory = await VideoUtil.documentsDirectory;
