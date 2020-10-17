@@ -117,6 +117,8 @@ class VidStabTab {
                       final String stabilizeVideoCommand =
                           "-y -i ${videoFile.path} -vf vidstabtransform=smoothing=30:input=${shakeResultsFile.path} -c:v mpeg4 ${stabilizedVideoFile.path}";
 
+                      //@TODO check return code before starting the third execution
+
                       executeAsyncFFmpeg(stabilizeVideoCommand,
                           (CompletedFFmpegExecution thirdExecution) {
                         ffprint(
@@ -193,7 +195,7 @@ class VidStabTab {
   }
 
   Future<File> getVideoFile() async {
-    final String video = "video.mp4";
+    final String video = "video-shaking.mp4";
     Directory documentsDirectory = await VideoUtil.documentsDirectory;
     return new File("${documentsDirectory.path}/$video");
   }
