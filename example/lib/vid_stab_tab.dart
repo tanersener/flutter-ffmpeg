@@ -121,8 +121,6 @@ class VidStabTab {
 
                       executeAsyncFFmpeg(stabilizeVideoCommand,
                           (CompletedFFmpegExecution thirdExecution) {
-                        ffprint(
-                            "FFmpeg process exited with rc ${thirdExecution.returnCode}.");
 
                         hideProgressDialog();
 
