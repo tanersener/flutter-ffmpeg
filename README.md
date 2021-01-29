@@ -107,7 +107,7 @@ possible to enable other `flutter_ffmpeg` packages using the following steps.
     ```
     # "fork" of method flutter_install_ios_plugin_pods (in fluttertools podhelpers.rb) to get lts version of ffmpeg
     def flutter_install_ios_plugin_pods(ios_application_path = nil)
-     # defined_in_file is set by CocoaPods and is a Pathname to the Podfile.
+      # defined_in_file is set by CocoaPods and is a Pathname to the Podfile.
       ios_application_path ||= File.dirname(defined_in_file.realpath) if self.respond_to?(:defined_in_file)
       raise 'Could not find iOS application path' unless ios_application_path
 
@@ -127,14 +127,14 @@ possible to enable other `flutter_ffmpeg` packages using the following steps.
         plugin_path = plugin_hash['path']
 
         if (plugin_name && plugin_path)
-            symlink = File.join(symlink_plugins_dir, plugin_name)
-            File.symlink(plugin_path, symlink)
+          symlink = File.join(symlink_plugins_dir, plugin_name)
+          File.symlink(plugin_path, symlink)
 
-            if plugin_name == 'flutter_ffmpeg'
-                pod plugin_name+'/<package name>', :path => File.join('.symlinks', 'plugins', plugin_name, 'ios')
-            else
-                pod plugin_name, :path => File.join('.symlinks', 'plugins', plugin_name, 'ios')
-            end
+          if plugin_name == 'flutter_ffmpeg'
+            pod plugin_name+'/<package name>', :path => File.join('.symlinks', 'plugins', plugin_name, 'ios')
+          else
+            pod plugin_name, :path => File.join('.symlinks', 'plugins', plugin_name, 'ios')
+          end
         end
       end
     end
@@ -158,9 +158,9 @@ name in `<package name>` section.
       symlink = File.join('.symlinks', 'plugins', name)
       File.symlink(path, symlink)
       if name == 'flutter_ffmpeg'
-          pod name+'/<package name>', :path => File.join(symlink, 'ios')
+        pod name+'/<package name>', :path => File.join(symlink, 'ios')
       else
-          pod name, :path => File.join(symlink, 'ios')
+        pod name, :path => File.join(symlink, 'ios')
       end
     end
     ```
