@@ -24,50 +24,54 @@ import 'package:flutter/services.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
+import 'flutter_ffmpeg_api_wrapper.dart';
 import 'util.dart';
 
 class VideoUtil {
-  static const String ASSET_1 = "1.jpg";
-  static const String ASSET_2 = "2.jpg";
-  static const String ASSET_3 = "3.jpg";
+  static const String ASSET_1 = "pyramid.jpg";
+  static const String ASSET_2 = "colosseum.jpg";
+  static const String ASSET_3 = "tajmahal.jpg";
   static const String SUBTITLE_ASSET = "subtitle.srt";
   static const String FONT_ASSET_1 = "doppioone_regular.ttf";
   static const String FONT_ASSET_2 = "truenorg.otf";
 
-  static void prepareAssets() {
-    VideoUtil.copyFileAssets('assets/pyramid.jpg', ASSET_1)
-        .then((path) => ffprint('Loaded asset $path.'));
-    VideoUtil.copyFileAssets('assets/colosseum.jpg', ASSET_2)
-        .then((path) => ffprint('Loaded asset $path.'));
-    VideoUtil.copyFileAssets('assets/tajmahal.jpg', ASSET_3)
-        .then((path) => ffprint('Loaded asset $path.'));
-    VideoUtil.copyFileAssets('assets/subtitle.srt', SUBTITLE_ASSET)
-        .then((path) => ffprint('Loaded asset $path.'));
-    VideoUtil.copyFileAssets('assets/doppioone_regular.ttf', FONT_ASSET_1)
-        .then((path) => ffprint('Loaded asset $path.'));
-    VideoUtil.copyFileAssets('assets/truenorg.otf', FONT_ASSET_2)
-        .then((path) => ffprint('Loaded asset $path.'));
+  static void registerAppFont() {
+    var fontNameMapping = Map<String, String>();
+    fontNameMapping["MyFontName"] = "Doppio One";
+    VideoUtil.tempDirectory.then((tempDirectory) {
+      setFontDirectory(tempDirectory.path, fontNameMapping);
+      setEnvironmentVariable(
+          "FFREPORT",
+          "file=" +
+              new File(tempDirectory.path + "/" + today() + "-ffreport.txt")
+                  .path);
+    });
   }
 
-  static Future<Directory> get tempDirectory async {
-    return await getTemporaryDirectory();
+  static void prepareAssets() async {
+    await VideoUtil.assetToFile(ASSET_1);
+    await VideoUtil.assetToFile(ASSET_2);
+    await VideoUtil.assetToFile(ASSET_3);
+    await VideoUtil.assetToFile(SUBTITLE_ASSET);
+    await VideoUtil.assetToFile(FONT_ASSET_1);
+    await VideoUtil.assetToFile(FONT_ASSET_2);
   }
 
-  static Future<Directory> get documentsDirectory async {
-    return await getApplicationDocumentsDirectory();
-  }
-
-  static Future<File> copyFileAssets(String assetName, String localName) async {
-    final ByteData assetByteData = await rootBundle.load(assetName);
+  static Future<File> assetToFile(String assetName) async {
+    final ByteData assetByteData = await rootBundle.load('assets/$assetName');
 
     final List<int> byteList = assetByteData.buffer
         .asUint8List(assetByteData.offsetInBytes, assetByteData.lengthInBytes);
 
     final String fullTemporaryPath =
-        join((await tempDirectory).path, localName);
+        join((await tempDirectory).path, assetName);
 
-    return new File(fullTemporaryPath)
+    Future<File> fileFuture = new File(fullTemporaryPath)
         .writeAsBytes(byteList, mode: FileMode.writeOnly, flush: true);
+
+    ffprint('assets/$assetName saved to file at $fullTemporaryPath.');
+
+    return fileFuture;
   }
 
   static void assetToPipe(String assetName, String pipePath) async {
@@ -79,10 +83,20 @@ class VideoUtil {
             .asUint8List(byteData.offsetInBytes, byteData.lengthInBytes),
         mode: FileMode.writeOnly,
         flush: false);
+
+    ffprint('assets/$assetName saved to pipe at $pipePath.');
   }
 
   static Future<String> assetPath(String assetName) async {
     return join((await tempDirectory).path, assetName);
+  }
+
+  static Future<Directory> get documentsDirectory async {
+    return await getApplicationDocumentsDirectory();
+  }
+
+  static Future<Directory> get tempDirectory async {
+    return await getTemporaryDirectory();
   }
 
   static String generateEncodeVideoScript(

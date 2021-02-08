@@ -1,6 +1,6 @@
 # flutter_ffmpeg 
 
-![GitHub release](https://img.shields.io/badge/release-v0.3.0-blue.svg)
+![GitHub release](https://img.shields.io/badge/release-v0.3.1-blue.svg)
 ![](https://img.shields.io/pub/v/flutter_ffmpeg.svg)
 
 FFmpeg plugin for Flutter. Supports iOS and Android.
@@ -35,7 +35,7 @@ FFmpeg plugin for Flutter. Supports iOS and Android.
 Add `flutter_ffmpeg` as a dependency in your `pubspec.yaml file`.
   ```
 dependencies:
-    flutter_ffmpeg: ^0.3.0
+    flutter_ffmpeg: ^0.3.1
   ```
 
 #### 2.1 Packages
@@ -107,7 +107,7 @@ possible to enable other `flutter_ffmpeg` packages using the following steps.
     ```
     # "fork" of method flutter_install_ios_plugin_pods (in fluttertools podhelpers.rb) to get lts version of ffmpeg
     def flutter_install_ios_plugin_pods(ios_application_path = nil)
-     # defined_in_file is set by CocoaPods and is a Pathname to the Podfile.
+      # defined_in_file is set by CocoaPods and is a Pathname to the Podfile.
       ios_application_path ||= File.dirname(defined_in_file.realpath) if self.respond_to?(:defined_in_file)
       raise 'Could not find iOS application path' unless ios_application_path
 
@@ -127,14 +127,14 @@ possible to enable other `flutter_ffmpeg` packages using the following steps.
         plugin_path = plugin_hash['path']
 
         if (plugin_name && plugin_path)
-            symlink = File.join(symlink_plugins_dir, plugin_name)
-            File.symlink(plugin_path, symlink)
+          symlink = File.join(symlink_plugins_dir, plugin_name)
+          File.symlink(plugin_path, symlink)
 
-            if plugin_name == 'flutter_ffmpeg'
-                pod plugin_name+'/<package name>', :path => File.join('.symlinks', 'plugins', plugin_name, 'ios')
-            else
-                pod plugin_name, :path => File.join('.symlinks', 'plugins', plugin_name, 'ios')
-            end
+          if plugin_name == 'flutter_ffmpeg'
+            pod plugin_name+'/<package name>', :path => File.join('.symlinks', 'plugins', plugin_name, 'ios')
+          else
+            pod plugin_name, :path => File.join('.symlinks', 'plugins', plugin_name, 'ios')
+          end
         end
       end
     end
@@ -158,9 +158,9 @@ name in `<package name>` section.
       symlink = File.join('.symlinks', 'plugins', name)
       File.symlink(path, symlink)
       if name == 'flutter_ffmpeg'
-          pod name+'/<package name>', :path => File.join(symlink, 'ios')
+        pod name+'/<package name>', :path => File.join(symlink, 'ios')
       else
-          pod name, :path => File.join(symlink, 'ios')
+        pod name, :path => File.join(symlink, 'ios')
       end
     end
     ```
@@ -451,7 +451,32 @@ can't use resources on those folders directly, you need to provide full paths of
     ```
     platform :ios, '9.3'
     ```
-    
+
+- If `flutter_ffmpeg` release builds on Android fail with the following exception, make sure that `mavenCentral()` is
+  defined as a repository in your `build.gradle` and it is listed before `jcenter()`.
+
+  ```
+  E/flutter (14793): [ERROR:flutter/shell/platform/android/platform_view_android_jni_impl.cc(43)] java.lang.UnsatisfiedLinkError: Bad JNI version returned from JNI_OnLoad in "/data/app/com.arthenica.flutter.ffmpeg.FlutterFFmpegExample-DV2qVHHlZArnXoQYMowxVQ==/base.apk!/lib/arm64-v8a/libmobileffmpeg.so": 0
+  E/flutter (14793): 	at java.lang.Runtime.loadLibrary0(Runtime.java:1071)
+  E/flutter (14793): 	at java.lang.Runtime.loadLibrary0(Runtime.java:1007)
+  E/flutter (14793): 	at java.lang.System.loadLibrary(System.java:1668)
+  E/flutter (14793): 	at com.arthenica.mobileffmpeg.Config.<clinit>(Unknown Source:148)
+  E/flutter (14793): 	at com.arthenica.mobileffmpeg.Config.c(Unknown Source:0)
+  E/flutter (14793): 	at b.a.a.a.d.onMethodCall(Unknown Source:323)
+  E/flutter (14793): 	at io.flutter.plugin.common.MethodChannel$IncomingMethodCallHandler.onMessage(Unknown Source:17)
+  E/flutter (14793): 	at io.flutter.embedding.engine.dart.DartMessenger.handleMessageFromDart(Unknown Source:57)
+  E/flutter (14793): 	at io.flutter.embedding.engine.FlutterJNI.handlePlatformMessage(Unknown Source:4)
+  E/flutter (14793): 	at android.os.MessageQueue.nativePollOnce(Native Method)
+  E/flutter (14793): 	at android.os.MessageQueue.next(MessageQueue.java:363)
+  E/flutter (14793): 	at android.os.Looper.loop(Looper.java:173)
+  E/flutter (14793): 	at android.app.ActivityThread.main(ActivityThread.java:8178)
+  E/flutter (14793): 	at java.lang.reflect.Method.invoke(Native Method)
+  E/flutter (14793): 	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:513)
+  E/flutter (14793): 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:1101)
+  E/flutter (14793):
+  F/flutter (14793): [FATAL:flutter/shell/platform/android/platform_view_android_jni_impl.cc(942)] Check failed: CheckException(env).
+  ```
+
 - `flutter_ffmpeg` includes native libraries that require ios deployment target to be at least `9.3`. If a deployment 
 target is not set or a value smaller than `9.3` is used then your build will fail with the following error.
    

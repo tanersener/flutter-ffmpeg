@@ -152,3 +152,7 @@ Future<void> setEnvironmentVariable(
 Future<List<FFmpegExecution>> listFFmpegExecutions() async {
   return await _flutterFFmpeg.listExecutions();
 }
+
+List<String> parseArguments(command) {
+  return FlutterFFmpeg.parseArguments(command);
+}

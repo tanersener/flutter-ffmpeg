@@ -36,9 +36,6 @@ class CommandTab {
     _commandText = TextEditingController();
     clearLog();
 
-    getLastCommandOutput()
-        .then((output) => ffprint("Last command output was: $output"));
-
     // COMMAND TAB IS SELECTED BY DEFAULT
     setActive();
   }

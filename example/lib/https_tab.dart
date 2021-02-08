@@ -39,9 +39,6 @@ class HttpsTab {
     _refreshable = refreshable;
     _urlText = TextEditingController();
     clearLog();
-
-    getLastCommandOutput()
-        .then((output) => ffprint("Last command output was: $output"));
   }
 
   void setActive() {
@@ -81,33 +78,31 @@ class HttpsTab {
     // HTTPS COMMAND ARGUMENTS
     getMediaInformation(testUrl).then((information) {
       if (information.getMediaProperties() != null) {
-        appendLog(
-            'Media information for ${information.getMediaProperties()['filename']}\n');
-
+        ffprint("---");
+        if (information.getMediaProperties().containsKey('filename')) {
+          ffprint('Path: ${information.getMediaProperties()['filename']}');
+        }
         if (information.getMediaProperties().containsKey('format_name')) {
-          appendLog("Format: " +
-              information.getMediaProperties()['format_name'] +
-              "\n");
+          ffprint("Format: " + information.getMediaProperties()['format_name']);
         }
         if (information.getMediaProperties().containsKey('bit_rate')) {
-          appendLog("Bitrate: " +
-              information.getMediaProperties()['bit_rate'] +
-              "\n");
+          ffprint("Bitrate: " + information.getMediaProperties()['bit_rate']);
         }
         if (information.getMediaProperties().containsKey('duration')) {
-          appendLog("Duration: " +
-              information.getMediaProperties()['duration'] +
-              "\n");
+          ffprint("Duration: " + information.getMediaProperties()['duration']);
         }
         if (information.getMediaProperties().containsKey('start_time')) {
-          appendLog("Start time: " +
-              information.getMediaProperties()['start_time'] +
-              "\n");
+          ffprint(
+              "Start time: " + information.getMediaProperties()['start_time']);
+        }
+        if (information.getMediaProperties().containsKey('nb_streams')) {
+          ffprint("Number of streams: " +
+              information.getMediaProperties()['nb_streams'].toString());
         }
         Map<dynamic, dynamic> tags = information.getMediaProperties()['tags'];
         if (tags != null) {
           tags.forEach((key, value) {
-            appendLog("Tag: " + key + ":" + value + "\n");
+            ffprint("Tag: " + key + ":" + value);
           });
         }
 
@@ -115,100 +110,79 @@ class HttpsTab {
         if (streams != null) {
           for (var i = 0; i < streams.length; ++i) {
             StreamInformation stream = streams[i];
-
+            ffprint("---");
             if (stream.getAllProperties().containsKey('index')) {
-              appendLog("Stream index: " +
-                  stream.getAllProperties()['index'].toString() +
-                  "\n");
+              ffprint("Stream index: " +
+                  stream.getAllProperties()['index'].toString());
             }
             if (stream.getAllProperties().containsKey('codec_type')) {
-              appendLog("Stream type: " +
-                  stream.getAllProperties()['codec_type'] +
-                  "\n");
+              ffprint(
+                  "Stream type: " + stream.getAllProperties()['codec_type']);
             }
             if (stream.getAllProperties().containsKey('codec_name')) {
-              appendLog("Stream codec: " +
-                  stream.getAllProperties()['codec_name'] +
-                  "\n");
+              ffprint(
+                  "Stream codec: " + stream.getAllProperties()['codec_name']);
             }
             if (stream.getAllProperties().containsKey('codec_long_name')) {
-              appendLog("Stream full codec: " +
-                  stream.getAllProperties()['codec_long_name'] +
-                  "\n");
+              ffprint("Stream full codec: " +
+                  stream.getAllProperties()['codec_long_name']);
             }
             if (stream.getAllProperties().containsKey('pix_fmt')) {
-              appendLog("Stream format: " +
-                  stream.getAllProperties()['pix_fmt'] +
-                  "\n");
+              ffprint("Stream format: " + stream.getAllProperties()['pix_fmt']);
             }
-
             if (stream.getAllProperties().containsKey('width')) {
-              appendLog("Stream width: " +
-                  stream.getAllProperties()['width'].toString() +
-                  "\n");
+              ffprint("Stream width: " +
+                  stream.getAllProperties()['width'].toString());
             }
             if (stream.getAllProperties().containsKey('height')) {
-              appendLog("Stream height: " +
-                  stream.getAllProperties()['height'].toString() +
-                  "\n");
+              ffprint("Stream height: " +
+                  stream.getAllProperties()['height'].toString());
             }
-
             if (stream.getAllProperties().containsKey('bit_rate')) {
-              appendLog("Stream bitrate: " +
-                  stream.getAllProperties()['bit_rate'] +
-                  "\n");
+              ffprint(
+                  "Stream bitrate: " + stream.getAllProperties()['bit_rate']);
             }
             if (stream.getAllProperties().containsKey('sample_rate')) {
-              appendLog("Stream sample rate: " +
-                  stream.getAllProperties()['sample_rate'] +
-                  "\n");
+              ffprint("Stream sample rate: " +
+                  stream.getAllProperties()['sample_rate']);
             }
             if (stream.getAllProperties().containsKey('sample_fmt')) {
-              appendLog("Stream sample format: " +
-                  stream.getAllProperties()['sample_fmt'] +
-                  "\n");
+              ffprint("Stream sample format: " +
+                  stream.getAllProperties()['sample_fmt']);
             }
             if (stream.getAllProperties().containsKey('channel_layout')) {
-              appendLog("Stream channel layout: " +
-                  stream.getAllProperties()['channel_layout'] +
-                  "\n");
+              ffprint("Stream channel layout: " +
+                  stream.getAllProperties()['channel_layout']);
             }
-
             if (stream.getAllProperties().containsKey('sample_aspect_ratio')) {
-              appendLog("Stream sample aspect ratio: " +
-                  stream.getAllProperties()['sample_aspect_ratio'] +
-                  "\n");
+              ffprint("Stream sample aspect ratio: " +
+                  stream.getAllProperties()['sample_aspect_ratio']);
             }
             if (stream.getAllProperties().containsKey('display_aspect_ratio')) {
-              appendLog("Stream display aspect ratio: " +
-                  stream.getAllProperties()['display_aspect_ratio'] +
-                  "\n");
+              ffprint("Stream display aspect ratio: " +
+                  stream.getAllProperties()['display_aspect_ratio']);
             }
             if (stream.getAllProperties().containsKey('avg_frame_rate')) {
-              appendLog("Stream average frame rate: " +
-                  stream.getAllProperties()['avg_frame_rate'] +
-                  "\n");
+              ffprint("Stream average frame rate: " +
+                  stream.getAllProperties()['avg_frame_rate']);
             }
             if (stream.getAllProperties().containsKey('r_frame_rate')) {
-              appendLog("Stream real frame rate: " +
-                  stream.getAllProperties()['r_frame_rate'] +
-                  "\n");
+              ffprint("Stream real frame rate: " +
+                  stream.getAllProperties()['r_frame_rate']);
             }
             if (stream.getAllProperties().containsKey('time_base')) {
-              appendLog("Stream time base: " +
-                  stream.getAllProperties()['time_base'] +
-                  "\n");
+              ffprint("Stream time base: " +
+                  stream.getAllProperties()['time_base']);
             }
             if (stream.getAllProperties().containsKey('codec_time_base')) {
-              appendLog("Stream codec time base: " +
-                  stream.getAllProperties()['codec_time_base'] +
-                  "\n");
+              ffprint("Stream codec time base: " +
+                  stream.getAllProperties()['codec_time_base']);
             }
 
             Map<dynamic, dynamic> tags = stream.getAllProperties()['tags'];
             if (tags != null) {
               tags.forEach((key, value) {
-                appendLog("Stream tag: " + key + ":" + value + "\n");
+                ffprint("Stream tag: " + key + ":" + value);
               });
             }
           }

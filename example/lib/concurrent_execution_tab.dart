@@ -19,6 +19,7 @@
 
 import 'dart:io';
 
+import 'package:flutter_ffmpeg/completed_ffmpeg_execution.dart';
 import 'package:flutter_ffmpeg/log.dart';
 import 'package:flutter_ffmpeg_example/abstract.dart';
 import 'package:flutter_ffmpeg_example/flutter_ffmpeg_api_wrapper.dart';
@@ -79,21 +80,18 @@ class ConcurrentExecutionTab {
                 "mpeg4",
                 "");
 
-            ffprint(
-                "FFmpeg process starting for button $buttonNumber with arguments \n'$ffmpegCommand'.");
-
             executeAsyncFFmpeg(ffmpegCommand,
-                (int executionId, int returnCode) {
-              if (returnCode == 255) {
+                (CompletedFFmpegExecution execution) {
+              if (execution.returnCode == 255) {
                 ffprint(
-                    "FFmpeg process ended with cancel for button $buttonNumber with executionId $executionId.");
+                    "FFmpeg process ended with cancel for button $buttonNumber with executionId ${execution.executionId}.");
               } else {
                 ffprint(
-                    "FFmpeg process ended with rc $returnCode for button $buttonNumber with executionId $executionId.");
+                    "FFmpeg process ended with rc ${execution.returnCode} for button $buttonNumber with executionId ${execution.executionId}.");
               }
             }).then((executionId) {
               ffprint(
-                  "Async FFmpeg process started for button $buttonNumber with executionId $executionId.");
+                  "Async FFmpeg process started for button $buttonNumber with arguments '$ffmpegCommand' and executionId $executionId.");
 
               switch (buttonNumber) {
                 case 1:

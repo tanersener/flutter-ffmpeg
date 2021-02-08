@@ -21,10 +21,12 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_ffmpeg/completed_ffmpeg_execution.dart';
 import 'package:flutter_ffmpeg/log.dart';
 import 'package:flutter_ffmpeg_example/abstract.dart';
 import 'package:flutter_ffmpeg_example/flutter_ffmpeg_api_wrapper.dart';
 import 'package:flutter_ffmpeg_example/popup.dart';
+import 'package:flutter_ffmpeg_example/test_api.dart';
 import 'package:flutter_ffmpeg_example/tooltip.dart';
 import 'package:flutter_ffmpeg_example/video_util.dart';
 
@@ -46,7 +48,6 @@ class AudioTab {
     print("Audio Tab Activated");
     enableLogCallback(null);
     _createAudioSample();
-    enableLogCallback(logCallback);
     enableStatisticsCallback(null);
     showPopup(AUDIO_TEST_TOOLTIP_TEXT);
   }
@@ -84,20 +85,22 @@ class AudioTab {
 
         clearLog();
 
-        ffprint("FFmpeg process started with arguments\n'$ffmpegCommand'.");
-
-        executeAsyncFFmpeg(ffmpegCommand, (executionId, returnCode) {
-          ffprint("FFmpeg process exited with rc $returnCode.");
-
+        executeAsyncFFmpeg(ffmpegCommand, (CompletedFFmpegExecution execution) {
           hideProgressDialog();
 
-          if (returnCode == 0) {
+          if (execution.returnCode == 0) {
             showPopup("Encode completed successfully.");
             ffprint("Encode completed successfully.");
           } else {
             showPopup("Encode failed. Please check log for the details.");
-            ffprint("Encode failed with rc=$returnCode.");
+            ffprint("Encode failed with rc=${execution.returnCode}.");
           }
+
+          ffprint("Testing post execution commands.");
+          Test.testPostExecutionCommands();
+        }).then((executionId) {
+          ffprint(
+              "Async FFmpeg process started with arguments '$ffmpegCommand' and executionId $executionId.");
         });
       });
     });
@@ -124,6 +127,7 @@ class AudioTab {
           showPopup(
               "Creating AUDIO sample failed. Please check log for the details.");
         }
+        enableLogCallback(logCallback);
       });
     });
   }

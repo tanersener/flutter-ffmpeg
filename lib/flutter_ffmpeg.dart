@@ -20,21 +20,24 @@
 import 'dart:async';
 
 import 'package:flutter/services.dart';
+import 'package:flutter_ffmpeg/completed_ffmpeg_execution.dart';
 import 'package:flutter_ffmpeg/ffmpeg_execution.dart';
 import 'package:flutter_ffmpeg/log.dart';
 import 'package:flutter_ffmpeg/media_information.dart';
 import 'package:flutter_ffmpeg/statistics.dart';
 
+import 'completed_ffmpeg_execution.dart';
+
 typedef LogCallback = void Function(Log log);
 typedef StatisticsCallback = void Function(Statistics statistics);
-typedef ExecuteCallback = void Function(int executionId, int returnCode);
+typedef ExecuteCallback = void Function(CompletedFFmpegExecution execution);
 
 class FlutterFFmpegConfig {
   static const MethodChannel _methodChannel =
       const MethodChannel('flutter_ffmpeg');
   static const EventChannel _eventChannel =
       const EventChannel('flutter_ffmpeg_event');
-  static final Map<int, ExecuteCallback> executeCallbackMap = new Map();
+  static final Map<int, ExecuteCallback> _executeCallbackMap = new Map();
 
   LogCallback logCallback;
   StatisticsCallback statisticsCallback;
@@ -90,14 +93,10 @@ class FlutterFFmpegConfig {
     }
   }
 
-  static void addExecuteCallback(int executionId, ExecuteCallback newCallback) {
-    executeCallbackMap[executionId] = newCallback;
-  }
-
   void handleLogEvent(Map<dynamic, dynamic> logEvent) {
     int executionId = logEvent['executionId'];
     int level = logEvent['level'];
-    String message = logEvent['log'];
+    String message = logEvent['message'];
 
     if (this.logCallback == null) {
       if (message.length > 0) {
@@ -123,9 +122,12 @@ class FlutterFFmpegConfig {
     int executionId = executeEvent['executionId'];
     int returnCode = executeEvent['returnCode'];
 
-    ExecuteCallback executeCallback = executeCallbackMap[executionId];
+    ExecuteCallback executeCallback = _executeCallbackMap[executionId];
     if (executeCallback != null) {
-      executeCallback(executionId, returnCode);
+      executeCallback(new CompletedFFmpegExecution(executionId, returnCode));
+    } else {
+      print(
+          "Async execution with id $executionId completed but no callback is found for it.");
     }
   }
 
@@ -453,7 +455,7 @@ class FlutterFFmpeg {
           'executeFFmpegAsyncWithArguments',
           {'arguments': arguments}).then((map) {
         var executionId = map["executionId"];
-        FlutterFFmpegConfig.addExecuteCallback(executionId, executeCallback);
+        FlutterFFmpegConfig._executeCallbackMap[executionId] = executeCallback;
         return executionId;
       });
     } on PlatformException catch (e, stack) {
@@ -494,7 +496,7 @@ class FlutterFFmpeg {
     try {
       return await _methodChannel.invokeMethod('listExecutions').then((value) {
         var mapList = value as List<dynamic>;
-        List<FFmpegExecution> executions = new List();
+        List<FFmpegExecution> executions = List<FFmpegExecution>.empty(growable: true);
 
         for (int i = 0; i < mapList.length; i++) {
           var execution = new FFmpegExecution();
@@ -515,7 +517,7 @@ class FlutterFFmpeg {
 
   /// Parses the given [command] into arguments.
   static List<String> parseArguments(String command) {
-    List<String> argumentList = new List();
+    List<String> argumentList = List<String>.empty(growable: true);
     StringBuffer currentArgument = new StringBuffer();
 
     bool singleQuoteStarted = false;

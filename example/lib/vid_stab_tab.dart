@@ -19,6 +19,7 @@
 
 import 'dart:io';
 
+import 'package:flutter_ffmpeg/completed_ffmpeg_execution.dart';
 import 'package:flutter_ffmpeg/log.dart';
 import 'package:flutter_ffmpeg_example/abstract.dart';
 import 'package:flutter_ffmpeg_example/flutter_ffmpeg_api_wrapper.dart';
@@ -92,16 +93,14 @@ class VidStabTab {
                 final ffmpegCommand = VideoUtil.generateShakingVideoScript(
                     image1Path, image2Path, image3Path, videoFile.path);
 
-                ffprint(
-                    "FFmpeg process started with arguments\n\'$ffmpegCommand\'.");
-
                 executeAsyncFFmpeg(ffmpegCommand,
-                    (int executionId, int returnCode) {
-                  ffprint("FFmpeg process exited with rc $returnCode.");
+                    (CompletedFFmpegExecution execution) {
+                  ffprint(
+                      "FFmpeg process exited with rc ${execution.returnCode}.");
 
                   hideProgressDialog();
 
-                  if (returnCode == 0) {
+                  if (execution.returnCode == 0) {
                     ffprint(
                         "Create completed successfully; stabilizing video.");
 
@@ -110,25 +109,22 @@ class VidStabTab {
 
                     showStabilizeProgressDialog();
 
-                    ffprint(
-                        "FFmpeg process started with arguments\n\'$analyzeVideoCommand\'.");
-
                     executeAsyncFFmpeg(analyzeVideoCommand,
-                        (int executionId, int returnCode) {
-                      ffprint("FFmpeg process exited with rc $returnCode.");
+                        (CompletedFFmpegExecution secondExecution) {
+                      ffprint(
+                          "FFmpeg process exited with rc ${secondExecution.returnCode}.");
 
                       final String stabilizeVideoCommand =
                           "-y -i ${videoFile.path} -vf vidstabtransform=smoothing=30:input=${shakeResultsFile.path} -c:v mpeg4 ${stabilizedVideoFile.path}";
-                      ffprint(
-                          "FFmpeg process started with arguments\n\'$stabilizeVideoCommand\'.");
+
+                      //@TODO check return code before starting the third execution
 
                       executeAsyncFFmpeg(stabilizeVideoCommand,
-                          (int executionId, int returnCode) {
-                        ffprint("FFmpeg process exited with rc $returnCode.");
+                          (CompletedFFmpegExecution thirdExecution) {
 
                         hideProgressDialog();
 
-                        if (returnCode == 0) {
+                        if (thirdExecution.returnCode == 0) {
                           ffprint(
                               "Stabilize video completed successfully; playing videos.");
                           playVideo();
@@ -137,11 +133,20 @@ class VidStabTab {
                           showPopup(
                               "Stabilize video failed. Please check log for the details.");
                           ffprint(
-                              "Stabilize video failed with rc=$returnCode.");
+                              "Stabilize video failed with rc=${thirdExecution.returnCode}.");
                         }
+                      }).then((executionId) {
+                        ffprint(
+                            "Async FFmpeg process started with arguments '$stabilizeVideoCommand' and executionId $executionId.");
                       });
+                    }).then((executionId) {
+                      ffprint(
+                          "Async FFmpeg process started with arguments '$analyzeVideoCommand' and executionId $executionId.");
                     });
                   }
+                }).then((executionId) {
+                  ffprint(
+                      "Async FFmpeg process started with arguments '$ffmpegCommand' and executionId $executionId.");
                 });
               });
             });
@@ -188,7 +193,7 @@ class VidStabTab {
   }
 
   Future<File> getVideoFile() async {
-    final String video = "video.mp4";
+    final String video = "video-shaking.mp4";
     Directory documentsDirectory = await VideoUtil.documentsDirectory;
     return new File("${documentsDirectory.path}/$video");
   }

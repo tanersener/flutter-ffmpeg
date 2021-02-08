@@ -39,7 +39,7 @@ static NSString *const KEY_PIPE = @"pipe";
 
 static NSString *const KEY_LOG_EXECUTION_ID = @"executionId";
 static NSString *const KEY_LOG_LEVEL = @"level";
-static NSString *const KEY_LOG_TEXT = @"log";
+static NSString *const KEY_LOG_MESSAGE = @"message";
 
 static NSString *const KEY_STAT_EXECUTION_ID = @"executionId";
 static NSString *const KEY_STAT_TIME = @"time";
@@ -250,7 +250,7 @@ static NSString *const EVENT_STAT = @"FlutterFFmpegStatisticsCallback";
         NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] init];
         dictionary[KEY_LOG_EXECUTION_ID] = [NSNumber numberWithLong:executionId];
         dictionary[KEY_LOG_LEVEL] = [NSNumber numberWithInt:level];
-        dictionary[KEY_LOG_TEXT] = message;
+        dictionary[KEY_LOG_MESSAGE] = message;
 
         [self emitLogMessage: dictionary];
     });

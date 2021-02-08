@@ -19,6 +19,7 @@
 
 import 'dart:io';
 
+import 'package:flutter_ffmpeg/completed_ffmpeg_execution.dart';
 import 'package:flutter_ffmpeg/log.dart';
 import 'package:flutter_ffmpeg/statistics.dart';
 import 'package:flutter_ffmpeg_example/abstract.dart';
@@ -81,22 +82,22 @@ class PipeTab implements PlayerTab {
             final ffmpegCommand = VideoUtil.generateCreateVideoWithPipesScript(
                 pipe1, pipe2, pipe3, videoFile.path);
 
-            ffprint(
-                "FFmpeg process started with arguments\n\'$ffmpegCommand\'.");
-
             executeAsyncFFmpeg(ffmpegCommand,
-                (int executionId, int returnCode) {
-              ffprint("FFmpeg process exited with rc $returnCode.");
+                (CompletedFFmpegExecution execution) {
+              ffprint("FFmpeg process exited with rc ${execution.returnCode}.");
 
               hideProgressDialog();
 
-              if (returnCode == 0) {
+              if (execution.returnCode == 0) {
                 ffprint("Create completed successfully; playing video.");
                 playVideo();
               } else {
                 showPopup("Create failed. Please check log for the details.");
-                ffprint("Create failed with rc=$returnCode.");
+                ffprint("Create failed with rc=${execution.returnCode}.");
               }
+            }).then((executionId) {
+              ffprint(
+                  "Async FFmpeg process started with arguments '$ffmpegCommand' and executionId $executionId.");
             });
 
             asyncAssetWriteToPipe("pyramid.jpg", pipe1);

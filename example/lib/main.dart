@@ -17,8 +17,6 @@
  * along with FlutterFFmpeg.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_ffmpeg/log_level.dart';
 import 'package:flutter_ffmpeg_example/abstract.dart';
@@ -33,7 +31,6 @@ import 'package:flutter_ffmpeg_example/player.dart';
 import 'package:flutter_ffmpeg_example/progress_modal.dart';
 import 'package:flutter_ffmpeg_example/subtitle_tab.dart';
 import 'package:flutter_ffmpeg_example/test_api.dart';
-import 'package:flutter_ffmpeg_example/util.dart';
 import 'package:flutter_ffmpeg_example/vid_stab_tab.dart';
 import 'package:flutter_ffmpeg_example/video_tab.dart';
 import 'package:flutter_ffmpeg_example/video_util.dart';
@@ -158,27 +155,13 @@ class FlutterFFmpegExampleAppState extends State<MainPage>
       }
     });
 
-    testCommonApiMethods();
-    testParseArguments();
+    Test.testCommonApiMethods();
+    Test.testParseArguments();
 
     VideoUtil.prepareAssets();
-
-    registerAppFont();
+    VideoUtil.registerAppFont();
 
     setLogLevel(LogLevel.AV_LOG_INFO);
-  }
-
-  void registerAppFont() {
-    var fontNameMapping = Map<String, String>();
-    fontNameMapping["MyFontName"] = "Doppio One";
-    VideoUtil.tempDirectory.then((tempDirectory) {
-      setFontDirectory(tempDirectory.path, fontNameMapping);
-      setEnvironmentVariable(
-          "FFREPORT",
-          "file=" +
-              new File(tempDirectory.path + "/" + today() + "-ffreport.txt")
-                  .path);
-    });
   }
 
   @override
@@ -186,7 +169,7 @@ class FlutterFFmpegExampleAppState extends State<MainPage>
     return Scaffold(
         key: _globalKey,
         appBar: AppBar(
-          title: Text('FlutterFFmpeg Test'),
+          title: Text('FlutterFFmpegTest'),
           centerTitle: true,
         ),
         bottomNavigationBar: Material(
@@ -724,7 +707,9 @@ class FlutterFFmpegExampleAppState extends State<MainPage>
 
   @override
   void dialogHide() {
-    progressModal.hide();
+    if (progressModal != null) {
+      progressModal.hide();
+    }
   }
 
   @override

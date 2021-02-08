@@ -27,11 +27,11 @@ class MediaInformation {
 
   /// Returns all streams
   List<StreamInformation> getStreams() {
-    List<StreamInformation> list = new List();
+    List<StreamInformation> list = List<StreamInformation>.empty(growable: true);
     var streamList;
 
     if (_allProperties == null) {
-      streamList = List();
+      streamList = List.empty(growable: true);
     } else {
       streamList = _allProperties["streams"];
     }
