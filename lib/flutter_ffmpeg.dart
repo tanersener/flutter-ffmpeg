@@ -496,7 +496,7 @@ class FlutterFFmpeg {
     try {
       return await _methodChannel.invokeMethod('listExecutions').then((value) {
         var mapList = value as List<dynamic>;
-        List<FFmpegExecution> executions = new List();
+        List<FFmpegExecution> executions = List<FFmpegExecution>.empty(growable: true);
 
         for (int i = 0; i < mapList.length; i++) {
           var execution = new FFmpegExecution();
@@ -517,7 +517,7 @@ class FlutterFFmpeg {
 
   /// Parses the given [command] into arguments.
   static List<String> parseArguments(String command) {
-    List<String> argumentList = new List();
+    List<String> argumentList = List<String>.empty(growable: true);
     StringBuffer currentArgument = new StringBuffer();
 
     bool singleQuoteStarted = false;

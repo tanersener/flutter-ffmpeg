@@ -1,6 +1,6 @@
 # flutter_ffmpeg 
 
-![GitHub release](https://img.shields.io/badge/release-v0.3.0-blue.svg)
+![GitHub release](https://img.shields.io/badge/release-v0.3.1-blue.svg)
 ![](https://img.shields.io/pub/v/flutter_ffmpeg.svg)
 
 FFmpeg plugin for Flutter. Supports iOS and Android.
@@ -35,7 +35,7 @@ FFmpeg plugin for Flutter. Supports iOS and Android.
 Add `flutter_ffmpeg` as a dependency in your `pubspec.yaml file`.
   ```
 dependencies:
-    flutter_ffmpeg: ^0.3.0
+    flutter_ffmpeg: ^0.3.1
   ```
 
 #### 2.1 Packages
@@ -451,7 +451,32 @@ can't use resources on those folders directly, you need to provide full paths of
     ```
     platform :ios, '9.3'
     ```
-    
+
+- If `flutter_ffmpeg` release builds on Android fail with the following exception, make sure that `mavenCentral()` is
+  defined as a repository in your `build.gradle` and it is listed before `jcenter()`.
+
+  ```
+  E/flutter (14793): [ERROR:flutter/shell/platform/android/platform_view_android_jni_impl.cc(43)] java.lang.UnsatisfiedLinkError: Bad JNI version returned from JNI_OnLoad in "/data/app/com.arthenica.flutter.ffmpeg.FlutterFFmpegExample-DV2qVHHlZArnXoQYMowxVQ==/base.apk!/lib/arm64-v8a/libmobileffmpeg.so": 0
+  E/flutter (14793): 	at java.lang.Runtime.loadLibrary0(Runtime.java:1071)
+  E/flutter (14793): 	at java.lang.Runtime.loadLibrary0(Runtime.java:1007)
+  E/flutter (14793): 	at java.lang.System.loadLibrary(System.java:1668)
+  E/flutter (14793): 	at com.arthenica.mobileffmpeg.Config.<clinit>(Unknown Source:148)
+  E/flutter (14793): 	at com.arthenica.mobileffmpeg.Config.c(Unknown Source:0)
+  E/flutter (14793): 	at b.a.a.a.d.onMethodCall(Unknown Source:323)
+  E/flutter (14793): 	at io.flutter.plugin.common.MethodChannel$IncomingMethodCallHandler.onMessage(Unknown Source:17)
+  E/flutter (14793): 	at io.flutter.embedding.engine.dart.DartMessenger.handleMessageFromDart(Unknown Source:57)
+  E/flutter (14793): 	at io.flutter.embedding.engine.FlutterJNI.handlePlatformMessage(Unknown Source:4)
+  E/flutter (14793): 	at android.os.MessageQueue.nativePollOnce(Native Method)
+  E/flutter (14793): 	at android.os.MessageQueue.next(MessageQueue.java:363)
+  E/flutter (14793): 	at android.os.Looper.loop(Looper.java:173)
+  E/flutter (14793): 	at android.app.ActivityThread.main(ActivityThread.java:8178)
+  E/flutter (14793): 	at java.lang.reflect.Method.invoke(Native Method)
+  E/flutter (14793): 	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:513)
+  E/flutter (14793): 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:1101)
+  E/flutter (14793):
+  F/flutter (14793): [FATAL:flutter/shell/platform/android/platform_view_android_jni_impl.cc(942)] Check failed: CheckException(env).
+  ```
+
 - `flutter_ffmpeg` includes native libraries that require ios deployment target to be at least `9.3`. If a deployment 
 target is not set or a value smaller than `9.3` is used then your build will fail with the following error.
    

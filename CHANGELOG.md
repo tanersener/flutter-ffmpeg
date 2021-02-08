@@ -1,3 +1,7 @@
+## 0.3.1
+- Adds mavenCentral() repository for Android
+- Minor updates in the test application
+
 ## 0.3.0
 - Uses thread pool executor to process Android executions
 - Adds listExecutions API method

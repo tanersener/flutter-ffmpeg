@@ -1,6 +1,6 @@
 PODS:
   - Flutter (1.0.0)
-  - flutter_ffmpeg/audio-lts (0.3.0):
+  - flutter_ffmpeg/audio-lts (0.3.1):
     - Flutter
     - mobile-ffmpeg-audio (= 4.4.LTS)
   - fluttertoast (0.0.2):
@@ -39,7 +39,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
-  flutter_ffmpeg: 657ce8a1502c3d25bf34efc58b380b248836f772
+  flutter_ffmpeg: 582ed04161233e3955540e32e79fd30bcbec272d
   fluttertoast: 6122fa75143e992b1d3470f61000f591a798cc58
   mobile-ffmpeg-audio: 1e0a053f8a6de57114e50ff48b3a85ff1c60f902
   path_provider: abfe2b5c733d04e238b0d8691db0cfd63a27a93c
@@ -48,4 +48,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 45c71b51796b78cb6a09bb97eb9786d4c7aa085f
 
-COCOAPODS: 1.9.2
+COCOAPODS: 1.10.1
