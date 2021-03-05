@@ -99,7 +99,47 @@ possible to enable other `flutter_ffmpeg` packages using the following steps.
     }
 
     ```
-##### 2.1.2 iOS (Flutter >= 1.20.x)
+##### 2.1.2 iOS (Flutter >= 2.x)
+
+- Edit `ios/Podfile`, add the following block **before** `target 'Runner do` and specify the package name in
+  `<package name>` section :
+
+    ```
+    # "fork" of method flutter_install_plugin_pods (in fluttertools podhelpers.rb) to get lts version of ffmpeg
+    def flutter_install_plugin_pods(application_path = nil, relative_symlink_dir, platform)
+      # defined_in_file is set by CocoaPods and is a Pathname to the Podfile.
+      application_path ||= File.dirname(defined_in_file.realpath) if self.respond_to?(:defined_in_file)
+      raise 'Could not find application path' unless application_path
+
+      # Prepare symlinks folder. We use symlinks to avoid having Podfile.lock
+      # referring to absolute paths on developers' machines.
+
+      symlink_dir = File.expand_path(relative_symlink_dir, application_path)
+      system('rm', '-rf', symlink_dir) # Avoid the complication of dependencies like FileUtils.
+
+      symlink_plugins_dir = File.expand_path('plugins', symlink_dir)
+      system('mkdir', '-p', symlink_plugins_dir)
+
+      plugins_file = File.join(application_path, '..', '.flutter-plugins-dependencies')
+      plugin_pods = flutter_parse_plugins_file(plugins_file, platform)
+      plugin_pods.each do |plugin_hash|
+        plugin_name = plugin_hash['name']
+        plugin_path = plugin_hash['path']
+        if (plugin_name && plugin_path)
+          symlink = File.join(symlink_plugins_dir, plugin_name)
+          File.symlink(plugin_path, symlink)
+
+          if plugin_name == 'flutter_ffmpeg'
+            pod 'flutter_ffmpeg/<package name>', :path => File.join(relative_symlink_dir, 'plugins', plugin_name, platform)
+          else
+            pod plugin_name, :path => File.join(relative_symlink_dir, 'plugins', plugin_name, platform)
+          end
+        end
+      end
+    end
+    ```
+
+##### 2.1.3 iOS (Flutter >= 1.20.x) && (Flutter < 2.x)
 
 - Edit `ios/Podfile`, add the following block **before** `target 'Runner do` and specify the package name in
 `<package name>` section :
@@ -143,7 +183,7 @@ possible to enable other `flutter_ffmpeg` packages using the following steps.
 `target 'Runner' do` block. In that case, it is mandatory that the added function is named 
 `flutter_install_ios_plugin_pods` and that you **do not** make an explicit call within that block.
 
-##### 2.1.3 iOS (Flutter < 1.20.x)
+##### 2.1.4 iOS (Flutter < 1.20.x)
 
 - Edit `ios/Podfile` file and modify the default `# Plugin Pods` block as follows. Do not forget to specify the package 
 name in `<package name>` section.
@@ -165,7 +205,7 @@ name in `<package name>` section.
     end
     ```
 
-##### 2.1.4 Package Names
+##### 2.1.5 Package Names
 
 The following table shows all package names defined for `flutter_ffmpeg`.
     
