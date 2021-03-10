@@ -39,8 +39,8 @@ class FlutterFFmpegConfig {
       const EventChannel('flutter_ffmpeg_event');
   static final Map<int, ExecuteCallback> _executeCallbackMap = new Map();
 
-  LogCallback logCallback;
-  StatisticsCallback statisticsCallback;
+  LogCallback? logCallback;
+  StatisticsCallback? statisticsCallback;
 
   FlutterFFmpegConfig() {
     logCallback = null;
@@ -57,14 +57,14 @@ class FlutterFFmpegConfig {
     getPlatform().then((name) => print("Loaded flutter-ffmpeg-$name."));
   }
 
-  void _onEvent(Object event) {
+  void _onEvent(dynamic event) {
     if (event is Map<dynamic, dynamic>) {
       final Map<String, dynamic> eventMap = event.cast();
-      final Map<dynamic, dynamic> logEvent =
+      final Map<dynamic, dynamic>? logEvent =
           eventMap['FlutterFFmpegLogCallback'];
-      final Map<dynamic, dynamic> statisticsEvent =
+      final Map<dynamic, dynamic>? statisticsEvent =
           eventMap['FlutterFFmpegStatisticsCallback'];
-      final Map<dynamic, dynamic> executeEvent =
+      final Map<dynamic, dynamic>? executeEvent =
           eventMap['FlutterFFmpegExecuteCallback'];
 
       if (logEvent != null) {
@@ -85,11 +85,11 @@ class FlutterFFmpegConfig {
     print('Event error: $error');
   }
 
-  double _doublePrecision(double value, int precision) {
+  double _doublePrecision(double? value, int precision) {
     if (value == null) {
       return 0;
     } else {
-      return num.parse(value.toStringAsFixed(precision));
+      return double.parse((value.toStringAsFixed(precision)));
     }
   }
 
@@ -108,13 +108,13 @@ class FlutterFFmpegConfig {
         }
       }
     } else {
-      this.logCallback(new Log(executionId, level, message));
+      this.logCallback!(new Log(executionId, level, message));
     }
   }
 
   void handleStatisticsEvent(Map<dynamic, dynamic> statisticsEvent) {
     if (this.statisticsCallback != null) {
-      this.statisticsCallback(eventToStatistics(statisticsEvent));
+      this.statisticsCallback!(eventToStatistics(statisticsEvent)!);
     }
   }
 
@@ -122,7 +122,7 @@ class FlutterFFmpegConfig {
     int executionId = executeEvent['executionId'];
     int returnCode = executeEvent['returnCode'];
 
-    ExecuteCallback executeCallback = _executeCallbackMap[executionId];
+    ExecuteCallback? executeCallback = _executeCallbackMap[executionId];
     if (executeCallback != null) {
       executeCallback(new CompletedFFmpegExecution(executionId, returnCode));
     } else {
@@ -132,7 +132,7 @@ class FlutterFFmpegConfig {
   }
 
   /// Creates a new [Statistics] instance from event map.
-  Statistics eventToStatistics(Map<dynamic, dynamic> eventMap) {
+  Statistics? eventToStatistics(Map<dynamic, dynamic> eventMap) {
     if (eventMap.length == 0) {
       return null;
     } else {
@@ -291,7 +291,7 @@ class FlutterFFmpegConfig {
     try {
       return await _methodChannel
           .invokeMethod('getLastReceivedStatistics')
-          .then((event) => eventToStatistics(event));
+          .then((event) => eventToStatistics(event)!);
     } on PlatformException catch (e, stack) {
       print("Plugin getLastReceivedStatistics error: ${e.message}");
       return Future.error("getLastReceivedStatistics failed.", stack);
@@ -321,7 +321,7 @@ class FlutterFFmpegConfig {
   /// Registers fonts inside the given [fontDirectory], so they will be
   /// available to use in FFmpeg filters.
   Future<void> setFontDirectory(
-      String fontDirectory, Map<String, String> fontNameMap) async {
+      String fontDirectory, Map<String, String>? fontNameMap) async {
     var parameters;
     if (fontNameMap == null) {
       parameters = {'fontDirectory': fontDirectory};
@@ -496,14 +496,15 @@ class FlutterFFmpeg {
     try {
       return await _methodChannel.invokeMethod('listExecutions').then((value) {
         var mapList = value as List<dynamic>;
-        List<FFmpegExecution> executions = List<FFmpegExecution>.empty(growable: true);
+        List<FFmpegExecution> executions =
+            List<FFmpegExecution>.empty(growable: true);
 
         for (int i = 0; i < mapList.length; i++) {
-          var execution = new FFmpegExecution();
-          execution.executionId = mapList[i]["executionId"];
-          execution.startTime = DateTime.fromMillisecondsSinceEpoch(
-              mapList[i]["startTime"].toInt());
-          execution.command = mapList[i]["command"];
+          var execution = new FFmpegExecution(
+              command: mapList[i]["command"],
+              executionId: mapList[i]["executionId"],
+              startTime: DateTime.fromMillisecondsSinceEpoch(
+                  mapList[i]["startTime"].toInt()));
           executions.add(execution);
         }
 

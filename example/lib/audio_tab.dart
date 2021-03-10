@@ -222,7 +222,7 @@ class AudioTab {
   }
 
   List<DropdownMenuItem<String>> getAudioCodecList() {
-    List<DropdownMenuItem<String>> list = new List();
+    List<DropdownMenuItem<String>> list = List.empty();
 
     list.add(new DropdownMenuItem(
         value: "mp2 (twolame)",
