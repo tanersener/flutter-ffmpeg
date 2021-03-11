@@ -27,9 +27,9 @@ import 'flutter_ffmpeg_api_wrapper.dart';
 import 'util.dart';
 
 class CommandTab {
-  Refreshable _refreshable;
-  TextEditingController _commandText;
-  String _outputText;
+  late Refreshable _refreshable;
+  late TextEditingController _commandText;
+  String _outputText = "";
 
   void init(Refreshable refreshable) {
     _refreshable = refreshable;

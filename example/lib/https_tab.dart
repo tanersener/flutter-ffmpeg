@@ -31,9 +31,9 @@ class HttpsTab {
   static const String HTTPS_TEST_DEFAULT_URL =
       "https://download.blender.org/peach/trailer/trailer_1080p.ogg";
 
-  Refreshable _refreshable;
-  TextEditingController _urlText;
-  String _outputText;
+  late Refreshable _refreshable;
+  late TextEditingController _urlText;
+  String _outputText = "";
 
   void init(Refreshable refreshable) {
     _refreshable = refreshable;
@@ -79,107 +79,102 @@ class HttpsTab {
     getMediaInformation(testUrl).then((information) {
       if (information.getMediaProperties() != null) {
         ffprint("---");
-        if (information.getMediaProperties().containsKey('filename')) {
-          ffprint('Path: ${information.getMediaProperties()['filename']}');
+        Map<dynamic, dynamic> mediaProperties =
+            information.getMediaProperties()!;
+        if (mediaProperties.containsKey('filename')) {
+          ffprint('Path: ${mediaProperties['filename']}');
         }
-        if (information.getMediaProperties().containsKey('format_name')) {
-          ffprint("Format: " + information.getMediaProperties()['format_name']);
+        if (mediaProperties.containsKey('format_name')) {
+          ffprint("Format: " + mediaProperties['format_name']);
         }
-        if (information.getMediaProperties().containsKey('bit_rate')) {
-          ffprint("Bitrate: " + information.getMediaProperties()['bit_rate']);
+        if (mediaProperties.containsKey('bit_rate')) {
+          ffprint("Bitrate: " + mediaProperties['bit_rate']);
         }
-        if (information.getMediaProperties().containsKey('duration')) {
-          ffprint("Duration: " + information.getMediaProperties()['duration']);
+        if (mediaProperties.containsKey('duration')) {
+          ffprint("Duration: " + mediaProperties['duration']);
         }
-        if (information.getMediaProperties().containsKey('start_time')) {
+        if (mediaProperties.containsKey('start_time')) {
+          ffprint("Start time: " + mediaProperties['start_time']);
+        }
+        if (mediaProperties.containsKey('nb_streams')) {
           ffprint(
-              "Start time: " + information.getMediaProperties()['start_time']);
+              "Number of streams: " + mediaProperties['nb_streams'].toString());
         }
-        if (information.getMediaProperties().containsKey('nb_streams')) {
-          ffprint("Number of streams: " +
-              information.getMediaProperties()['nb_streams'].toString());
-        }
-        Map<dynamic, dynamic> tags = information.getMediaProperties()['tags'];
+        Map<dynamic, dynamic>? tags = mediaProperties['tags'];
         if (tags != null) {
           tags.forEach((key, value) {
             ffprint("Tag: " + key + ":" + value);
           });
         }
 
-        List<StreamInformation> streams = information.getStreams();
+        List<StreamInformation>? streams = information.getStreams();
         if (streams != null) {
           for (var i = 0; i < streams.length; ++i) {
             StreamInformation stream = streams[i];
             ffprint("---");
-            if (stream.getAllProperties().containsKey('index')) {
-              ffprint("Stream index: " +
-                  stream.getAllProperties()['index'].toString());
+            Map<dynamic, dynamic> streamProperties = stream.getAllProperties();
+            if (streamProperties.containsKey('index')) {
+              ffprint("Stream index: " + streamProperties['index'].toString());
             }
-            if (stream.getAllProperties().containsKey('codec_type')) {
+            if (streamProperties.containsKey('codec_type')) {
+              ffprint("Stream type: " + streamProperties['codec_type']);
+            }
+            if (streamProperties.containsKey('codec_name')) {
+              ffprint("Stream codec: " + streamProperties['codec_name']);
+            }
+            if (streamProperties.containsKey('codec_long_name')) {
               ffprint(
-                  "Stream type: " + stream.getAllProperties()['codec_type']);
+                  "Stream full codec: " + streamProperties['codec_long_name']);
             }
-            if (stream.getAllProperties().containsKey('codec_name')) {
+            if (streamProperties.containsKey('pix_fmt')) {
+              ffprint("Stream format: " + streamProperties['pix_fmt']);
+            }
+            if (streamProperties.containsKey('width')) {
+              ffprint("Stream width: " + streamProperties['width'].toString());
+            }
+            if (streamProperties.containsKey('height')) {
               ffprint(
-                  "Stream codec: " + stream.getAllProperties()['codec_name']);
+                  "Stream height: " + streamProperties['height'].toString());
             }
-            if (stream.getAllProperties().containsKey('codec_long_name')) {
-              ffprint("Stream full codec: " +
-                  stream.getAllProperties()['codec_long_name']);
+            if (streamProperties.containsKey('bit_rate')) {
+              ffprint("Stream bitrate: " + streamProperties['bit_rate']);
             }
-            if (stream.getAllProperties().containsKey('pix_fmt')) {
-              ffprint("Stream format: " + stream.getAllProperties()['pix_fmt']);
+            if (streamProperties.containsKey('sample_rate')) {
+              ffprint("Stream sample rate: " + streamProperties['sample_rate']);
             }
-            if (stream.getAllProperties().containsKey('width')) {
-              ffprint("Stream width: " +
-                  stream.getAllProperties()['width'].toString());
-            }
-            if (stream.getAllProperties().containsKey('height')) {
-              ffprint("Stream height: " +
-                  stream.getAllProperties()['height'].toString());
-            }
-            if (stream.getAllProperties().containsKey('bit_rate')) {
+            if (streamProperties.containsKey('sample_fmt')) {
               ffprint(
-                  "Stream bitrate: " + stream.getAllProperties()['bit_rate']);
+                  "Stream sample format: " + streamProperties['sample_fmt']);
             }
-            if (stream.getAllProperties().containsKey('sample_rate')) {
-              ffprint("Stream sample rate: " +
-                  stream.getAllProperties()['sample_rate']);
-            }
-            if (stream.getAllProperties().containsKey('sample_fmt')) {
-              ffprint("Stream sample format: " +
-                  stream.getAllProperties()['sample_fmt']);
-            }
-            if (stream.getAllProperties().containsKey('channel_layout')) {
+            if (streamProperties.containsKey('channel_layout')) {
               ffprint("Stream channel layout: " +
-                  stream.getAllProperties()['channel_layout']);
+                  streamProperties['channel_layout']);
             }
-            if (stream.getAllProperties().containsKey('sample_aspect_ratio')) {
+            if (streamProperties.containsKey('sample_aspect_ratio')) {
               ffprint("Stream sample aspect ratio: " +
-                  stream.getAllProperties()['sample_aspect_ratio']);
+                  streamProperties['sample_aspect_ratio']);
             }
-            if (stream.getAllProperties().containsKey('display_aspect_ratio')) {
+            if (streamProperties.containsKey('display_aspect_ratio')) {
               ffprint("Stream display aspect ratio: " +
-                  stream.getAllProperties()['display_aspect_ratio']);
+                  streamProperties['display_aspect_ratio']);
             }
-            if (stream.getAllProperties().containsKey('avg_frame_rate')) {
+            if (streamProperties.containsKey('avg_frame_rate')) {
               ffprint("Stream average frame rate: " +
-                  stream.getAllProperties()['avg_frame_rate']);
+                  streamProperties['avg_frame_rate']);
             }
-            if (stream.getAllProperties().containsKey('r_frame_rate')) {
+            if (streamProperties.containsKey('r_frame_rate')) {
               ffprint("Stream real frame rate: " +
-                  stream.getAllProperties()['r_frame_rate']);
+                  streamProperties['r_frame_rate']);
             }
-            if (stream.getAllProperties().containsKey('time_base')) {
-              ffprint("Stream time base: " +
-                  stream.getAllProperties()['time_base']);
+            if (streamProperties.containsKey('time_base')) {
+              ffprint("Stream time base: " + streamProperties['time_base']);
             }
-            if (stream.getAllProperties().containsKey('codec_time_base')) {
+            if (streamProperties.containsKey('codec_time_base')) {
               ffprint("Stream codec time base: " +
-                  stream.getAllProperties()['codec_time_base']);
+                  streamProperties['codec_time_base']);
             }
 
-            Map<dynamic, dynamic> tags = stream.getAllProperties()['tags'];
+            Map<dynamic, dynamic>? tags = streamProperties['tags'];
             if (tags != null) {
               tags.forEach((key, value) {
                 ffprint("Stream tag: " + key + ":" + value);

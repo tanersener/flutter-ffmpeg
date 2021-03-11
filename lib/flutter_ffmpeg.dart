@@ -267,7 +267,7 @@ class FlutterFFmpegConfig {
 
   /// Sets a callback to redirect FFmpeg logs. [newCallback] is the new log
   /// callback function, use null to disable a previously defined callback.
-  void enableLogCallback(LogCallback newCallback) {
+  void enableLogCallback(LogCallback? newCallback) {
     try {
       this.logCallback = newCallback;
     } on PlatformException catch (e) {
@@ -278,7 +278,7 @@ class FlutterFFmpegConfig {
   /// Sets a callback to redirect FFmpeg statistics. [newCallback] is the new
   /// statistics callback function, use null to disable a previously defined
   /// callback.
-  void enableStatisticsCallback(StatisticsCallback newCallback) {
+  void enableStatisticsCallback(StatisticsCallback? newCallback) {
     try {
       this.statisticsCallback = newCallback;
     } on PlatformException catch (e) {
@@ -425,7 +425,7 @@ class FlutterFFmpeg {
   ///
   /// Returns zero on successful execution, 255 on user cancel and non-zero on
   /// error.
-  Future<int> executeWithArguments(List<String> arguments) async {
+  Future<int> executeWithArguments(List<dynamic>? arguments) async {
     try {
       final Map<dynamic, dynamic> result = await _methodChannel
           .invokeMethod('executeFFmpegWithArguments', {'arguments': arguments});
@@ -470,7 +470,7 @@ class FlutterFFmpeg {
   Future<int> executeAsync(
       String command, ExecuteCallback executeCallback) async {
     return executeAsyncWithArguments(
-        FlutterFFmpeg.parseArguments(command), executeCallback);
+        FlutterFFmpeg.parseArguments(command)!, executeCallback);
   }
 
   /// Cancels all ongoing executions.
@@ -517,7 +517,7 @@ class FlutterFFmpeg {
   }
 
   /// Parses the given [command] into arguments.
-  static List<String> parseArguments(String command) {
+  static List<String>? parseArguments(String command) {
     List<String> argumentList = List<String>.empty(growable: true);
     StringBuffer currentArgument = new StringBuffer();
 
@@ -580,7 +580,7 @@ class FlutterFFprobe {
   ///
   /// Returns zero on successful execution, 255 on user cancel and non-zero on
   /// error.
-  Future<int> executeWithArguments(List<String> arguments) async {
+  Future<int> executeWithArguments(List<dynamic> arguments) async {
     try {
       final Map<dynamic, dynamic> result = await _methodChannel.invokeMethod(
           'executeFFprobeWithArguments', {'arguments': arguments});

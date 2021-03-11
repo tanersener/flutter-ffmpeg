@@ -30,11 +30,11 @@ import 'package:flutter_ffmpeg_example/video_util.dart';
 import 'util.dart';
 
 class ConcurrentExecutionTab {
-  Refreshable _refreshable;
-  String _outputText;
-  int _executionId1;
-  int _executionId2;
-  int _executionId3;
+  late Refreshable _refreshable;
+  String _outputText = "";
+  late int _executionId1;
+  late int _executionId2;
+  late int _executionId3;
 
   void init(Refreshable refreshable) {
     _refreshable = refreshable;

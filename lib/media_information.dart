@@ -26,7 +26,7 @@ class MediaInformation {
   MediaInformation(this._allProperties);
 
   /// Returns all streams
-  List<StreamInformation> getStreams() {
+  List<StreamInformation>? getStreams() {
     List<StreamInformation> list =
         List<StreamInformation>.empty(growable: true);
     var streamList;
@@ -47,7 +47,7 @@ class MediaInformation {
   }
 
   /// Returns all media properties in a map or null if no media properties are found
-  Map<dynamic, dynamic> getMediaProperties() {
+  Map<dynamic, dynamic>? getMediaProperties() {
     if (_allProperties == null) {
       return Map();
     } else {

@@ -36,15 +36,15 @@ import 'package:video_player/video_player.dart';
 import 'flutter_ffmpeg_api_wrapper.dart';
 
 class VideoTab implements PlayerTab {
-  VideoPlayerController _videoPlayerController;
-  RefreshablePlayerDialogFactory _refreshablePlayerDialogFactory;
-  String _selectedCodec;
-  Statistics _statistics;
+  VideoPlayerController? _videoPlayerController;
+  late RefreshablePlayerDialogFactory _refreshablePlayerDialogFactory;
+  late String _selectedCodec;
+  late Statistics? _statistics;
 
   void init(RefreshablePlayerDialogFactory refreshablePlayerDialogFactory) {
     _refreshablePlayerDialogFactory = refreshablePlayerDialogFactory;
     List<DropdownMenuItem<String>> videoCodecList = getVideoCodecList();
-    _selectedCodec = videoCodecList[0].value;
+    _selectedCodec = videoCodecList[0].value!;
     _statistics = null;
   }
 
@@ -64,8 +64,8 @@ class VideoTab implements PlayerTab {
     updateProgressDialog();
   }
 
-  void changedVideoCodec(String selectedCodec) {
-    _selectedCodec = selectedCodec;
+  void changedVideoCodec(String? selectedCodec) {
+    _selectedCodec = selectedCodec!;
     _refreshablePlayerDialogFactory.refresh();
   }
 
@@ -123,15 +123,15 @@ class VideoTab implements PlayerTab {
 
   Future<void> playVideo() async {
     if (_videoPlayerController != null) {
-      await _videoPlayerController.initialize();
-      await _videoPlayerController.play();
+      await _videoPlayerController!.initialize();
+      await _videoPlayerController!.play();
     }
     _refreshablePlayerDialogFactory.refresh();
   }
 
   Future<void> pause() async {
     if (_videoPlayerController != null) {
-      await _videoPlayerController.pause();
+      await _videoPlayerController!.pause();
     }
     _refreshablePlayerDialogFactory.refresh();
   }
@@ -226,7 +226,7 @@ class VideoTab implements PlayerTab {
   }
 
   List<DropdownMenuItem<String>> getVideoCodecList() {
-    List<DropdownMenuItem<String>> list = List.empty();
+    List<DropdownMenuItem<String>> list = List.empty(growable: true);
 
     list.add(new DropdownMenuItem(
         value: "mpeg4",

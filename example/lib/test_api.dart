@@ -66,22 +66,22 @@ class Test {
         "-hide_banner   -loop 1  -i file.jpg  -filter_complex  [0:v]setpts=PTS-STARTPTS[video] -map [video] -vsync 2 -async 1  video.mp4");
 
     assert(argumentArray != null);
-    assert(argumentArray.length == 14);
+    assert(argumentArray!.length == 14);
 
-    assert("-hide_banner" == argumentArray[0]);
-    assert("-loop" == argumentArray[1]);
-    assert("1" == argumentArray[2]);
-    assert("-i" == argumentArray[3]);
-    assert("file.jpg" == argumentArray[4]);
-    assert("-filter_complex" == argumentArray[5]);
-    assert("[0:v]setpts=PTS-STARTPTS[video]" == argumentArray[6]);
-    assert("-map" == argumentArray[7]);
-    assert("[video]" == argumentArray[8]);
-    assert("-vsync" == argumentArray[9]);
-    assert("2" == argumentArray[10]);
-    assert("-async" == argumentArray[11]);
-    assert("1" == argumentArray[12]);
-    assert("video.mp4" == argumentArray[13]);
+    assert("-hide_banner" == argumentArray![0]);
+    assert("-loop" == argumentArray![1]);
+    assert("1" == argumentArray![2]);
+    assert("-i" == argumentArray![3]);
+    assert("file.jpg" == argumentArray![4]);
+    assert("-filter_complex" == argumentArray![5]);
+    assert("[0:v]setpts=PTS-STARTPTS[video]" == argumentArray![6]);
+    assert("-map" == argumentArray![7]);
+    assert("[video]" == argumentArray![8]);
+    assert("-vsync" == argumentArray![9]);
+    assert("2" == argumentArray![10]);
+    assert("-async" == argumentArray![11]);
+    assert("1" == argumentArray![12]);
+    assert("video.mp4" == argumentArray![13]);
   }
 
   static void _testParseSingleQuotesInCommand() {
@@ -89,16 +89,16 @@ class Test {
         "-loop 1 'file one.jpg'  -filter_complex  '[0:v]setpts=PTS-STARTPTS[video]'  -map  [video]  video.mp4 ");
 
     assert(argumentArray != null);
-    assert(argumentArray.length == 8);
+    assert(argumentArray!.length == 8);
 
-    assert("-loop" == argumentArray[0]);
-    assert("1" == argumentArray[1]);
-    assert("file one.jpg" == argumentArray[2]);
-    assert("-filter_complex" == argumentArray[3]);
-    assert("[0:v]setpts=PTS-STARTPTS[video]" == argumentArray[4]);
-    assert("-map" == argumentArray[5]);
-    assert("[video]" == argumentArray[6]);
-    assert("video.mp4" == argumentArray[7]);
+    assert("-loop" == argumentArray![0]);
+    assert("1" == argumentArray![1]);
+    assert("file one.jpg" == argumentArray![2]);
+    assert("-filter_complex" == argumentArray![3]);
+    assert("[0:v]setpts=PTS-STARTPTS[video]" == argumentArray![4]);
+    assert("-map" == argumentArray![5]);
+    assert("[video]" == argumentArray![6]);
+    assert("video.mp4" == argumentArray![7]);
   }
 
   static void _testParseDoubleQuotesInCommand() {
@@ -106,37 +106,37 @@ class Test {
         "-loop  1 \"file one.jpg\"   -filter_complex \"[0:v]setpts=PTS-STARTPTS[video]\"  -map  [video]  video.mp4 ");
 
     assert(argumentArray != null);
-    assert(argumentArray.length == 8);
+    assert(argumentArray!.length == 8);
 
-    assert("-loop" == argumentArray[0]);
-    assert("1" == argumentArray[1]);
-    assert("file one.jpg" == argumentArray[2]);
-    assert("-filter_complex" == argumentArray[3]);
-    assert("[0:v]setpts=PTS-STARTPTS[video]" == argumentArray[4]);
-    assert("-map" == argumentArray[5]);
-    assert("[video]" == argumentArray[6]);
-    assert("video.mp4" == argumentArray[7]);
+    assert("-loop" == argumentArray![0]);
+    assert("1" == argumentArray![1]);
+    assert("file one.jpg" == argumentArray![2]);
+    assert("-filter_complex" == argumentArray![3]);
+    assert("[0:v]setpts=PTS-STARTPTS[video]" == argumentArray![4]);
+    assert("-map" == argumentArray![5]);
+    assert("[video]" == argumentArray![6]);
+    assert("video.mp4" == argumentArray![7]);
 
     argumentArray = parseArguments(
         " -i   file:///tmp/input.mp4 -vcodec libx264 -vf \"scale=1024:1024,pad=width=1024:height=1024:x=0:y=0:color=black\"  -acodec copy  -q:v 0  -q:a   0 video.mp4");
 
     assert(argumentArray != null);
-    assert(argumentArray.length == 13);
+    assert(argumentArray!.length == 13);
 
-    assert("-i" == argumentArray[0]);
-    assert("file:///tmp/input.mp4" == argumentArray[1]);
-    assert("-vcodec" == argumentArray[2]);
-    assert("libx264" == argumentArray[3]);
-    assert("-vf" == argumentArray[4]);
+    assert("-i" == argumentArray![0]);
+    assert("file:///tmp/input.mp4" == argumentArray![1]);
+    assert("-vcodec" == argumentArray![2]);
+    assert("libx264" == argumentArray![3]);
+    assert("-vf" == argumentArray![4]);
     assert("scale=1024:1024,pad=width=1024:height=1024:x=0:y=0:color=black" ==
-        argumentArray[5]);
-    assert("-acodec" == argumentArray[6]);
-    assert("copy" == argumentArray[7]);
-    assert("-q:v" == argumentArray[8]);
-    assert("0" == argumentArray[9]);
-    assert("-q:a" == argumentArray[10]);
-    assert("0" == argumentArray[11]);
-    assert("video.mp4" == argumentArray[12]);
+        argumentArray![5]);
+    assert("-acodec" == argumentArray![6]);
+    assert("copy" == argumentArray![7]);
+    assert("-q:v" == argumentArray![8]);
+    assert("0" == argumentArray![9]);
+    assert("-q:a" == argumentArray![10]);
+    assert("0" == argumentArray![11]);
+    assert("video.mp4" == argumentArray![12]);
   }
 
   static void _testParseDoubleQuotesAndEscapesInCommand() {
@@ -144,44 +144,44 @@ class Test {
         "  -i   file:///tmp/input.mp4 -vf \"subtitles=file:///tmp/subtitles.srt:force_style=\'FontSize=16,PrimaryColour=&HFFFFFF&\'\" -vcodec libx264   -acodec copy  -q:v 0 -q:a  0  video.mp4");
 
     assert(argumentArray != null);
-    assert(argumentArray.length == 13);
+    assert(argumentArray!.length == 13);
 
-    assert("-i" == argumentArray[0]);
-    assert("file:///tmp/input.mp4" == argumentArray[1]);
-    assert("-vf" == argumentArray[2]);
+    assert("-i" == argumentArray![0]);
+    assert("file:///tmp/input.mp4" == argumentArray![1]);
+    assert("-vf" == argumentArray![2]);
     assert(
         "subtitles=file:///tmp/subtitles.srt:force_style='FontSize=16,PrimaryColour=&HFFFFFF&'" ==
-            argumentArray[3]);
-    assert("-vcodec" == argumentArray[4]);
-    assert("libx264" == argumentArray[5]);
-    assert("-acodec" == argumentArray[6]);
-    assert("copy" == argumentArray[7]);
-    assert("-q:v" == argumentArray[8]);
-    assert("0" == argumentArray[9]);
-    assert("-q:a" == argumentArray[10]);
-    assert("0" == argumentArray[11]);
-    assert("video.mp4" == argumentArray[12]);
+            argumentArray![3]);
+    assert("-vcodec" == argumentArray![4]);
+    assert("libx264" == argumentArray![5]);
+    assert("-acodec" == argumentArray![6]);
+    assert("copy" == argumentArray![7]);
+    assert("-q:v" == argumentArray![8]);
+    assert("0" == argumentArray![9]);
+    assert("-q:a" == argumentArray![10]);
+    assert("0" == argumentArray![11]);
+    assert("video.mp4" == argumentArray![12]);
 
     argumentArray = parseArguments(
         "  -i   file:///tmp/input.mp4 -vf \"subtitles=file:///tmp/subtitles.srt:force_style=\\\"FontSize=16,PrimaryColour=&HFFFFFF&\\\"\" -vcodec libx264   -acodec copy  -q:v 0 -q:a  0  video.mp4");
 
     assert(argumentArray != null);
-    assert(argumentArray.length == 13);
+    assert(argumentArray!.length == 13);
 
-    assert("-i" == argumentArray[0]);
-    assert("file:///tmp/input.mp4" == argumentArray[1]);
-    assert("-vf" == argumentArray[2]);
+    assert("-i" == argumentArray![0]);
+    assert("file:///tmp/input.mp4" == argumentArray![1]);
+    assert("-vf" == argumentArray![2]);
     assert(
         "subtitles=file:///tmp/subtitles.srt:force_style=\\\"FontSize=16,PrimaryColour=&HFFFFFF&\\\"" ==
-            argumentArray[3]);
-    assert("-vcodec" == argumentArray[4]);
-    assert("libx264" == argumentArray[5]);
-    assert("-acodec" == argumentArray[6]);
-    assert("copy" == argumentArray[7]);
-    assert("-q:v" == argumentArray[8]);
-    assert("0" == argumentArray[9]);
-    assert("-q:a" == argumentArray[10]);
-    assert("0" == argumentArray[11]);
-    assert("video.mp4" == argumentArray[12]);
+            argumentArray![3]);
+    assert("-vcodec" == argumentArray![4]);
+    assert("libx264" == argumentArray![5]);
+    assert("-acodec" == argumentArray![6]);
+    assert("copy" == argumentArray![7]);
+    assert("-q:v" == argumentArray![8]);
+    assert("0" == argumentArray![9]);
+    assert("-q:a" == argumentArray![10]);
+    assert("0" == argumentArray![11]);
+    assert("video.mp4" == argumentArray![12]);
   }
 }
