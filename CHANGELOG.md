@@ -1,3 +1,12 @@
+## 0.4.0-nullsafety.0
+- Migrated to nullsafety
+- Updated example application, changed example to use full-gpl ffmpeg package (video stabilization not present in full package)
+- Fixes issue #266 and possibly #246
+
+### Known issues
+- Burn subtitles in example not working properly (stuck at Burning subtitles)
+
+
 ## 0.3.1
 - Adds mavenCentral() repository for Android
 - Minor updates in the test application
