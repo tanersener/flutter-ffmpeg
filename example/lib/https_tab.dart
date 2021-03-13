@@ -31,9 +31,9 @@ class HttpsTab {
   static const String HTTPS_TEST_DEFAULT_URL =
       "https://download.blender.org/peach/trailer/trailer_1080p.ogg";
 
-  Refreshable _refreshable;
-  TextEditingController _urlText;
-  String _outputText;
+  late Refreshable _refreshable;
+  late TextEditingController _urlText;
+  String _outputText = '';
 
   void init(Refreshable refreshable) {
     _refreshable = refreshable;
@@ -58,7 +58,7 @@ class HttpsTab {
   }
 
   void clearLog() {
-    _outputText = "";
+    _outputText = '';
   }
 
   void runGetMediaInformation() {
@@ -79,27 +79,28 @@ class HttpsTab {
     getMediaInformation(testUrl).then((information) {
       if (information.getMediaProperties() != null) {
         ffprint("---");
-        if (information.getMediaProperties().containsKey('filename')) {
-          ffprint('Path: ${information.getMediaProperties()['filename']}');
+        if (information.getMediaProperties()!.containsKey('filename')) {
+          ffprint('Path: ${information.getMediaProperties()!['filename']}');
         }
-        if (information.getMediaProperties().containsKey('format_name')) {
-          ffprint("Format: " + information.getMediaProperties()['format_name']);
-        }
-        if (information.getMediaProperties().containsKey('bit_rate')) {
-          ffprint("Bitrate: " + information.getMediaProperties()['bit_rate']);
-        }
-        if (information.getMediaProperties().containsKey('duration')) {
-          ffprint("Duration: " + information.getMediaProperties()['duration']);
-        }
-        if (information.getMediaProperties().containsKey('start_time')) {
+        if (information.getMediaProperties()!.containsKey('format_name')) {
           ffprint(
-              "Start time: " + information.getMediaProperties()['start_time']);
+              "Format: " + information.getMediaProperties()!['format_name']);
         }
-        if (information.getMediaProperties().containsKey('nb_streams')) {
+        if (information.getMediaProperties()!.containsKey('bit_rate')) {
+          ffprint("Bitrate: " + information.getMediaProperties()!['bit_rate']);
+        }
+        if (information.getMediaProperties()!.containsKey('duration')) {
+          ffprint("Duration: " + information.getMediaProperties()!['duration']);
+        }
+        if (information.getMediaProperties()!.containsKey('start_time')) {
+          ffprint(
+              "Start time: " + information.getMediaProperties()!['start_time']);
+        }
+        if (information.getMediaProperties()!.containsKey('nb_streams')) {
           ffprint("Number of streams: " +
-              information.getMediaProperties()['nb_streams'].toString());
+              information.getMediaProperties()!['nb_streams'].toString());
         }
-        Map<dynamic, dynamic> tags = information.getMediaProperties()['tags'];
+        Map<dynamic, dynamic>? tags = information.getMediaProperties()!['tags'];
         if (tags != null) {
           tags.forEach((key, value) {
             ffprint("Tag: " + key + ":" + value);
@@ -107,7 +108,7 @@ class HttpsTab {
         }
 
         List<StreamInformation> streams = information.getStreams();
-        if (streams != null) {
+        if (streams.isNotEmpty) {
           for (var i = 0; i < streams.length; ++i) {
             StreamInformation stream = streams[i];
             ffprint("---");
@@ -179,7 +180,7 @@ class HttpsTab {
                   stream.getAllProperties()['codec_time_base']);
             }
 
-            Map<dynamic, dynamic> tags = stream.getAllProperties()['tags'];
+            Map<dynamic, dynamic>? tags = stream.getAllProperties()['tags'];
             if (tags != null) {
               tags.forEach((key, value) {
                 ffprint("Stream tag: " + key + ":" + value);

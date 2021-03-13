@@ -36,10 +36,10 @@ import 'package:video_player/video_player.dart';
 import 'flutter_ffmpeg_api_wrapper.dart';
 
 class VideoTab implements PlayerTab {
-  VideoPlayerController _videoPlayerController;
-  RefreshablePlayerDialogFactory _refreshablePlayerDialogFactory;
-  String _selectedCodec;
-  Statistics _statistics;
+  VideoPlayerController? _videoPlayerController;
+  late RefreshablePlayerDialogFactory _refreshablePlayerDialogFactory;
+  String? _selectedCodec;
+  Statistics? _statistics;
 
   void init(RefreshablePlayerDialogFactory refreshablePlayerDialogFactory) {
     _refreshablePlayerDialogFactory = refreshablePlayerDialogFactory;
@@ -59,12 +59,12 @@ class VideoTab implements PlayerTab {
     ffprint(log.message);
   }
 
-  void statisticsCallback(Statistics statistics) {
+  void statisticsCallback(Statistics? statistics) {
     this._statistics = statistics;
     updateProgressDialog();
   }
 
-  void changedVideoCodec(String selectedCodec) {
+  void changedVideoCodec(String? selectedCodec) {
     _selectedCodec = selectedCodec;
     _refreshablePlayerDialogFactory.refresh();
   }
@@ -123,21 +123,21 @@ class VideoTab implements PlayerTab {
 
   Future<void> playVideo() async {
     if (_videoPlayerController != null) {
-      await _videoPlayerController.initialize();
-      await _videoPlayerController.play();
+      await _videoPlayerController!.initialize();
+      await _videoPlayerController!.play();
     }
     _refreshablePlayerDialogFactory.refresh();
   }
 
   Future<void> pause() async {
     if (_videoPlayerController != null) {
-      await _videoPlayerController.pause();
+      await _videoPlayerController!.pause();
     }
     _refreshablePlayerDialogFactory.refresh();
   }
 
   String getSelectedVideoCodec() {
-    String videoCodec = _selectedCodec;
+    String? videoCodec = _selectedCodec;
 
     // VIDEO CODEC MENU HAS BASIC NAMES, FFMPEG NEEDS LONGER LIBRARY NAMES.
     // APPLYING NECESSARY TRANSFORMATION HERE
@@ -171,11 +171,11 @@ class VideoTab implements PlayerTab {
         break;
     }
 
-    return videoCodec;
+    return videoCodec!;
   }
 
   Future<File> getVideoFile() async {
-    String videoCodec = _selectedCodec;
+    String? videoCodec = _selectedCodec;
 
     String extension;
     switch (videoCodec) {
@@ -204,7 +204,7 @@ class VideoTab implements PlayerTab {
   }
 
   String getCustomOptions() {
-    String videoCodec = _selectedCodec;
+    String? videoCodec = _selectedCodec;
 
     switch (videoCodec) {
       case "x265":
@@ -226,11 +226,13 @@ class VideoTab implements PlayerTab {
   }
 
   List<DropdownMenuItem<String>> getVideoCodecList() {
-    List<DropdownMenuItem<String>> list = new List();
+    List<DropdownMenuItem<String>> list;
 
-    list.add(new DropdownMenuItem(
-        value: "mpeg4",
-        child: SizedBox(width: 100, child: Center(child: new Text("mpeg4")))));
+    list = [
+      new DropdownMenuItem(
+          value: "mpeg4",
+          child: SizedBox(width: 100, child: Center(child: new Text("mpeg4"))))
+    ];
     list.add(new DropdownMenuItem(
         value: "x264",
         child: SizedBox(width: 100, child: Center(child: new Text("x264")))));
@@ -296,7 +298,7 @@ class VideoTab implements PlayerTab {
     _refreshablePlayerDialogFactory.dialogHide();
   }
 
-  String getSelectedCodec() => _selectedCodec;
+  String? getSelectedCodec() => _selectedCodec;
 
   @override
   void setController(VideoPlayerController controller) {

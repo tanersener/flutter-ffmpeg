@@ -33,9 +33,9 @@ import 'package:flutter_ffmpeg_example/video_util.dart';
 import 'util.dart';
 
 class AudioTab {
-  RefreshablePlayerDialogFactory _refreshablePlayerDialogFactory;
-  String _selectedCodec;
-  String _outputText;
+  late RefreshablePlayerDialogFactory _refreshablePlayerDialogFactory;
+  String? _selectedCodec;
+  String _outputText = '';
 
   void init(RefreshablePlayerDialogFactory refreshablePlayerDialogFactory) {
     _refreshablePlayerDialogFactory = refreshablePlayerDialogFactory;
@@ -62,10 +62,10 @@ class AudioTab {
   }
 
   void clearLog() {
-    _outputText = "";
+    _outputText = '';
   }
 
-  void changedAudioCodec(String selectedCodec) {
+  void changedAudioCodec(String? selectedCodec) {
     _selectedCodec = selectedCodec;
     _refreshablePlayerDialogFactory.refresh();
   }
@@ -76,7 +76,7 @@ class AudioTab {
         audioOutputFile.delete().catchError((_) {});
       } on Exception catch (_) {}
 
-      final String audioCodec = _selectedCodec;
+      final String? audioCodec = _selectedCodec;
 
       ffprint("Testing AUDIO encoding with '$audioCodec' codec");
 
@@ -133,7 +133,7 @@ class AudioTab {
   }
 
   Future<File> getAudioOutputFile() async {
-    String audioCodec = _selectedCodec;
+    String? audioCodec = _selectedCodec;
 
     String extension;
     switch (audioCodec) {
@@ -190,7 +190,7 @@ class AudioTab {
   }
 
   Future<String> generateAudioEncodeScript() async {
-    String audioCodec = _selectedCodec;
+    String? audioCodec = _selectedCodec;
     String audioSampleFile = (await getAudioSampleFile()).path;
     String audioOutputFile = (await getAudioOutputFile()).path;
 
@@ -222,12 +222,14 @@ class AudioTab {
   }
 
   List<DropdownMenuItem<String>> getAudioCodecList() {
-    List<DropdownMenuItem<String>> list = new List();
+    List<DropdownMenuItem<String>> list;
 
-    list.add(new DropdownMenuItem(
-        value: "mp2 (twolame)",
-        child: SizedBox(
-            width: 100, child: Center(child: new Text("mp2 (twolame)")))));
+    list = [
+      new DropdownMenuItem(
+          value: "mp2 (twolame)",
+          child: SizedBox(
+              width: 100, child: Center(child: new Text("mp2 (twolame)"))))
+    ];
     list.add(new DropdownMenuItem(
         value: "mp3 (liblame)",
         child: SizedBox(
@@ -267,5 +269,5 @@ class AudioTab {
 
   String getOutputText() => _outputText;
 
-  String getSelectedCodec() => _selectedCodec;
+  String? getSelectedCodec() => _selectedCodec;
 }
