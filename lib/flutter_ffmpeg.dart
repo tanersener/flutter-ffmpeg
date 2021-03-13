@@ -57,21 +57,18 @@ class FlutterFFmpegConfig {
     getPlatform().then((name) => print("Loaded flutter-ffmpeg-$name."));
   }
 
-  void _onEvent(Object? event) {
-    if (event is Map<dynamic, dynamic>) {
-      final Map<String, dynamic> eventMap = event.cast();
-      final Map<dynamic, dynamic> logEvent =
-          eventMap['FlutterFFmpegLogCallback'];
-      final Map<dynamic, dynamic> statisticsEvent =
-          eventMap['FlutterFFmpegStatisticsCallback'];
-      final Map<dynamic, dynamic> executeEvent =
-          eventMap['FlutterFFmpegExecuteCallback'];
+  void _onEvent(dynamic? event) {
+    if (event != null) {
+      final Map<dynamic, dynamic>? logEvent = event['FlutterFFmpegLogCallback'];
+      if (logEvent != null) handleLogEvent(logEvent);
 
-      handleLogEvent(logEvent);
+      final Map<dynamic, dynamic>? statisticsEvent =
+          event['FlutterFFmpegStatisticsCallback'];
+      if (statisticsEvent != null) handleStatisticsEvent(statisticsEvent);
 
-      handleStatisticsEvent(statisticsEvent);
-
-      handleExecuteEvent(executeEvent);
+      final Map<dynamic, dynamic>? executeEvent =
+          event['FlutterFFmpegExecuteCallback'];
+      if (executeEvent != null) handleExecuteEvent(executeEvent);
     }
   }
 
