@@ -28,11 +28,11 @@ final FlutterFFmpegConfig _flutterFFmpegConfig = new FlutterFFmpegConfig();
 final FlutterFFmpeg _flutterFFmpeg = new FlutterFFmpeg();
 final FlutterFFprobe _flutterFFprobe = new FlutterFFprobe();
 
-void enableLogCallback(LogCallback callback) {
+void enableLogCallback(LogCallback? callback) {
   _flutterFFmpegConfig.enableLogCallback(callback);
 }
 
-void enableStatisticsCallback(StatisticsCallback callback) {
+void enableStatisticsCallback(StatisticsCallback? callback) {
   _flutterFFmpegConfig.enableStatisticsCallback(callback);
 }
 
@@ -44,7 +44,7 @@ Future<String> getPlatform() async {
   return await _flutterFFmpegConfig.getPlatform();
 }
 
-Future<int> executeFFmpegWithArguments(List arguments) async {
+Future<int> executeFFmpegWithArguments(List<String> arguments) async {
   return await _flutterFFmpeg.executeWithArguments(arguments);
 }
 
@@ -57,7 +57,7 @@ Future<int> executeAsyncFFmpeg(
   return await _flutterFFmpeg.executeAsync(command, executeCallback);
 }
 
-Future<int> executeFFprobeWithArguments(List arguments) async {
+Future<int> executeFFprobeWithArguments(List<String> arguments) async {
   return await _flutterFFprobe.executeWithArguments(arguments);
 }
 
@@ -101,7 +101,7 @@ Future<void> disableStatistics() async {
   return await _flutterFFmpegConfig.disableStatistics();
 }
 
-Future<Statistics> getLastReceivedStatistics() async {
+Future<Statistics?> getLastReceivedStatistics() async {
   return await _flutterFFmpegConfig.getLastReceivedStatistics();
 }
 

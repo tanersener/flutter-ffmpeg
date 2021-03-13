@@ -29,7 +29,7 @@ import 'package:flutter_ffmpeg/statistics.dart';
 import 'completed_ffmpeg_execution.dart';
 
 typedef LogCallback = void Function(Log log);
-typedef StatisticsCallback = void Function(Statistics statistics);
+typedef StatisticsCallback = void Function(Statistics? statistics);
 typedef ExecuteCallback = void Function(CompletedFFmpegExecution execution);
 
 class FlutterFFmpegConfig {
@@ -39,8 +39,8 @@ class FlutterFFmpegConfig {
       const EventChannel('flutter_ffmpeg_event');
   static final Map<int, ExecuteCallback> _executeCallbackMap = new Map();
 
-  LogCallback logCallback;
-  StatisticsCallback statisticsCallback;
+  LogCallback? logCallback;
+  StatisticsCallback? statisticsCallback;
 
   FlutterFFmpegConfig() {
     logCallback = null;
@@ -57,7 +57,7 @@ class FlutterFFmpegConfig {
     getPlatform().then((name) => print("Loaded flutter-ffmpeg-$name."));
   }
 
-  void _onEvent(Object event) {
+  void _onEvent(Object? event) {
     if (event is Map<dynamic, dynamic>) {
       final Map<String, dynamic> eventMap = event.cast();
       final Map<dynamic, dynamic> logEvent =
@@ -67,17 +67,11 @@ class FlutterFFmpegConfig {
       final Map<dynamic, dynamic> executeEvent =
           eventMap['FlutterFFmpegExecuteCallback'];
 
-      if (logEvent != null) {
-        handleLogEvent(logEvent);
-      }
+      handleLogEvent(logEvent);
 
-      if (statisticsEvent != null) {
-        handleStatisticsEvent(statisticsEvent);
-      }
+      handleStatisticsEvent(statisticsEvent);
 
-      if (executeEvent != null) {
-        handleExecuteEvent(executeEvent);
-      }
+      handleExecuteEvent(executeEvent);
     }
   }
 
@@ -85,11 +79,11 @@ class FlutterFFmpegConfig {
     print('Event error: $error');
   }
 
-  double _doublePrecision(double value, int precision) {
+  double _doublePrecision(double? value, int precision) {
     if (value == null) {
       return 0;
     } else {
-      return num.parse(value.toStringAsFixed(precision));
+      return double.parse(value.toStringAsFixed(precision));
     }
   }
 
@@ -108,13 +102,13 @@ class FlutterFFmpegConfig {
         }
       }
     } else {
-      this.logCallback(new Log(executionId, level, message));
+      this.logCallback!(new Log(executionId, level, message));
     }
   }
 
   void handleStatisticsEvent(Map<dynamic, dynamic> statisticsEvent) {
     if (this.statisticsCallback != null) {
-      this.statisticsCallback(eventToStatistics(statisticsEvent));
+      this.statisticsCallback!(eventToStatistics(statisticsEvent));
     }
   }
 
@@ -122,7 +116,7 @@ class FlutterFFmpegConfig {
     int executionId = executeEvent['executionId'];
     int returnCode = executeEvent['returnCode'];
 
-    ExecuteCallback executeCallback = _executeCallbackMap[executionId];
+    ExecuteCallback? executeCallback = _executeCallbackMap[executionId];
     if (executeCallback != null) {
       executeCallback(new CompletedFFmpegExecution(executionId, returnCode));
     } else {
@@ -132,7 +126,7 @@ class FlutterFFmpegConfig {
   }
 
   /// Creates a new [Statistics] instance from event map.
-  Statistics eventToStatistics(Map<dynamic, dynamic> eventMap) {
+  Statistics? eventToStatistics(Map<dynamic, dynamic> eventMap) {
     if (eventMap.length == 0) {
       return null;
     } else {
@@ -267,7 +261,7 @@ class FlutterFFmpegConfig {
 
   /// Sets a callback to redirect FFmpeg logs. [newCallback] is the new log
   /// callback function, use null to disable a previously defined callback.
-  void enableLogCallback(LogCallback newCallback) {
+  void enableLogCallback(LogCallback? newCallback) {
     try {
       this.logCallback = newCallback;
     } on PlatformException catch (e) {
@@ -278,7 +272,7 @@ class FlutterFFmpegConfig {
   /// Sets a callback to redirect FFmpeg statistics. [newCallback] is the new
   /// statistics callback function, use null to disable a previously defined
   /// callback.
-  void enableStatisticsCallback(StatisticsCallback newCallback) {
+  void enableStatisticsCallback(StatisticsCallback? newCallback) {
     try {
       this.statisticsCallback = newCallback;
     } on PlatformException catch (e) {
@@ -287,7 +281,7 @@ class FlutterFFmpegConfig {
   }
 
   /// Returns the last received [Statistics] instance.
-  Future<Statistics> getLastReceivedStatistics() async {
+  Future<Statistics?> getLastReceivedStatistics() async {
     try {
       return await _methodChannel
           .invokeMethod('getLastReceivedStatistics')
@@ -321,7 +315,7 @@ class FlutterFFmpegConfig {
   /// Registers fonts inside the given [fontDirectory], so they will be
   /// available to use in FFmpeg filters.
   Future<void> setFontDirectory(
-      String fontDirectory, Map<String, String> fontNameMap) async {
+      String fontDirectory, Map<String, String>? fontNameMap) async {
     var parameters;
     if (fontNameMap == null) {
       parameters = {'fontDirectory': fontDirectory};
@@ -496,7 +490,8 @@ class FlutterFFmpeg {
     try {
       return await _methodChannel.invokeMethod('listExecutions').then((value) {
         var mapList = value as List<dynamic>;
-        List<FFmpegExecution> executions = List<FFmpegExecution>.empty(growable: true);
+        List<FFmpegExecution> executions =
+            List<FFmpegExecution>.empty(growable: true);
 
         for (int i = 0; i < mapList.length; i++) {
           var execution = new FFmpegExecution();

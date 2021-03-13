@@ -20,17 +20,17 @@
 import 'package:flutter/material.dart';
 
 class ProgressModal {
-  _Progress _progress;
-  BuildContext _context;
-  BuildContext _cancelContext;
-  bool displayed;
+  late _Progress _progress;
+  late BuildContext _context;
+  late BuildContext _cancelContext;
+  late bool displayed;
 
   ProgressModal(BuildContext context) {
     _context = context;
     displayed = false;
   }
 
-  void show(String message, {Function cancelFunction}) {
+  void show(String message, {Function? cancelFunction}) {
     if (displayed) {
       return;
     }
@@ -63,7 +63,7 @@ class ProgressModal {
     displayed = true;
   }
 
-  void update({String message}) {
+  void update({String? message}) {
     if (displayed) {
       _progress.update(message: message);
     }
@@ -80,11 +80,11 @@ class ProgressModal {
 class _Progress extends StatefulWidget {
   final _ProgressState _progressState;
 
-  _Progress(String message, {Function cancelFunction})
+  _Progress(String message, {Function? cancelFunction})
       : _progressState =
             _ProgressState(message, cancelFunction: cancelFunction);
 
-  update({String message}) {
+  update({String? message}) {
     _progressState.update(message: message);
   }
 
@@ -96,12 +96,12 @@ class _Progress extends StatefulWidget {
 
 class _ProgressState extends State<_Progress> {
   String _message;
-  Function _cancelFunction;
+  Function? _cancelFunction;
 
-  _ProgressState(this._message, {Function cancelFunction})
+  _ProgressState(this._message, {Function? cancelFunction})
       : _cancelFunction = cancelFunction;
 
-  update({String message}) {
+  update({String? message}) {
     if (message != null) {
       _message = message;
     }
@@ -143,7 +143,7 @@ class _ProgressState extends State<_Progress> {
       Container(
         padding: const EdgeInsets.only(top: 10),
         child: new InkWell(
-          onTap: () => _cancelFunction(),
+          onTap: () => _cancelFunction != null ? _cancelFunction!() : null,
           child: new Container(
             width: 100,
             height: 38,
