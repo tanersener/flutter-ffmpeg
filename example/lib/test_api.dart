@@ -55,17 +55,16 @@ class Test {
     getLastReturnCode()
         .then((returnCode) => ffprint("Last return code: $returnCode"));
     getLastReceivedStatistics().then((statistics) => ffprint(
-        "Last received statistics: executionId: ${statistics.executionId}, "
-        "video frame number: ${statistics.videoFrameNumber}, video fps: ${statistics.videoFps}, "
-        "video quality: ${statistics.videoQuality}, size: ${statistics.size}, time: ${statistics.time}, "
-        "bitrate: ${statistics.bitrate}, speed: ${statistics.speed}"));
+        "Last received statistics: executionId: ${statistics?.executionId}, "
+        "video frame number: ${statistics?.videoFrameNumber}, video fps: ${statistics?.videoFps}, "
+        "video quality: ${statistics?.videoQuality}, size: ${statistics?.size}, time: ${statistics?.time}, "
+        "bitrate: ${statistics?.bitrate}, speed: ${statistics?.speed}"));
   }
 
   static void _testParseSimpleCommand() {
     var argumentArray = parseArguments(
         "-hide_banner   -loop 1  -i file.jpg  -filter_complex  [0:v]setpts=PTS-STARTPTS[video] -map [video] -vsync 2 -async 1  video.mp4");
 
-    assert(argumentArray != null);
     assert(argumentArray.length == 14);
 
     assert("-hide_banner" == argumentArray[0]);
@@ -88,7 +87,6 @@ class Test {
     var argumentArray = parseArguments(
         "-loop 1 'file one.jpg'  -filter_complex  '[0:v]setpts=PTS-STARTPTS[video]'  -map  [video]  video.mp4 ");
 
-    assert(argumentArray != null);
     assert(argumentArray.length == 8);
 
     assert("-loop" == argumentArray[0]);
@@ -105,7 +103,6 @@ class Test {
     var argumentArray = parseArguments(
         "-loop  1 \"file one.jpg\"   -filter_complex \"[0:v]setpts=PTS-STARTPTS[video]\"  -map  [video]  video.mp4 ");
 
-    assert(argumentArray != null);
     assert(argumentArray.length == 8);
 
     assert("-loop" == argumentArray[0]);
@@ -120,7 +117,6 @@ class Test {
     argumentArray = parseArguments(
         " -i   file:///tmp/input.mp4 -vcodec libx264 -vf \"scale=1024:1024,pad=width=1024:height=1024:x=0:y=0:color=black\"  -acodec copy  -q:v 0  -q:a   0 video.mp4");
 
-    assert(argumentArray != null);
     assert(argumentArray.length == 13);
 
     assert("-i" == argumentArray[0]);
@@ -143,7 +139,6 @@ class Test {
     var argumentArray = parseArguments(
         "  -i   file:///tmp/input.mp4 -vf \"subtitles=file:///tmp/subtitles.srt:force_style=\'FontSize=16,PrimaryColour=&HFFFFFF&\'\" -vcodec libx264   -acodec copy  -q:v 0 -q:a  0  video.mp4");
 
-    assert(argumentArray != null);
     assert(argumentArray.length == 13);
 
     assert("-i" == argumentArray[0]);
@@ -165,7 +160,6 @@ class Test {
     argumentArray = parseArguments(
         "  -i   file:///tmp/input.mp4 -vf \"subtitles=file:///tmp/subtitles.srt:force_style=\\\"FontSize=16,PrimaryColour=&HFFFFFF&\\\"\" -vcodec libx264   -acodec copy  -q:v 0 -q:a  0  video.mp4");
 
-    assert(argumentArray != null);
     assert(argumentArray.length == 13);
 
     assert("-i" == argumentArray[0]);

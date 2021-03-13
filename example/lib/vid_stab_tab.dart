@@ -32,7 +32,7 @@ import 'package:video_player/video_player.dart';
 import 'util.dart';
 
 class _ControllerWrapper implements PlayerTab {
-  VideoPlayerController _controller;
+  VideoPlayerController? _controller;
 
   @override
   void setController(VideoPlayerController controller) {
@@ -41,9 +41,9 @@ class _ControllerWrapper implements PlayerTab {
 }
 
 class VidStabTab {
-  _ControllerWrapper videoController;
-  _ControllerWrapper stabilizedVideoController;
-  RefreshablePlayerDialogFactory _refreshablePlayerDialogFactory;
+  late _ControllerWrapper videoController;
+  late _ControllerWrapper stabilizedVideoController;
+  late RefreshablePlayerDialogFactory _refreshablePlayerDialogFactory;
 
   void init(RefreshablePlayerDialogFactory refreshablePlayerDialogFactory) {
     _refreshablePlayerDialogFactory = refreshablePlayerDialogFactory;
@@ -121,7 +121,6 @@ class VidStabTab {
 
                       executeAsyncFFmpeg(stabilizeVideoCommand,
                           (CompletedFFmpegExecution thirdExecution) {
-
                         hideProgressDialog();
 
                         if (thirdExecution.returnCode == 0) {
@@ -158,30 +157,30 @@ class VidStabTab {
 
   Future<void> playVideo() async {
     if (videoController._controller != null) {
-      await videoController._controller.initialize();
-      await videoController._controller.play();
+      await videoController._controller!.initialize();
+      await videoController._controller!.play();
     }
     _refreshablePlayerDialogFactory.refresh();
   }
 
   Future<void> pauseVideo() async {
     if (videoController._controller != null) {
-      await videoController._controller.pause();
+      await videoController._controller!.pause();
     }
     _refreshablePlayerDialogFactory.refresh();
   }
 
   Future<void> playStabilizedVideo() async {
     if (stabilizedVideoController._controller != null) {
-      await stabilizedVideoController._controller.initialize();
-      await stabilizedVideoController._controller.play();
+      await stabilizedVideoController._controller!.initialize();
+      await stabilizedVideoController._controller!.play();
     }
     _refreshablePlayerDialogFactory.refresh();
   }
 
   Future<void> pauseStabilizedVideo() async {
     if (stabilizedVideoController._controller != null) {
-      await stabilizedVideoController._controller.pause();
+      await stabilizedVideoController._controller!.pause();
     }
     _refreshablePlayerDialogFactory.refresh();
   }

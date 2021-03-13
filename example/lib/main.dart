@@ -17,6 +17,8 @@
  * along with FlutterFFmpeg.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_ffmpeg/log_level.dart';
 import 'package:flutter_ffmpeg_example/abstract.dart';
@@ -56,7 +58,7 @@ class MainPage extends StatefulWidget {
 }
 
 class DecoratedTabBar extends StatelessWidget implements PreferredSizeWidget {
-  DecoratedTabBar({@required this.tabBar, @required this.decoration});
+  DecoratedTabBar({required this.tabBar, required this.decoration});
 
   final TabBar tabBar;
   final BoxDecoration decoration;
@@ -79,8 +81,8 @@ class FlutterFFmpegExampleAppState extends State<MainPage>
     with TickerProviderStateMixin
     implements RefreshablePlayerDialogFactory {
   // COMMON COMPONENTS
-  TabController _controller;
-  ProgressModal progressModal;
+  late TabController _controller;
+  ProgressModal? progressModal;
 
   // COMMAND TAB COMPONENTS
   CommandTab commandTab = new CommandTab();
@@ -300,7 +302,7 @@ class FlutterFFmpegExampleAppState extends State<MainPage>
                           return Container(
                               alignment: Alignment(0.0, 0.0),
                               child: EmbeddedPlayer(
-                                  "${snapshot.data.path}", videoTab));
+                                  "${(snapshot.data as File).path}", videoTab));
                         } else {
                           return Container(
                             alignment: Alignment(0.0, 0.0),
@@ -433,7 +435,8 @@ class FlutterFFmpegExampleAppState extends State<MainPage>
                           return Container(
                               alignment: Alignment(0.0, 0.0),
                               child: EmbeddedPlayer(
-                                  "${snapshot.data.path}", subtitleTab));
+                                  "${(snapshot.data as File).path}",
+                                  subtitleTab));
                         } else {
                           return Container(
                             alignment: Alignment(0.0, 0.0),
@@ -459,7 +462,8 @@ class FlutterFFmpegExampleAppState extends State<MainPage>
                         if (snapshot.hasData) {
                           return Container(
                               alignment: Alignment(0.0, 0.0),
-                              child: EmbeddedPlayer("${snapshot.data.path}",
+                              child: EmbeddedPlayer(
+                                  "${(snapshot.data as File).path}",
                                   vidStabTab.videoController));
                         } else {
                           return Container(
@@ -498,7 +502,8 @@ class FlutterFFmpegExampleAppState extends State<MainPage>
                         if (snapshot.hasData) {
                           return Container(
                               alignment: Alignment(0.0, 0.0),
-                              child: EmbeddedPlayer("${snapshot.data.path}",
+                              child: EmbeddedPlayer(
+                                  "${(snapshot.data as File).path}",
                                   vidStabTab.stabilizedVideoController));
                         } else {
                           return Container(
@@ -543,7 +548,7 @@ class FlutterFFmpegExampleAppState extends State<MainPage>
                           return Container(
                               alignment: Alignment(0.0, 0.0),
                               child: EmbeddedPlayer(
-                                  "${snapshot.data.path}", pipeTab));
+                                  "${(snapshot.data as File).path}", pipeTab));
                         } else {
                           return Container(
                             alignment: Alignment(0.0, 0.0),
@@ -708,25 +713,25 @@ class FlutterFFmpegExampleAppState extends State<MainPage>
   @override
   void dialogHide() {
     if (progressModal != null) {
-      progressModal.hide();
+      progressModal!.hide();
     }
   }
 
   @override
   void dialogShowCancellable(String message, Function cancelFunction) {
-    progressModal = new ProgressModal(_globalKey.currentContext);
-    progressModal.show(message, cancelFunction: cancelFunction);
+    progressModal = new ProgressModal(_globalKey.currentContext!);
+    progressModal!.show(message, cancelFunction: cancelFunction);
   }
 
   @override
   void dialogShow(String message) {
-    progressModal = new ProgressModal(_globalKey.currentContext);
-    progressModal.show(message);
+    progressModal = new ProgressModal(_globalKey.currentContext!);
+    progressModal!.show(message);
   }
 
   @override
   void dialogUpdate(String message) {
-    progressModal.update(message: message);
+    progressModal!.update(message: message);
   }
 
   @override

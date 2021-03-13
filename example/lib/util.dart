@@ -32,5 +32,5 @@ void ffprint(String text) {
   var nowString = now();
   pattern
       .allMatches(text)
-      .forEach((match) => print("$nowString - " + match.group(0)));
+      .forEach((match) => print("$nowString - ${match.group(0)}"));
 }
