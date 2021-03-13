@@ -82,7 +82,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "0.4.0-nullsafety.0"
+    version: "0.4.0"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -251,7 +251,7 @@ packages:
       name: video_player
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.1"
+    version: "2.0.2"
   video_player_platform_interface:
     dependency: transitive
     description:

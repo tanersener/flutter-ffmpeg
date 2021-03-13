@@ -143,6 +143,10 @@ Future<String> registerNewFFmpegPipe() async {
   return await _flutterFFmpegConfig.registerNewFFmpegPipe();
 }
 
+Future<void> closeFFmpegPipe(String ffmpegPipePath) async {
+  return await _flutterFFmpegConfig.closeFFmpegPipe(ffmpegPipePath);
+}
+
 Future<void> setEnvironmentVariable(
     String variableName, String variableValue) async {
   return await _flutterFFmpegConfig.setEnvironmentVariable(

@@ -60,7 +60,7 @@ class PipeTab implements PlayerTab {
   }
 
   void asyncAssetWriteToPipe(String assetName, String pipePath) {
-    VideoUtil.assetToPipe(assetName, pipePath);
+    VideoUtil.writeAssetToPipeAndClose(assetName, pipePath);
   }
 
   void createVideo() {

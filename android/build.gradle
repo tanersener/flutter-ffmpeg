@@ -11,7 +11,7 @@ String safeExtGet(String prop, String fallback) {
 }
 
 group 'com.arthenica.flutter.ffmpeg'
-version '0.3.1'
+version '0.4.0'
 
 buildscript {
     repositories {

@@ -401,6 +401,17 @@ class FlutterFFmpegConfig {
     }
   }
 
+  /// Closes a previously created FFmpeg pipe.
+  Future<void> closeFFmpegPipe(String ffmpegPipePath) async {
+    try {
+      await _methodChannel
+          .invokeMethod('closeFFmpegPipe', {'ffmpegPipePath': ffmpegPipePath});
+    } on PlatformException catch (e, stack) {
+      print("Plugin closeFFmpegPipe error: ${e.message}");
+      return Future.error("closeFFmpegPipe failed.", stack);
+    }
+  }
+
   /// Sets an environment variable.
   Future<void> setEnvironmentVariable(
       String variableName, String variableValue) async {

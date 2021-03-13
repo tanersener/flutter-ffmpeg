@@ -1,11 +1,8 @@
-## 0.4.0-nullsafety.0
+## 0.4.0
 - Migrated to nullsafety
-- Updated example application, changed example to use full-gpl ffmpeg package (video stabilization not present in full package)
-- Fixes issue #266 and possibly #246
-
-### Known issues
-- Burn subtitles in example not working properly (stuck at Burning subtitles)
-
+- Fixes issue #246 and #266
+- Adds closeFFmpegPipe method to close pipes
+- Updated example application
 
 ## 0.3.1
 - Adds mavenCentral() repository for Android

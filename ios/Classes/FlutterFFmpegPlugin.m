@@ -226,6 +226,11 @@ static NSString *const EVENT_STAT = @"FlutterFFmpegStatisticsCallback";
         NSString *pipe = [MobileFFmpegConfig registerNewFFmpegPipe];
         result([FlutterFFmpegPlugin toStringDictionary:KEY_PIPE :pipe]);
 
+    } else if ([@"closeFFmpegPipe" isEqualToString:call.method]) {
+
+        NSString* ffmpegPipePath = call.arguments[@"ffmpegPipePath"];
+        [MobileFFmpegConfig closeFFmpegPipe:ffmpegPipePath];
+
     } else if ([@"setEnvironmentVariable" isEqualToString:call.method]) {
 
         NSString* variableName = call.arguments[@"variableName"];
