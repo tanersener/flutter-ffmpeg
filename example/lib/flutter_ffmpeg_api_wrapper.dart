@@ -28,11 +28,11 @@ final FlutterFFmpegConfig _flutterFFmpegConfig = new FlutterFFmpegConfig();
 final FlutterFFmpeg _flutterFFmpeg = new FlutterFFmpeg();
 final FlutterFFprobe _flutterFFprobe = new FlutterFFprobe();
 
-void enableLogCallback(LogCallback callback) {
+void enableLogCallback(LogCallback? callback) {
   _flutterFFmpegConfig.enableLogCallback(callback);
 }
 
-void enableStatisticsCallback(StatisticsCallback callback) {
+void enableStatisticsCallback(StatisticsCallback? callback) {
   _flutterFFmpegConfig.enableStatisticsCallback(callback);
 }
 
@@ -153,6 +153,6 @@ Future<List<FFmpegExecution>> listFFmpegExecutions() async {
   return await _flutterFFmpeg.listExecutions();
 }
 
-List<String> parseArguments(command) {
+List<String>? parseArguments(command) {
   return FlutterFFmpeg.parseArguments(command);
 }

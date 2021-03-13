@@ -6,3 +6,7 @@ build/
 /pubspec.lock
 /.packages
 /.gradle/
+
+.settings/
+.project
+.classpath

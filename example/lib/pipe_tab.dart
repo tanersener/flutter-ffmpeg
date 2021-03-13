@@ -33,9 +33,9 @@ import 'package:video_player/video_player.dart';
 import 'util.dart';
 
 class PipeTab implements PlayerTab {
-  VideoPlayerController _videoPlayerController;
-  RefreshablePlayerDialogFactory _refreshablePlayerDialogFactory;
-  Statistics _statistics;
+  VideoPlayerController? _videoPlayerController;
+  late RefreshablePlayerDialogFactory _refreshablePlayerDialogFactory;
+  Statistics? _statistics;
 
   void init(RefreshablePlayerDialogFactory refreshablePlayerDialogFactory) {
     _refreshablePlayerDialogFactory = refreshablePlayerDialogFactory;
@@ -111,15 +111,15 @@ class PipeTab implements PlayerTab {
 
   Future<void> playVideo() async {
     if (_videoPlayerController != null) {
-      await _videoPlayerController.initialize();
-      await _videoPlayerController.play();
+      await _videoPlayerController!.initialize();
+      await _videoPlayerController!.play();
     }
     _refreshablePlayerDialogFactory.refresh();
   }
 
   Future<void> pause() async {
     if (_videoPlayerController != null) {
-      await _videoPlayerController.pause();
+      await _videoPlayerController!.pause();
     }
     _refreshablePlayerDialogFactory.refresh();
   }
@@ -142,7 +142,7 @@ class PipeTab implements PlayerTab {
       return;
     }
 
-    int timeInMilliseconds = this._statistics.time;
+    int timeInMilliseconds = this._statistics!.time;
     if (timeInMilliseconds > 0) {
       int totalVideoDuration = 9000;
 
