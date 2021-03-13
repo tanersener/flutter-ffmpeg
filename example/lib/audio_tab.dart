@@ -33,14 +33,14 @@ import 'package:flutter_ffmpeg_example/video_util.dart';
 import 'util.dart';
 
 class AudioTab {
-  RefreshablePlayerDialogFactory _refreshablePlayerDialogFactory;
-  String _selectedCodec;
-  String _outputText;
+  late RefreshablePlayerDialogFactory _refreshablePlayerDialogFactory;
+  late String _selectedCodec;
+  String _outputText = "";
 
   void init(RefreshablePlayerDialogFactory refreshablePlayerDialogFactory) {
     _refreshablePlayerDialogFactory = refreshablePlayerDialogFactory;
     List<DropdownMenuItem<String>> videoCodecList = getAudioCodecList();
-    _selectedCodec = videoCodecList[0].value;
+    _selectedCodec = videoCodecList[0].value!;
     clearLog();
   }
 
@@ -65,8 +65,8 @@ class AudioTab {
     _outputText = "";
   }
 
-  void changedAudioCodec(String selectedCodec) {
-    _selectedCodec = selectedCodec;
+  void changedAudioCodec(String? selectedCodec) {
+    _selectedCodec = selectedCodec!;
     _refreshablePlayerDialogFactory.refresh();
   }
 
@@ -222,7 +222,7 @@ class AudioTab {
   }
 
   List<DropdownMenuItem<String>> getAudioCodecList() {
-    List<DropdownMenuItem<String>> list = new List();
+    List<DropdownMenuItem<String>> list = List.empty(growable: true);
 
     list.add(new DropdownMenuItem(
         value: "mp2 (twolame)",

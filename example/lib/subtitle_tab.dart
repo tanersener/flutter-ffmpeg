@@ -35,11 +35,11 @@ import 'util.dart';
 enum _State { IDLE, CREATING, BURNING }
 
 class SubtitleTab implements PlayerTab {
-  VideoPlayerController _videoPlayerController;
-  RefreshablePlayerDialogFactory _refreshablePlayerDialogFactory;
-  Statistics _statistics;
-  _State _state;
-  int _executionId;
+  VideoPlayerController? _videoPlayerController;
+  late RefreshablePlayerDialogFactory _refreshablePlayerDialogFactory;
+  late Statistics? _statistics;
+  late _State _state;
+  late int _executionId;
 
   void init(RefreshablePlayerDialogFactory refreshablePlayerDialogFactory) {
     _refreshablePlayerDialogFactory = refreshablePlayerDialogFactory;
@@ -109,7 +109,7 @@ class SubtitleTab implements PlayerTab {
                         "Create completed successfully; burning subtitles.");
 
                     String burnSubtitlesCommand =
-                        "-y -i ${videoFile.path} -vf subtitles=$subtitlePath:force_style='FontName=MyFontName' -c:v mpeg4 ${videoWithSubtitlesFile.path}";
+                        "-y -i ${videoFile.path} -vf subtitles=$subtitlePath:force_style='Fontname=Trueno' -c:v mpeg4 ${videoWithSubtitlesFile.path}";
 
                     showBurnProgressDialog();
 
@@ -158,15 +158,15 @@ class SubtitleTab implements PlayerTab {
 
   Future<void> playVideo() async {
     if (_videoPlayerController != null) {
-      await _videoPlayerController.initialize();
-      await _videoPlayerController.play();
+      await _videoPlayerController!.initialize();
+      await _videoPlayerController!.play();
     }
     _refreshablePlayerDialogFactory.refresh();
   }
 
   Future<void> pause() async {
     if (_videoPlayerController != null) {
-      await _videoPlayerController.pause();
+      await _videoPlayerController!.pause();
     }
     _refreshablePlayerDialogFactory.refresh();
   }
@@ -204,7 +204,7 @@ class SubtitleTab implements PlayerTab {
       return;
     }
 
-    int timeInMilliseconds = this._statistics.time;
+    int timeInMilliseconds = this._statistics!.time;
     if (timeInMilliseconds > 0) {
       int totalVideoDuration = 9000;
 

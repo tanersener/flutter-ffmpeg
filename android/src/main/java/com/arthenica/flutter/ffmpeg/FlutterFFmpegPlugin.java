@@ -48,7 +48,6 @@ import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
-import io.flutter.plugin.common.PluginRegistry.Registrar;
 
 /**
  * <h3>Flutter FFmpeg Plugin</h3>
@@ -90,7 +89,8 @@ public class FlutterFFmpegPlugin implements MethodCallHandler, EventChannel.Stre
     public static final String EVENT_EXECUTE = "FlutterFFmpegExecuteCallback";
 
     private EventChannel.EventSink eventSink;
-    private final Registrar registrar;
+    @SuppressWarnings("deprecation")
+    private final io.flutter.plugin.common.PluginRegistry.Registrar registrar;
     private final FlutterFFmpegResultHandler flutterFFmpegResultHandler;
 
     /**
@@ -98,7 +98,8 @@ public class FlutterFFmpegPlugin implements MethodCallHandler, EventChannel.Stre
      *
      * @param registrar receiver of plugin registration
      */
-    public static void registerWith(final Registrar registrar) {
+    @SuppressWarnings("deprecation")
+    public static void registerWith(final io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
         FlutterFFmpegPlugin flutterFFmpegPlugin = new FlutterFFmpegPlugin(registrar);
 
         final MethodChannel channel = new MethodChannel(registrar.messenger(), "flutter_ffmpeg");
@@ -108,7 +109,8 @@ public class FlutterFFmpegPlugin implements MethodCallHandler, EventChannel.Stre
         eventChannel.setStreamHandler(flutterFFmpegPlugin);
     }
 
-    private FlutterFFmpegPlugin(Registrar registrar) {
+    @SuppressWarnings("deprecation")
+    private FlutterFFmpegPlugin(io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
         this.registrar = registrar;
 
         this.flutterFFmpegResultHandler = new FlutterFFmpegResultHandler();
@@ -285,6 +287,11 @@ public class FlutterFFmpegPlugin implements MethodCallHandler, EventChannel.Stre
 
             final String pipe = Config.registerNewFFmpegPipe(getActiveContext());
             flutterFFmpegResultHandler.success(result, toStringMap(KEY_PIPE, pipe));
+
+        } else if (call.method.equals("closeFFmpegPipe")) {
+            String ffmpegPipePath = call.argument("ffmpegPipePath");
+
+            Config.closeFFmpegPipe(ffmpegPipePath);
 
         } else if (call.method.equals("setEnvironmentVariable")) {
             String variableName = call.argument("variableName");

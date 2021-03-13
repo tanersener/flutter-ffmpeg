@@ -43,7 +43,7 @@ class EmbeddedPlayer extends StatefulWidget {
 class _EmbeddedPlayerState extends State<EmbeddedPlayer> {
   final PlayerTab _playerTab;
   final File _file;
-  VideoPlayerController _videoPlayerController;
+  VideoPlayerController? _videoPlayerController;
   bool startedPlaying = false;
 
   _EmbeddedPlayerState(this._file, this._playerTab);
@@ -53,12 +53,12 @@ class _EmbeddedPlayerState extends State<EmbeddedPlayer> {
     super.initState();
 
     _videoPlayerController = VideoPlayerController.file(_file);
-    _playerTab.setController(_videoPlayerController);
+    _playerTab.setController(_videoPlayerController!);
   }
 
   @override
   void dispose() {
-    _videoPlayerController.dispose();
+    _videoPlayerController!.dispose();
     super.dispose();
   }
 
@@ -68,12 +68,12 @@ class _EmbeddedPlayerState extends State<EmbeddedPlayer> {
         elevation: 0,
         child: Center(
           child: FutureBuilder<bool>(
-            future: Future.value(_videoPlayerController.value.initialized),
+            future: Future.value(_videoPlayerController!.value.isInitialized),
             builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
               if (snapshot.data == true) {
                 return Container(
                   alignment: Alignment(0.0, 0.0),
-                  child: VideoPlayer(_videoPlayerController),
+                  child: VideoPlayer(_videoPlayerController!),
                 );
               } else {
                 return Container(

@@ -1,3 +1,9 @@
+## 0.4.0
+- Migrated to nullsafety
+- Fixes issue #246 and #266
+- Adds closeFFmpegPipe method to close pipes
+- Updated example application
+
 ## 0.3.1
 - Adds mavenCentral() repository for Android
 - Minor updates in the test application

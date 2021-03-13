@@ -1,6 +1,6 @@
 # flutter_ffmpeg 
 
-![GitHub release](https://img.shields.io/badge/release-v0.3.1-blue.svg)
+![GitHub release](https://img.shields.io/badge/release-v0.4.0-blue.svg)
 ![](https://img.shields.io/pub/v/flutter_ffmpeg.svg)
 
 FFmpeg plugin for Flutter. Supports iOS and Android.
@@ -35,7 +35,7 @@ FFmpeg plugin for Flutter. Supports iOS and Android.
 Add `flutter_ffmpeg` as a dependency in your `pubspec.yaml file`.
   ```
 dependencies:
-    flutter_ffmpeg: ^0.3.1
+    flutter_ffmpeg: ^0.4.0
   ```
 
 #### 2.1 Packages

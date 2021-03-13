@@ -74,7 +74,8 @@ class VideoUtil {
     return fileFuture;
   }
 
-  static void assetToPipe(String assetName, String pipePath) async {
+  static void writeAssetToPipeAndClose(
+      String assetName, String pipePath) async {
     final ByteData byteData = await rootBundle.load('assets/$assetName');
 
     var pipeFile = new File(pipePath);
@@ -85,6 +86,8 @@ class VideoUtil {
         flush: false);
 
     ffprint('assets/$assetName saved to pipe at $pipePath.');
+
+    closeFFmpegPipe(pipePath);
   }
 
   static Future<String> assetPath(String assetName) async {
