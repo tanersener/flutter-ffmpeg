@@ -90,7 +90,7 @@ Installation of `FlutterFFmpeg` using `pub` enables the default package, which i
 possible to enable other `flutter_ffmpeg` packages using the following steps.
 
 
-##### When releasing app
+### When releasing app
 As of flutter v2.0, the native code is being getting deleted to decrease size of app and
 due to that, many package functionalities are crashing. Same is the case of camera plugin.
 It is requested to add `proguard-rules.pro` files in app folder:
