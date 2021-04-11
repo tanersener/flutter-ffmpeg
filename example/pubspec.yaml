@@ -14,7 +14,8 @@ dependencies:
   path: ^1.8.0
   fluttertoast: ^8.0.1-nullsafety.0
   video_player: ^2.0.2
-  flutter_ffmpeg: 0.4.0
+  flutter_ffmpeg:
+    path: ../
 
 dev_dependencies:
   flutter_test:
