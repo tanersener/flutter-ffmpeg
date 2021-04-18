@@ -43,8 +43,7 @@ dependencies:
 `ffmpeg` includes built-in encoders for some popular formats. However, there are certain external libraries that needs 
 to be enabled in order to encode specific formats/codecs. For example, to encode an `mp3` file you need `lame` or 
 `shine` library enabled. You have to install a `flutter_ffmpeg` package that has at least one of them inside. 
-To encode an `h264` video, you need to install a package with `x264` inside. To encode `vp8` or `vp9` videos, you need 
-a `flutter_ffmpeg` package with `libvpx` inside.
+To encode `vp8` or `vp9` videos, you need a `flutter_ffmpeg` package with `libvpx` inside.
 
 `flutter_ffmpeg` provides eight packages that include different sets of external libraries. These packages are named 
 according to the external libraries included in them. Below you can see which libraries are enabled in each package. 
