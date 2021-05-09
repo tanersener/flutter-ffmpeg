@@ -282,8 +282,8 @@ the package name you are using.
 2. Execute asynchronous FFmpeg commands.
 
     ```
-    _flutterFFmpeg.executeAsync(ffmpegCommand, (int executionId, int returnCode) {
-      print("FFmpeg process for executionId $executionId exited with rc $returnCode");
+    _flutterFFmpeg.executeAsync(ffmpegCommand, (CompletedFFmpegExecution execution) {
+      print("FFmpeg process for executionId ${execution.executionId} exited with rc ${execution.returnCode}");
     }).then((executionId) => print("Async FFmpeg process started with executionId $executionId."));
     ```
 
