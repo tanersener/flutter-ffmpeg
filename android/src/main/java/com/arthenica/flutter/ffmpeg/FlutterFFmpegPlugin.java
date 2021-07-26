@@ -22,8 +22,6 @@ package com.arthenica.flutter.ffmpeg;
 import android.content.Context;
 import android.os.AsyncTask;
 
-import androidx.annotation.NonNull;
-
 import com.arthenica.mobileffmpeg.AbiDetect;
 import com.arthenica.mobileffmpeg.Config;
 import com.arthenica.mobileffmpeg.ExecuteCallback;
@@ -36,7 +34,6 @@ import com.arthenica.mobileffmpeg.MediaInformation;
 import com.arthenica.mobileffmpeg.Statistics;
 import com.arthenica.mobileffmpeg.StatisticsCallback;
 
-import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
