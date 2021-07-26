@@ -106,10 +106,15 @@ public class FlutterFFmpegPlugin implements FlutterPlugin, MethodCallHandler, Ev
 
     @Override
     public void onDetachedFromEngine(final FlutterPluginBinding binding) {
-        channel.setMethodCallHandler(null);
-        eventChannel.setStreamHandler(null);
-        channel = null;
-        eventChannel = null;
+        if (channel != null) {
+            channel.setMethodCallHandler(null);
+            channel = null;
+        }
+        
+        if (eventChannel != null) {
+            eventChannel.setStreamHandler(null);
+            eventChannel = null;
+        }
     }
 
     /**
