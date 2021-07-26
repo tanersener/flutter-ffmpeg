@@ -99,7 +99,7 @@ public class FlutterFFmpegPlugin implements FlutterPlugin, MethodCallHandler, Ev
     private EventChannel eventChannel;
     
     @Override
-    public void onAttachedToEngine(@NonNull @NotNull FlutterPluginBinding binding) {
+    public void onAttachedToEngine(@NotNull FlutterPluginBinding binding) {
         channel = new MethodChannel(binding.getBinaryMessenger(), "flutter_ffmpeg");
         channel.setMethodCallHandler(this);
         eventChannel = new EventChannel(binding.getBinaryMessenger(), "flutter_ffmpeg_event");
@@ -108,7 +108,7 @@ public class FlutterFFmpegPlugin implements FlutterPlugin, MethodCallHandler, Ev
     }
 
     @Override
-    public void onDetachedFromEngine(@NonNull @NotNull FlutterPluginBinding binding) {
+    public void onDetachedFromEngine(@NotNull FlutterPluginBinding binding) {
         channel.setMethodCallHandler(null);
         eventChannel.setStreamHandler(null);
         channel = null;
@@ -122,7 +122,7 @@ public class FlutterFFmpegPlugin implements FlutterPlugin, MethodCallHandler, Ev
      * @param result result callback
      */
     @Override
-    public void onMethodCall(@NonNull @NotNull MethodCall call, @NonNull @NotNull MethodChannel.Result result) {
+    public void onMethodCall(@NotNull MethodCall call, @NotNull MethodChannel.Result result) {
         switch (call.method) {
             case "getPlatform":
 
