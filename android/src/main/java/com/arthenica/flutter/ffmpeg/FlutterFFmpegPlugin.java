@@ -22,6 +22,8 @@ package com.arthenica.flutter.ffmpeg;
 import android.content.Context;
 import android.os.AsyncTask;
 
+import androidx.annotation.NonNull;
+
 import com.arthenica.mobileffmpeg.AbiDetect;
 import com.arthenica.mobileffmpeg.Config;
 import com.arthenica.mobileffmpeg.ExecuteCallback;
@@ -34,6 +36,7 @@ import com.arthenica.mobileffmpeg.MediaInformation;
 import com.arthenica.mobileffmpeg.Statistics;
 import com.arthenica.mobileffmpeg.StatisticsCallback;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -43,11 +46,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
-import io.flutter.plugin.common.MethodChannel.Result;
 
 /**
  * <h3>Flutter FFmpeg Plugin</h3>
@@ -55,7 +58,7 @@ import io.flutter.plugin.common.MethodChannel.Result;
  * @author Taner Sener
  * @since 0.1.0
  */
-public class FlutterFFmpegPlugin implements MethodCallHandler, EventChannel.StreamHandler {
+public class FlutterFFmpegPlugin implements FlutterPlugin, MethodCallHandler, EventChannel.StreamHandler {
     public static final String LIBRARY_NAME = "flutter-ffmpeg";
     public static final String PLATFORM_NAME = "android";
 
@@ -89,35 +92,27 @@ public class FlutterFFmpegPlugin implements MethodCallHandler, EventChannel.Stre
     public static final String EVENT_EXECUTE = "FlutterFFmpegExecuteCallback";
 
     private EventChannel.EventSink eventSink;
-    @SuppressWarnings("deprecation")
-    private final io.flutter.plugin.common.PluginRegistry.Registrar registrar;
-    private final FlutterFFmpegResultHandler flutterFFmpegResultHandler;
+    private final FlutterFFmpegResultHandler flutterFFmpegResultHandler = new FlutterFFmpegResultHandler();
 
-    /**
-     * Registers plugin to registry.
-     *
-     * @param registrar receiver of plugin registration
-     */
-    @SuppressWarnings("deprecation")
-    public static void registerWith(final io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
-        FlutterFFmpegPlugin flutterFFmpegPlugin = new FlutterFFmpegPlugin(registrar);
-
-        final MethodChannel channel = new MethodChannel(registrar.messenger(), "flutter_ffmpeg");
-        channel.setMethodCallHandler(flutterFFmpegPlugin);
-
-        final EventChannel eventChannel = new EventChannel(registrar.messenger(), "flutter_ffmpeg_event");
-        eventChannel.setStreamHandler(flutterFFmpegPlugin);
+    private Context context;
+    private MethodChannel channel;
+    private EventChannel eventChannel;
+    
+    @Override
+    public void onAttachedToEngine(@NonNull @NotNull FlutterPluginBinding binding) {
+        channel = new MethodChannel(binding.getBinaryMessenger(), "flutter_ffmpeg");
+        channel.setMethodCallHandler(this);
+        eventChannel = new EventChannel(binding.getBinaryMessenger(), "flutter_ffmpeg_event");
+        eventChannel.setStreamHandler(this);
+        context = binding.getApplicationContext();
     }
 
-    @SuppressWarnings("deprecation")
-    private FlutterFFmpegPlugin(io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
-        this.registrar = registrar;
-
-        this.flutterFFmpegResultHandler = new FlutterFFmpegResultHandler();
-    }
-
-    private Context getActiveContext() {
-        return (registrar.activity() != null) ? registrar.activity() : registrar.context();
+    @Override
+    public void onDetachedFromEngine(@NonNull @NotNull FlutterPluginBinding binding) {
+        channel.setMethodCallHandler(null);
+        eventChannel.setStreamHandler(null);
+        channel = null;
+        eventChannel = null;
     }
 
     /**
@@ -127,185 +122,228 @@ public class FlutterFFmpegPlugin implements MethodCallHandler, EventChannel.Stre
      * @param result result callback
      */
     @Override
-    public void onMethodCall(final MethodCall call, final Result result) {
-        if (call.method.equals("getPlatform")) {
+    public void onMethodCall(@NonNull @NotNull MethodCall call, @NonNull @NotNull MethodChannel.Result result) {
+        switch (call.method) {
+            case "getPlatform":
 
-            final String abi = AbiDetect.getAbi();
-            flutterFFmpegResultHandler.success(result, toStringMap(KEY_PLATFORM, PLATFORM_NAME + "-" + abi));
+                final String abi = AbiDetect.getAbi();
+                flutterFFmpegResultHandler.success(result, toStringMap(KEY_PLATFORM, PLATFORM_NAME + "-" + abi));
 
-        } else if (call.method.equals("getFFmpegVersion")) {
+                break;
+            case "getFFmpegVersion":
 
-            final String version = Config.getFFmpegVersion();
-            flutterFFmpegResultHandler.success(result, toStringMap(KEY_VERSION, version));
+                final String version = Config.getFFmpegVersion();
+                flutterFFmpegResultHandler.success(result, toStringMap(KEY_VERSION, version));
 
-        } else if (call.method.equals("executeFFmpegWithArguments")) {
+                break;
+            case "executeFFmpegWithArguments": {
 
-            List<String> arguments = call.argument("arguments");
+                List<String> arguments = call.argument("arguments");
 
-            final FlutterFFmpegExecuteFFmpegAsyncArgumentsTask asyncTask = new FlutterFFmpegExecuteFFmpegAsyncArgumentsTask(arguments, flutterFFmpegResultHandler, result);
-            asyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                assert arguments != null;
+                final FlutterFFmpegExecuteFFmpegAsyncArgumentsTask asyncTask = new FlutterFFmpegExecuteFFmpegAsyncArgumentsTask(arguments, flutterFFmpegResultHandler, result);
+                asyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
-        } else if (call.method.equals("executeFFmpegAsyncWithArguments")) {
-
-            List<String> arguments = call.argument("arguments");
-
-            long executionId = FFmpeg.executeAsync(arguments.toArray(new String[0]), new ExecuteCallback() {
-
-                @Override
-                public void apply(long executionId, int returnCode) {
-                    final HashMap<String, Object> executeMap = new HashMap<>();
-                    executeMap.put("executionId", executionId);
-                    executeMap.put("returnCode", returnCode);
-
-                    final HashMap<String, Object> eventMap = new HashMap<>();
-                    eventMap.put(EVENT_EXECUTE, executeMap);
-
-                    flutterFFmpegResultHandler.success(eventSink, eventMap);
-                }
-            });
-
-            flutterFFmpegResultHandler.success(result, FlutterFFmpegPlugin.toLongMap(FlutterFFmpegPlugin.KEY_EXECUTION_ID, executionId));
-
-        } else if (call.method.equals("executeFFprobeWithArguments")) {
-
-            List<String> arguments = call.argument("arguments");
-
-            final FlutterFFmpegExecuteFFprobeAsyncArgumentsTask asyncTask = new FlutterFFmpegExecuteFFprobeAsyncArgumentsTask(arguments, flutterFFmpegResultHandler, result);
-            asyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-
-        } else if (call.method.equals("cancel")) {
-
-            Integer executionId = call.argument("executionId");
-            if (executionId == null) {
-                FFmpeg.cancel();
-            } else {
-                FFmpeg.cancel(executionId);
+                break;
             }
+            case "executeFFmpegAsyncWithArguments": {
 
-        } else if (call.method.equals("enableRedirection")) {
+                List<String> arguments = call.argument("arguments");
 
-            Config.enableRedirection();
+                assert arguments != null;
+                long executionId = FFmpeg.executeAsync(arguments.toArray(new String[0]), new ExecuteCallback() {
 
-        } else if (call.method.equals("disableRedirection")) {
+                    @Override
+                    public void apply(long executionId, int returnCode) {
+                        final HashMap<String, Object> executeMap = new HashMap<>();
+                        executeMap.put("executionId", executionId);
+                        executeMap.put("returnCode", returnCode);
 
-            Config.disableRedirection();
+                        final HashMap<String, Object> eventMap = new HashMap<>();
+                        eventMap.put(EVENT_EXECUTE, executeMap);
 
-        } else if (call.method.equals("getLogLevel")) {
+                        flutterFFmpegResultHandler.success(eventSink, eventMap);
+                    }
+                });
 
-            final Level level = Config.getLogLevel();
-            flutterFFmpegResultHandler.success(result, toIntMap(KEY_LOG_LEVEL, levelToInt(level)));
+                flutterFFmpegResultHandler.success(result, FlutterFFmpegPlugin.toLongMap(FlutterFFmpegPlugin.KEY_EXECUTION_ID, executionId));
 
-        } else if (call.method.equals("setLogLevel")) {
-
-            Integer level = call.argument("level");
-            if (level == null) {
-                level = Level.AV_LOG_TRACE.getValue();
+                break;
             }
-            Config.setLogLevel(Level.from(level));
+            case "executeFFprobeWithArguments": {
 
-        } else if (call.method.equals("enableLogs")) {
+                List<String> arguments = call.argument("arguments");
 
-            Config.enableLogCallback(new LogCallback() {
+                assert arguments != null;
+                final FlutterFFmpegExecuteFFprobeAsyncArgumentsTask asyncTask = new FlutterFFmpegExecuteFFprobeAsyncArgumentsTask(arguments, flutterFFmpegResultHandler, result);
+                asyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
-                @Override
-                public void apply(final LogMessage logMessage) {
-                    emitLogMessage(logMessage);
+                break;
+            }
+            case "cancel": {
+
+                Integer executionId = call.argument("executionId");
+                if (executionId == null) {
+                    FFmpeg.cancel();
+                } else {
+                    FFmpeg.cancel(executionId);
                 }
-            });
 
-        } else if (call.method.equals("disableLogs")) {
+                break;
+            }
+            case "enableRedirection":
 
-            Config.enableLogCallback(new LogCallback() {
+                Config.enableRedirection();
 
-                @Override
-                public void apply(LogMessage message) {
-                    // EMPTY LOG CALLBACK
+                break;
+            case "disableRedirection":
+
+                Config.disableRedirection();
+
+                break;
+            case "getLogLevel": {
+
+                final Level level = Config.getLogLevel();
+                flutterFFmpegResultHandler.success(result, toIntMap(KEY_LOG_LEVEL, levelToInt(level)));
+
+                break;
+            }
+            case "setLogLevel": {
+
+                Integer level = call.argument("level");
+                if (level == null) {
+                    level = Level.AV_LOG_TRACE.getValue();
                 }
-            });
+                Config.setLogLevel(Level.from(level));
 
-        } else if (call.method.equals("enableStatistics")) {
+                break;
+            }
+            case "enableLogs":
 
-            Config.enableStatisticsCallback(new StatisticsCallback() {
+                Config.enableLogCallback(new LogCallback() {
 
-                @Override
-                public void apply(final Statistics statistics) {
-                    emitStatistics(statistics);
-                }
-            });
+                    @Override
+                    public void apply(final LogMessage logMessage) {
+                        emitLogMessage(logMessage);
+                    }
+                });
 
-        } else if (call.method.equals("disableStatistics")) {
+                break;
+            case "disableLogs":
 
-            Config.enableStatisticsCallback(null);
+                Config.enableLogCallback(new LogCallback() {
 
-        } else if (call.method.equals("getLastReceivedStatistics")) {
+                    @Override
+                    public void apply(LogMessage message) {
+                        // EMPTY LOG CALLBACK
+                    }
+                });
 
-            flutterFFmpegResultHandler.success(result, toMap(Config.getLastReceivedStatistics()));
+                break;
+            case "enableStatistics":
 
-        } else if (call.method.equals("resetStatistics")) {
+                Config.enableStatisticsCallback(new StatisticsCallback() {
 
-            Config.resetStatistics();
+                    @Override
+                    public void apply(final Statistics statistics) {
+                        emitStatistics(statistics);
+                    }
+                });
 
-        } else if (call.method.equals("setFontconfigConfigurationPath")) {
-            String path = call.argument("path");
+                break;
+            case "disableStatistics":
 
-            Config.setFontconfigConfigurationPath(path);
+                Config.enableStatisticsCallback(null);
 
-        } else if (call.method.equals("setFontDirectory")) {
+                break;
+            case "getLastReceivedStatistics":
 
-            String path = call.argument("fontDirectory");
-            Map<String, String> map = call.argument("fontNameMap");
+                flutterFFmpegResultHandler.success(result, toMap(Config.getLastReceivedStatistics()));
 
-            Config.setFontDirectory(getActiveContext(), path, map);
+                break;
+            case "resetStatistics":
 
-        } else if (call.method.equals("getPackageName")) {
+                Config.resetStatistics();
 
-            final String packageName = Config.getPackageName();
-            flutterFFmpegResultHandler.success(result, toStringMap(KEY_PACKAGE_NAME, packageName));
+                break;
+            case "setFontconfigConfigurationPath": {
+                String path = call.argument("path");
 
-        } else if (call.method.equals("getExternalLibraries")) {
+                Config.setFontconfigConfigurationPath(path);
 
-            final List<String> externalLibraries = Config.getExternalLibraries();
-            flutterFFmpegResultHandler.success(result, externalLibraries);
+                break;
+            }
+            case "setFontDirectory": {
 
-        } else if (call.method.equals("getLastReturnCode")) {
+                String path = call.argument("fontDirectory");
+                Map<String, String> map = call.argument("fontNameMap");
 
-            int lastReturnCode = Config.getLastReturnCode();
-            flutterFFmpegResultHandler.success(result, toIntMap(KEY_LAST_RC, lastReturnCode));
+                Config.setFontDirectory(context, path, map);
 
-        } else if (call.method.equals("getLastCommandOutput")) {
+                break;
+            }
+            case "getPackageName":
 
-            final String lastCommandOutput = Config.getLastCommandOutput();
-            flutterFFmpegResultHandler.success(result, toStringMap(KEY_LAST_COMMAND_OUTPUT, lastCommandOutput));
+                final String packageName = Config.getPackageName();
+                flutterFFmpegResultHandler.success(result, toStringMap(KEY_PACKAGE_NAME, packageName));
 
-        } else if (call.method.equals("getMediaInformation")) {
-            final String path = call.argument("path");
+                break;
+            case "getExternalLibraries":
 
-            final FlutterFFmpegGetMediaInformationAsyncTask asyncTask = new FlutterFFmpegGetMediaInformationAsyncTask(path, flutterFFmpegResultHandler, result);
-            asyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                final List<String> externalLibraries = Config.getExternalLibraries();
+                flutterFFmpegResultHandler.success(result, externalLibraries);
 
-        } else if (call.method.equals("registerNewFFmpegPipe")) {
+                break;
+            case "getLastReturnCode":
 
-            final String pipe = Config.registerNewFFmpegPipe(getActiveContext());
-            flutterFFmpegResultHandler.success(result, toStringMap(KEY_PIPE, pipe));
+                int lastReturnCode = Config.getLastReturnCode();
+                flutterFFmpegResultHandler.success(result, toIntMap(KEY_LAST_RC, lastReturnCode));
 
-        } else if (call.method.equals("closeFFmpegPipe")) {
-            String ffmpegPipePath = call.argument("ffmpegPipePath");
+                break;
+            case "getLastCommandOutput":
 
-            Config.closeFFmpegPipe(ffmpegPipePath);
+                final String lastCommandOutput = Config.getLastCommandOutput();
+                flutterFFmpegResultHandler.success(result, toStringMap(KEY_LAST_COMMAND_OUTPUT, lastCommandOutput));
 
-        } else if (call.method.equals("setEnvironmentVariable")) {
-            String variableName = call.argument("variableName");
-            String variableValue = call.argument("variableValue");
+                break;
+            case "getMediaInformation": {
+                final String path = call.argument("path");
 
-            Config.setEnvironmentVariable(variableName, variableValue);
+                assert path != null;
+                final FlutterFFmpegGetMediaInformationAsyncTask asyncTask = new FlutterFFmpegGetMediaInformationAsyncTask(path, flutterFFmpegResultHandler, result);
+                asyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
-        } else if (call.method.equals("listExecutions")) {
+                break;
+            }
+            case "registerNewFFmpegPipe":
 
-            final List<Map<String, Object>> executionsList = toExecutionsList(FFmpeg.listExecutions());
-            flutterFFmpegResultHandler.success(result, executionsList);
+                final String pipe = Config.registerNewFFmpegPipe(context);
+                flutterFFmpegResultHandler.success(result, toStringMap(KEY_PIPE, pipe));
 
-        } else {
-            flutterFFmpegResultHandler.notImplemented(result);
+                break;
+            case "closeFFmpegPipe":
+                String ffmpegPipePath = call.argument("ffmpegPipePath");
+
+                assert ffmpegPipePath != null;
+                Config.closeFFmpegPipe(ffmpegPipePath);
+
+                break;
+            case "setEnvironmentVariable":
+                String variableName = call.argument("variableName");
+                String variableValue = call.argument("variableValue");
+
+                Config.setEnvironmentVariable(variableName, variableValue);
+
+                break;
+            case "listExecutions":
+
+                final List<Map<String, Object>> executionsList = toExecutionsList(FFmpeg.listExecutions());
+                flutterFFmpegResultHandler.success(result, executionsList);
+
+                break;
+            default:
+                flutterFFmpegResultHandler.notImplemented(result);
+                break;
         }
     }
 
@@ -450,5 +488,4 @@ public class FlutterFFmpegPlugin implements MethodCallHandler, EventChannel.Stre
 
         return list;
     }
-
 }
