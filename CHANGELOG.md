@@ -1,3 +1,6 @@
+## 0.4.1
+- Migrated the plugin to Android v2 embedding
+
 ## 0.4.0
 - Migrated to nullsafety
 - Fixes issue #246 and #266
