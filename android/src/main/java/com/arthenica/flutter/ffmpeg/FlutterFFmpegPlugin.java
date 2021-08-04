@@ -48,6 +48,7 @@ import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
+import io.flutter.plugin.common.BinaryMessenger;
 
 /**
  * <h3>Flutter FFmpeg Plugin</h3>
@@ -94,14 +95,29 @@ public class FlutterFFmpegPlugin implements FlutterPlugin, MethodCallHandler, Ev
     private Context context;
     private MethodChannel channel;
     private EventChannel eventChannel;
-    
+
+    /**
+     * Registers plugin to registry.
+     *
+     * @param registrar receiver of plugin registration
+     */
+    @SuppressWarnings("deprecation")
+    public static void registerWith(final io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
+        FlutterFFmpegPlugin flutterFFmpegPlugin = new FlutterFFmpegPlugin();
+        flutterFFmpegPlugin.init(registrar.messenger(), (registrar.activity() != null) ? registrar.activity() : registrar.context());
+    }
+
+    private void init(final BinaryMessenger messenger, final Context context) {
+        channel = new MethodChannel(messenger, "flutter_ffmpeg");
+        channel.setMethodCallHandler(this);
+        eventChannel = new EventChannel(messenger, "flutter_ffmpeg_event");
+        eventChannel.setStreamHandler(this);
+        this.context = context;
+    }
+
     @Override
     public void onAttachedToEngine(final FlutterPluginBinding binding) {
-        channel = new MethodChannel(binding.getBinaryMessenger(), "flutter_ffmpeg");
-        channel.setMethodCallHandler(this);
-        eventChannel = new EventChannel(binding.getBinaryMessenger(), "flutter_ffmpeg_event");
-        eventChannel.setStreamHandler(this);
-        context = binding.getApplicationContext();
+        init(binding.getBinaryMessenger(), binding.getApplicationContext());
     }
 
     @Override
@@ -110,7 +126,7 @@ public class FlutterFFmpegPlugin implements FlutterPlugin, MethodCallHandler, Ev
             channel.setMethodCallHandler(null);
             channel = null;
         }
-        
+
         if (eventChannel != null) {
             eventChannel.setStreamHandler(null);
             eventChannel = null;
