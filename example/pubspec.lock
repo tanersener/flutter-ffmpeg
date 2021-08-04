@@ -82,7 +82,7 @@ packages:
       name: flutter_ffmpeg
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.4.1"
+    version: "0.4.2"
   flutter_test:
     dependency: "direct dev"
     description: flutter

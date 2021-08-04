@@ -1,3 +1,6 @@
+## 0.4.2
+- Support Android v1 and v2 embeddings
+
 ## 0.4.1
 - Migrated the plugin to Android v2 embedding
 
