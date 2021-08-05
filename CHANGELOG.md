@@ -1,8 +1,9 @@
 ## 0.4.2
-- Support Android v1 and v2 embeddings
+- Supports both Android v1 and v2 embeddings
 
 ## 0.4.1
 - Migrated the plugin to Android v2 embedding
+- Fixes issue #320
 
 ## 0.4.0
 - Migrated to nullsafety
