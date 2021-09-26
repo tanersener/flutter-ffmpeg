@@ -18,6 +18,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:flutter_ffmpeg/flutter_ffmpeg.dart';
 import 'package:flutter_ffmpeg/log.dart';
 import 'package:flutter_ffmpeg/stream_information.dart';
 import 'package:flutter_ffmpeg_example/abstract.dart';
@@ -38,6 +39,10 @@ class HttpsTab {
   void init(Refreshable refreshable) {
     _refreshable = refreshable;
     _urlText = TextEditingController();
+    /**
+     * Required to run this to get the chapters for m4b.
+     */
+    FlutterFFprobe().executeWithArguments(['-show_chapters']);
     clearLog();
   }
 

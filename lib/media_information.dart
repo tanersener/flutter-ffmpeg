@@ -18,6 +18,7 @@
  */
 
 import 'package:flutter_ffmpeg/stream_information.dart';
+import 'package:flutter_ffmpeg/chapter.dart';
 
 class MediaInformation {
   Map<dynamic, dynamic>? _allProperties;
@@ -41,6 +42,40 @@ class MediaInformation {
       streamList.forEach((element) {
         list.add(new StreamInformation(element));
       });
+    }
+
+    return list;
+  }
+
+  /// Returns all chapters
+  List<Chapter>? getChapters() {
+    List<Chapter> list = List<Chapter>.empty(growable: true);
+    var chapters;
+
+    if (_allProperties == null) {
+      chapters = List.empty(growable: true);
+    } else {
+      if (_allProperties!["chapters"] != null) {
+        chapters = <Chapter>[];
+        _allProperties!['chapters'].forEach((chapter) {
+          int id = chapter['id'];
+          String timeBase = chapter['time_base'];
+          int start = chapter['start'];
+          int end = chapter['end'];
+          String startTime = chapter['start_time'];
+          String endTime = chapter['end_time'];
+          Tags? tags;
+          if (chapter['tags'] != null) {
+            tags = Tags(chapter['tags']['title'] ?? "");
+          }
+          chapters.add(
+              new Chapter(id, timeBase, start, end, startTime, endTime, tags));
+        });
+      }
+    }
+
+    if (chapters != null) {
+      list.addAll(chapters);
     }
 
     return list;

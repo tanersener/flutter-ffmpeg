@@ -85,7 +85,8 @@ Demonstrates how to use the flutter_ffmpeg plugin.
     - Print selected fields
     ```
     final FlutterFFprobe _flutterFFprobe = new FlutterFFprobe();
-
+    //add this line to get the chapters from a m4b file
+    _flutterFFprobe.executeWithArguments(['-show_chapters']);
     _flutterFFprobe.getMediaInformation("<file path or uri>").then((info) {
         print("Media Information");
 
